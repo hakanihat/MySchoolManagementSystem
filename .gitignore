@@ -1,0 +1,38 @@
+# ASP.NET MVC
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+[Oo]bj/
+bin/
+# NuGet Packages
+*.nupkg
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+# Visual Studio Code
+.vscode/
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+# NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+# ReSharper
+*.[Rr]e[Ss]harper
+*.rsCache
+# TeamCity
+_TeamCity*
+# Paket dependency manager
+.paket/
+# FAKE - F# Make
+.fake/
+# JetBrains Rider
+.idea/
+*.sln.iml
+# CodeRush
+.cr/
+# dotCover
+*.dotCover
+# Test Files
+TestResults/
