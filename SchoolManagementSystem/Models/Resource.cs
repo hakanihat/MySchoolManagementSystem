@@ -1,5 +1,5 @@
-﻿using SchoolManagementSystem.Data;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using SchoolManagementSystem.Data;
 
 namespace SchoolManagementSystem.Models
 {

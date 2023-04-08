@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SchoolManagementSystem.Models;
 
-
 namespace SchoolManagementSystem.Data
 {
     public class ApplicationUser : IdentityUser

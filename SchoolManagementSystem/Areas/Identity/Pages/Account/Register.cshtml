@@ -1,9 +1,6 @@
 ﻿@page
 @model RegisterModel
-@inject RoleManager<IdentityRole> roleManager
-@{
-    var roles = roleManager.Roles.ToList();
-}
+
 
 @{
     ViewData["Title"] = "Register";
@@ -24,13 +21,14 @@
                     <b>Select a role</b>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="role-dropdown" data-offset="10" data-flip="true" data-boundary="viewport">
-                    @foreach (var role in roles)
+                    @foreach (var role in ViewData["Roles"] as List<string>)
                     {
-                        <a class="dropdown-item" href="#" data-value="@role.Name">@role.Name</a>
+                        <a class="dropdown-item" href="#" data-value="@role">@role</a>
                     }
                 </div>
-                <input asp-for="Input.Roles" id="role-select" class="form-control" style="display:none" />
+                <input asp-for="Input.Roles" id="roles-input" type="hidden" />
             </div>
+
 
                
 
@@ -100,6 +98,15 @@
             $(".dropdown-menu a").click(function () {
                 $("#role-dropdown b:first-child").text($(this).text());
                 $("#role-dropdown b:first-child").val($(this).text());
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+            $('.dropdown-menu a').click(function () {
+                var selectedRole = $(this).data('value');
+                $('#roles-input').val(selectedRole);
+                $('#role-dropdown').text(selectedRole);
             });
         });
     </script>
