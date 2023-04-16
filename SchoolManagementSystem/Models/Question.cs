@@ -1,12 +1,21 @@
 ﻿namespace SchoolManagementSystem.Models
 {
+
+    public enum QuestionType
+    {
+        MultipleChoice,
+        TrueFalse,
+        ShortAnswer,
+        Essay
+    }
     public class Question
     {
         public int Id { get; set; }
-        public string QuestionText { get; set; }
-        public virtual ICollection<Option> Options { get; set; }
-        public int CorrectOptionId { get; set; }
-
-        public virtual Option CorrectOption { get; set; }
+        public string Text { get; set; }
+        public int Points { get; set; }
+        public QuestionType Type { get; set; }
+        public ICollection<Choice> Choices { get; set; }
+        public ICollection<Exam> Exams { get; set; }
     }
+
 }

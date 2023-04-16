@@ -22,19 +22,34 @@ namespace SchoolManagementSystem.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("ApplicationUserSchoolClass", b =>
+            modelBuilder.Entity("ApplicationUserCourse", b =>
                 {
-                    b.Property<int>("ClassesId")
+                    b.Property<int>("CoursesId")
                         .HasColumnType("int");
 
-                    b.Property<string>("StudentsId")
+                    b.Property<string>("TeachersId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("ClassesId", "StudentsId");
+                    b.HasKey("CoursesId", "TeachersId");
 
-                    b.HasIndex("StudentsId");
+                    b.HasIndex("TeachersId");
 
-                    b.ToTable("ApplicationUserSchoolClass");
+                    b.ToTable("ApplicationUserCourse");
+                });
+
+            modelBuilder.Entity("ExamQuestion", b =>
+                {
+                    b.Property<int>("ExamsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuestionsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ExamsId", "QuestionsId");
+
+                    b.HasIndex("QuestionsId");
+
+                    b.ToTable("ExamQuestion");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -67,21 +82,21 @@ namespace SchoolManagementSystem.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "3c74c566-1988-412b-9373-a0e4ad9b06ba",
+                            ConcurrencyStamp = "7994526c-6227-45b9-bc39-85caf7ecc265",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "b373120f-9526-45d2-ac14-a36fba7f1fec",
+                            ConcurrencyStamp = "d07e6c2c-4add-49f0-8a2c-8d018143abe3",
                             Name = "student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "86cdf6d2-a96a-4d57-a678-ae9c946aadaa",
+                            ConcurrencyStamp = "80f74fbe-ba14-4d2f-b9a2-748d99586330",
                             Name = "teacher",
                             NormalizedName = "TEACHER"
                         });
@@ -197,7 +212,44 @@ namespace SchoolManagementSystem.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Data.ApplicationUser", b =>
+            modelBuilder.Entity("OnlineExaminationSystem.Models.ChatRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChatRooms");
+                });
+
+            modelBuilder.Entity("OnlineExaminationSystem.Models.ChatRoomUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ChatRoomId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatRoomId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ChatRoomUsers");
+                });
+
+            modelBuilder.Entity("SchoolManagementSystem.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -215,10 +267,6 @@ namespace SchoolManagementSystem.Data.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -243,10 +291,6 @@ namespace SchoolManagementSystem.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -270,7 +314,53 @@ namespace SchoolManagementSystem.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.Answer", b =>
+            modelBuilder.Entity("SchoolManagementSystem.Models.Assignment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AssignedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AssignedToId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("AssignedById");
+
+                    b.HasIndex("AssignedToId");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("Assignments");
+                });
+
+            modelBuilder.Entity("SchoolManagementSystem.Models.Choice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -281,122 +371,18 @@ namespace SchoolManagementSystem.Data.Migrations
                     b.Property<bool>("IsCorrect")
                         .HasColumnType("bit");
 
-                    b.Property<int>("OptionId")
-                        .HasColumnType("int");
-
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TestSubmissionId")
-                        .HasColumnType("int");
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OptionId");
 
                     b.HasIndex("QuestionId");
 
-                    b.HasIndex("TestSubmissionId");
-
-                    b.ToTable("Answers");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.Assignment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("ClassId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SchoolClassId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SchoolClassId");
-
-                    b.ToTable("Assignments");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.ChatConversation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("User1Id")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("User2Id")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("User1Id");
-
-                    b.HasIndex("User2Id");
-
-                    b.ToTable("ChatConversations");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.ChatMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("ChatConversationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatConversationId");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("ChatMessages");
+                    b.ToTable("Choices");
                 });
 
             modelBuilder.Entity("SchoolManagementSystem.Models.Course", b =>
@@ -411,22 +397,22 @@ namespace SchoolManagementSystem.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TeacherId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TeacherId");
 
                     b.ToTable("Courses");
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.Grade", b =>
+            modelBuilder.Entity("SchoolManagementSystem.Models.CourseEnrollment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -434,31 +420,26 @@ namespace SchoolManagementSystem.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("AssignmentId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Score")
-                        .HasColumnType("float");
-
-                    b.Property<string>("StudentId")
+                    b.Property<string>("ApplicationUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("TestId")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("EnrollmentDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssignmentId");
+                    b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("CourseId");
 
-                    b.HasIndex("TestId");
-
-                    b.ToTable("Grades");
+                    b.ToTable("CourseEnrollments");
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.Option", b =>
+            modelBuilder.Entity("SchoolManagementSystem.Models.Exam", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -466,18 +447,115 @@ namespace SchoolManagementSystem.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("OptionText")
+                    b.Property<int?>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("QuestionId")
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("Exams");
+                });
+
+            modelBuilder.Entity("SchoolManagementSystem.Models.ExamResult", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ExamId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Score")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionId");
+                    b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Options");
+                    b.HasIndex("ExamId");
+
+                    b.ToTable("ExamResults");
+                });
+
+            modelBuilder.Entity("SchoolManagementSystem.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ChatRoomId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatRoomId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("SchoolManagementSystem.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("SchoolManagementSystem.Models.Question", b =>
@@ -488,26 +566,22 @@ namespace SchoolManagementSystem.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CorrectOptionId")
+                    b.Property<int>("Points")
                         .HasColumnType("int");
 
-                    b.Property<string>("QuestionText")
+                    b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TestId")
+                    b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CorrectOptionId");
-
-                    b.HasIndex("TestId");
 
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.Resource", b =>
+            modelBuilder.Entity("SchoolManagementSystem.Models.Submission", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -515,175 +589,90 @@ namespace SchoolManagementSystem.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ClassId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
+                    b.Property<string>("AnswerText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SchoolClassId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UploadDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UploaderId")
+                    b.Property<string>("ApplicationUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("SchoolClassId");
-
-                    b.HasIndex("UploaderId");
-
-                    b.ToTable("Resources");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.SchoolClass", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("AssignmentId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("SchoolClasses");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.Test", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("AssignmentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ClassId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssignmentId");
-
-                    b.HasIndex("ClassId");
-
-                    b.ToTable("Tests");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.TestAssignment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("ClassId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SchoolClassId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TestId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SchoolClassId");
-
-                    b.HasIndex("TestId");
-
-                    b.ToTable("TestAssignments");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.TestSubmission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("SubmissionTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TestAssignmentId")
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("AssignmentId");
+
+                    b.ToTable("Submissions");
+                });
+
+            modelBuilder.Entity("SchoolManagementSystem.Models.UserProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactInfo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("UserId");
 
-                    b.HasIndex("TestAssignmentId");
-
-                    b.ToTable("TestSubmissions");
+                    b.ToTable("UserProfiles");
                 });
 
-            modelBuilder.Entity("ApplicationUserSchoolClass", b =>
+            modelBuilder.Entity("ApplicationUserCourse", b =>
                 {
-                    b.HasOne("SchoolManagementSystem.Models.SchoolClass", null)
+                    b.HasOne("SchoolManagementSystem.Models.Course", null)
                         .WithMany()
-                        .HasForeignKey("ClassesId")
+                        .HasForeignKey("CoursesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", null)
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", null)
                         .WithMany()
-                        .HasForeignKey("StudentsId")
+                        .HasForeignKey("TeachersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ExamQuestion", b =>
+                {
+                    b.HasOne("SchoolManagementSystem.Models.Exam", null)
+                        .WithMany()
+                        .HasForeignKey("ExamsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchoolManagementSystem.Models.Question", null)
+                        .WithMany()
+                        .HasForeignKey("QuestionsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -699,7 +688,7 @@ namespace SchoolManagementSystem.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", null)
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -708,7 +697,7 @@ namespace SchoolManagementSystem.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", null)
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -723,7 +712,7 @@ namespace SchoolManagementSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", null)
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -732,272 +721,223 @@ namespace SchoolManagementSystem.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", null)
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.Answer", b =>
+            modelBuilder.Entity("OnlineExaminationSystem.Models.ChatRoomUser", b =>
                 {
-                    b.HasOne("SchoolManagementSystem.Models.Option", "Option")
-                        .WithMany()
-                        .HasForeignKey("OptionId")
+                    b.HasOne("OnlineExaminationSystem.Models.ChatRoom", "ChatRoom")
+                        .WithMany("ChatRoomUsers")
+                        .HasForeignKey("ChatRoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolManagementSystem.Models.Question", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId")
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", "User")
+                        .WithMany("ChatRoomUsers")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolManagementSystem.Models.TestSubmission", null)
-                        .WithMany("Answers")
-                        .HasForeignKey("TestSubmissionId");
+                    b.Navigation("ChatRoom");
 
-                    b.Navigation("Option");
-
-                    b.Navigation("Question");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SchoolManagementSystem.Models.Assignment", b =>
                 {
-                    b.HasOne("SchoolManagementSystem.Models.SchoolClass", "SchoolClass")
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", null)
                         .WithMany("Assignments")
-                        .HasForeignKey("SchoolClassId")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", "AssignedBy")
+                        .WithMany()
+                        .HasForeignKey("AssignedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", "AssignedTo")
+                        .WithMany()
+                        .HasForeignKey("AssignedToId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SchoolManagementSystem.Models.Course", "Course")
+                        .WithMany("Assignments")
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("SchoolClass");
+                    b.Navigation("AssignedBy");
+
+                    b.Navigation("AssignedTo");
+
+                    b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.ChatConversation", b =>
+            modelBuilder.Entity("SchoolManagementSystem.Models.Choice", b =>
                 {
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", "User1")
-                        .WithMany()
-                        .HasForeignKey("User1Id")
+                    b.HasOne("SchoolManagementSystem.Models.Question", "Question")
+                        .WithMany("Choices")
+                        .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", "User2")
-                        .WithMany()
-                        .HasForeignKey("User2Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User1");
-
-                    b.Navigation("User2");
+                    b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.ChatMessage", b =>
+            modelBuilder.Entity("SchoolManagementSystem.Models.CourseEnrollment", b =>
                 {
-                    b.HasOne("SchoolManagementSystem.Models.ChatConversation", null)
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("CourseEnrollments")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchoolManagementSystem.Models.Course", "Course")
+                        .WithMany("CourseEnrollments")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("SchoolManagementSystem.Models.Exam", b =>
+                {
+                    b.HasOne("SchoolManagementSystem.Models.Course", null)
+                        .WithMany("Exams")
+                        .HasForeignKey("CourseId");
+                });
+
+            modelBuilder.Entity("SchoolManagementSystem.Models.ExamResult", b =>
+                {
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("ExamResults")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchoolManagementSystem.Models.Exam", "Exam")
+                        .WithMany("ExamResults")
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Exam");
+                });
+
+            modelBuilder.Entity("SchoolManagementSystem.Models.Message", b =>
+                {
+                    b.HasOne("OnlineExaminationSystem.Models.ChatRoom", "ChatRoom")
                         .WithMany("Messages")
-                        .HasForeignKey("ChatConversationId");
-
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId")
+                        .HasForeignKey("ChatRoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", "Sender")
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", "Sender")
                         .WithMany()
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Receiver");
+                    b.Navigation("ChatRoom");
 
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.Course", b =>
+            modelBuilder.Entity("SchoolManagementSystem.Models.Notification", b =>
                 {
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", "Teacher")
-                        .WithMany()
-                        .HasForeignKey("TeacherId")
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Teacher");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.Grade", b =>
+            modelBuilder.Entity("SchoolManagementSystem.Models.Submission", b =>
                 {
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("SchoolManagementSystem.Models.Assignment", "Assignment")
-                        .WithMany("Grades")
+                        .WithMany("Submissions")
                         .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SchoolManagementSystem.Models.Test", null)
-                        .WithMany("Grades")
-                        .HasForeignKey("TestId");
+                    b.Navigation("ApplicationUser");
 
                     b.Navigation("Assignment");
-
-                    b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.Option", b =>
+            modelBuilder.Entity("SchoolManagementSystem.Models.UserProfile", b =>
                 {
-                    b.HasOne("SchoolManagementSystem.Models.Question", null)
-                        .WithMany("Options")
-                        .HasForeignKey("QuestionId");
+                    b.HasOne("SchoolManagementSystem.Models.ApplicationUser", "User")
+                        .WithMany("UserProfiles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.Question", b =>
+            modelBuilder.Entity("OnlineExaminationSystem.Models.ChatRoom", b =>
                 {
-                    b.HasOne("SchoolManagementSystem.Models.Option", "CorrectOption")
-                        .WithMany()
-                        .HasForeignKey("CorrectOptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ChatRoomUsers");
 
-                    b.HasOne("SchoolManagementSystem.Models.Test", null)
-                        .WithMany("Questions")
-                        .HasForeignKey("TestId");
-
-                    b.Navigation("CorrectOption");
+                    b.Navigation("Messages");
                 });
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.Resource", b =>
+            modelBuilder.Entity("SchoolManagementSystem.Models.ApplicationUser", b =>
                 {
-                    b.HasOne("SchoolManagementSystem.Models.SchoolClass", "SchoolClass")
-                        .WithMany("Resources")
-                        .HasForeignKey("SchoolClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Assignments");
 
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", "Uploader")
-                        .WithMany()
-                        .HasForeignKey("UploaderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ChatRoomUsers");
 
-                    b.Navigation("SchoolClass");
+                    b.Navigation("CourseEnrollments");
 
-                    b.Navigation("Uploader");
-                });
+                    b.Navigation("ExamResults");
 
-            modelBuilder.Entity("SchoolManagementSystem.Models.SchoolClass", b =>
-                {
-                    b.HasOne("SchoolManagementSystem.Models.Course", "Course")
-                        .WithMany("SchoolClasses")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Notifications");
 
-                    b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.Test", b =>
-                {
-                    b.HasOne("SchoolManagementSystem.Models.Assignment", null)
-                        .WithMany("Tests")
-                        .HasForeignKey("AssignmentId");
-
-                    b.HasOne("SchoolManagementSystem.Models.SchoolClass", "Class")
-                        .WithMany()
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Class");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.TestAssignment", b =>
-                {
-                    b.HasOne("SchoolManagementSystem.Models.SchoolClass", "SchoolClass")
-                        .WithMany()
-                        .HasForeignKey("SchoolClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SchoolManagementSystem.Models.Test", "Test")
-                        .WithMany()
-                        .HasForeignKey("TestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SchoolClass");
-
-                    b.Navigation("Test");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.TestSubmission", b =>
-                {
-                    b.HasOne("SchoolManagementSystem.Data.ApplicationUser", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SchoolManagementSystem.Models.TestAssignment", "TestAssignment")
-                        .WithMany("TestSubmissions")
-                        .HasForeignKey("TestAssignmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
-
-                    b.Navigation("TestAssignment");
+                    b.Navigation("UserProfiles");
                 });
 
             modelBuilder.Entity("SchoolManagementSystem.Models.Assignment", b =>
                 {
-                    b.Navigation("Grades");
-
-                    b.Navigation("Tests");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.ChatConversation", b =>
-                {
-                    b.Navigation("Messages");
+                    b.Navigation("Submissions");
                 });
 
             modelBuilder.Entity("SchoolManagementSystem.Models.Course", b =>
                 {
-                    b.Navigation("SchoolClasses");
+                    b.Navigation("Assignments");
+
+                    b.Navigation("CourseEnrollments");
+
+                    b.Navigation("Exams");
+                });
+
+            modelBuilder.Entity("SchoolManagementSystem.Models.Exam", b =>
+                {
+                    b.Navigation("ExamResults");
                 });
 
             modelBuilder.Entity("SchoolManagementSystem.Models.Question", b =>
                 {
-                    b.Navigation("Options");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.SchoolClass", b =>
-                {
-                    b.Navigation("Assignments");
-
-                    b.Navigation("Resources");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.Test", b =>
-                {
-                    b.Navigation("Grades");
-
-                    b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.TestAssignment", b =>
-                {
-                    b.Navigation("TestSubmissions");
-                });
-
-            modelBuilder.Entity("SchoolManagementSystem.Models.TestSubmission", b =>
-                {
-                    b.Navigation("Answers");
+                    b.Navigation("Choices");
                 });
 #pragma warning restore 612, 618
         }

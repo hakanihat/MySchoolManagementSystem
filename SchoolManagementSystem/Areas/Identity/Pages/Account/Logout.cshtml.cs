@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using SchoolManagementSystem.Data;
+using SchoolManagementSystem.Models;
 
-namespace SchoolManagementSystem.Areas.Identity.Pages.Account
+namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
 {
     public class LogoutModel : PageModel
     {

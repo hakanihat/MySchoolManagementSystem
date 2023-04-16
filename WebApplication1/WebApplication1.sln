@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication1", "WebApplication1.csproj", "{2B19025D-A6F5-48C1-8121-1D5FE2C72C6F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchoolManagementSystem", "..\SchoolManagementSystem\SchoolManagementSystem.csproj", "{F61CCC00-C799-47A1-9E7A-A9F202E845AD}"
 EndProject
 Global
@@ -13,10 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2B19025D-A6F5-48C1-8121-1D5FE2C72C6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2B19025D-A6F5-48C1-8121-1D5FE2C72C6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2B19025D-A6F5-48C1-8121-1D5FE2C72C6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2B19025D-A6F5-48C1-8121-1D5FE2C72C6F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F61CCC00-C799-47A1-9E7A-A9F202E845AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F61CCC00-C799-47A1-9E7A-A9F202E845AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F61CCC00-C799-47A1-9E7A-A9F202E845AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
