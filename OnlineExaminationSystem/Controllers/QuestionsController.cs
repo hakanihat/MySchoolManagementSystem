@@ -7,7 +7,7 @@ using OnlineExaminationSystem.ViewModels;
 
 namespace OnlineExaminationSystem.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "admin")]
     public class QuestionsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,20 +17,19 @@ namespace OnlineExaminationSystem.Controllers
             _context = context;
         }
 
-        public IActionResult Create()
+        public IActionResult CreateQuestion()
         {
             var viewModel = new CreateQuestionViewModel();
-            return View(viewModel);
+            return View("CreateQuestionViewModel",viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(CreateQuestionViewModel viewModel)
+        public IActionResult CreateQuestion(CreateQuestionViewModel viewModel, List<string> Answers)
         {
             if (!ModelState.IsValid)
             {
-                viewModel.QuestionTypes = GetQuestionTypes();
-                return View("Create", viewModel);
+                return View(viewModel);
             }
 
             var question = new Question
@@ -38,7 +37,7 @@ namespace OnlineExaminationSystem.Controllers
                 Text = viewModel.QuestionText,
                 Points = viewModel.Points,
                 Type = Enum.Parse<QuestionType>(viewModel.QuestionType),
-                Choices = ParseChoices(viewModel.Answers)
+                Choices = ParseChoices(Answers)
             };
 
             _context.Questions.Add(question);
@@ -47,25 +46,11 @@ namespace OnlineExaminationSystem.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        private List<SelectListItem> GetQuestionTypes()
-        {
-            return Enum.GetValues(typeof(QuestionType))
-                .Cast<QuestionType>()
-                .Select(x => new SelectListItem
-                {
-                    Text = x.ToString(),
-                    Value = x.ToString()
-                })
-                .ToList();
-        }
-
-
-        private List<Choice> ParseChoices(string answers)
+        private List<Choice> ParseChoices(List<string> answers)
         {
             var choices = new List<Choice>();
-            var answersArray = answers.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (var answer in answersArray)
+            foreach (var answer in answers)
             {
                 choices.Add(new Choice
                 {
@@ -76,5 +61,7 @@ namespace OnlineExaminationSystem.Controllers
 
             return choices;
         }
+
+
     }
 }

@@ -15,14 +15,21 @@ namespace OnlineExaminationSystem.ViewModels
 
         [Required]
         [Display(Name = "Answers")]
-        public string Answers { get; set; }
+        public List<string> Answers { get; set; } =new List<string>();
 
         [Required]
         [Display(Name = "Points")]
         public int Points { get; set; }
 
-        public List<SelectListItem> QuestionTypes { get; set; }
+        public List<SelectListItem> QuestionTypes { get; } = new List<SelectListItem>
+    {
+        new SelectListItem { Text = "Multiple Choice", Value = "MultipleChoice" },
+        new SelectListItem { Text = "True/False", Value = "TrueFalse" },
+        new SelectListItem { Text = "Short Answer", Value = "ShortAnswer" },
+        new SelectListItem { Text = "Essay", Value = "Essay" }
+    };
     }
+
 
 
 }

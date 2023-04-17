@@ -1,37 +1,46 @@
 ﻿@using OnlineExaminationSystem.ViewModels
-
 @model CreateQuestionViewModel
 
-@{
-    ViewData["Questions"] = "Create questions";
-}
-<h1>@ViewData["Questions"]</h1>
+<h1>Create questions</h1>
 
-@using (Html.BeginForm("CreateQuestion", "Questions", FormMethod.Post))
-{
+<form asp-action="CreateQuestion" asp-controller="Questions" method="post">
     @Html.AntiForgeryToken()
 
     <div class="form-group">
-        @Html.LabelFor(m => m.QuestionText)
-        @Html.TextAreaFor(m => m.QuestionText, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.QuestionText)
+        <label asp-for="QuestionText"></label>
+        <textarea asp-for="QuestionText" class="form-control"></textarea>
+        <span asp-validation-for="QuestionText"></span>
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(m => m.QuestionType)
-        @Html.DropDownListFor(m => m.QuestionType, Model.QuestionTypes, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.QuestionType)
+        <label asp-for="QuestionType"></label>
+        <select asp-for="QuestionType" asp-items="@Model.QuestionTypes" class="form-control"></select>
+        <span asp-validation-for="QuestionType"></span>
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(m => m.Answers)
-        @Html.TextAreaFor(m => m.Answers, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Answers)
+        <label asp-for="Points"></label>
+        <input asp-for="Points" class="form-control" type="number" min="1" max="100" required />
+        <span asp-validation-for="Points"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Answers"></label>
+        <div id="answers-container" name="Answers">
+            <div class="form-check">
+                <input class="form-check-input answer-input" type="radio" value="Answer1" name="Answer" />
+                <input type="text" name="answerText" class="form-control answer-text" required />
+                <button class="btn btn-danger delete-answer" type="button">Delete</button>
+            </div>
+        </div>
+        <button id="add-answer-btn" type="button" class="btn btn-primary">Add Answer</button>
+        <button id="toggle-answer-type" type="button" class="btn btn-secondary">Change to Checkbox</button>
+        <span asp-validation-for="Answers"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section scripts {
+    <script src="~/js/addNewAnswer.js" asp-append-version="true"></script>
 }
-
-
-
-
