@@ -4,7 +4,7 @@ $(document).ready(function () {
     $("#add-answer-btn").click(function () {
         var answerType = $(".answer-input").prop("type");
         var inputType = answerType === "radio" ? "radio" : "checkbox";
-        var newInput = $("<div class='form-check'><input type='" + inputType + "' name='Answer' class='form-check-input answer-input' value='Answer" + ($(".answer-input").length + 1) + "'><input type='text' name='AnswerText" + ($(".answer-text").length + 1) + "' class='form-control answer-text' required /><button class='btn btn-danger delete-answer' type='button'>Delete</button></div>");
+        var newInput = $("<div class='form-check'><input type='" + inputType + "' name='Answer' class='form-check-input answer-input' id='answer-" + ($(".answer-input").length + 1) + "' value='true'><label class='form-check-label' for='answer-" + ($(".answer-input").length + 1) + "'><input type='text' name='AnswerText" + ($(".answer-text").length + 1) + "' class='form-control answer-text' id='answer-text-" + ($(".answer-text").length + 1) + "' required /></label><button class='btn btn-danger delete-answer' type='button'>Delete</button></div>");
         $("#answers-container").append(newInput);
     });
 
@@ -35,22 +35,5 @@ $(document).ready(function () {
         });
     });
 
-    $("form").submit(function () {
-        answers = {}; // clear the dictionary before adding new values
-
-        // iterate through each answer input and add its value to the dictionary
-        $(".answer-input:checked").each(function () {
-            answers[$(this).val()] = true;
-        });
-
-        // iterate through each text input and add its value to the dictionary
-        $(".answer-text").each(function () {
-            var answerKey = $(this).prev(".answer-input").val();
-            var answerText = $(this).val();
-            answers[answerText] = answerKey;
-        });
-
-        // set the value of the hidden Answers input to the JSON representation of the dictionary
-        $("#Answers").val(JSON.stringify(answers));
-    });
+  
 });

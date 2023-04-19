@@ -3,7 +3,7 @@
 
 <h1>Create questions</h1>
 
-<form asp-action="CreateQuestion" asp-controller="Questions" method="post">
+<form asp-action="CreateQuestion" asp-controller="Questions" method="post" id="form-id">
     @Html.AntiForgeryToken()
 
     <div class="form-group">
@@ -26,21 +26,28 @@
 
     <div class="form-group">
         <label asp-for="Answers"></label>
-        <div id="answers-container" name="Answers">
+        <div id="answers-container">
             <div class="form-check">
-                <input class="form-check-input answer-input" type="radio" value="Answer1" name="Answer" />
-                <input type="text" name="answerText" class="form-control answer-text" required />
+                <input class="form-check-input answer-input" type="radio" name="answer" id="answer-1" value="true"  />
+                <label class="form-check-label" for="answer-1">
+                    <input type="text" name="answer-text" id="answer-text-1" class="form-control answer-text" required />
+                </label>
                 <button class="btn btn-danger delete-answer" type="button">Delete</button>
             </div>
+
+
         </div>
         <button id="add-answer-btn" type="button" class="btn btn-primary">Add Answer</button>
         <button id="toggle-answer-type" type="button" class="btn btn-secondary">Change to Checkbox</button>
         <span asp-validation-for="Answers"></span>
+        <input type="hidden" name="AnswersJson" id="AnswersJson" />
     </div>
 
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
 
+
 @section scripts {
     <script src="~/js/addNewAnswer.js" asp-append-version="true"></script>
+    <script src="~/js/assignAnswers.js" asp-append-version="true"></script>
 }

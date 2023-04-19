@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using OnlineExaminationSystem.Data;
 using OnlineExaminationSystem.Models;
 using OnlineExaminationSystem.ViewModels;
@@ -25,8 +26,16 @@ namespace OnlineExaminationSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateQuestion(CreateQuestionViewModel viewModel, List<string> Answers)
+             public IActionResult CreateQuestion(CreateQuestionViewModel viewModel, string AnswersJson)
         {
+            // Deserialize the JSON string into a list of AnswerViewModel objects
+            var answers = JsonConvert.DeserializeObject<List<AnswerViewModel>>(AnswersJson);
+            
+            // Assign the answers to the view model's Answers property
+            viewModel.Answers = answers;
+
+
+
             if (!ModelState.IsValid)
             {
                 return View(viewModel);
@@ -37,16 +46,15 @@ namespace OnlineExaminationSystem.Controllers
                 Text = viewModel.QuestionText,
                 Points = viewModel.Points,
                 Type = Enum.Parse<QuestionType>(viewModel.QuestionType),
-                Choices = ParseChoices(Answers)
             };
 
             _context.Questions.Add(question);
             _context.SaveChanges();
-
+            CreateQuestionAnswers(viewModel.Answers,question);
             return RedirectToAction("Index", "Home");
         }
 
-        private List<Choice> ParseChoices(List<string> answers)
+        private void CreateQuestionAnswers(List<AnswerViewModel> answers,Question question)
         {
             var choices = new List<Choice>();
 
@@ -54,12 +62,14 @@ namespace OnlineExaminationSystem.Controllers
             {
                 choices.Add(new Choice
                 {
-                    Text = answer,
-                    IsCorrect = false
+                    Text = answer.AnswerText,
+                    IsCorrect = answer.IsCorrect,
+                    QuestionId = question.Id
                 });
             }
+            _context.Choices.AddRange(choices);
+            _context.SaveChanges();
 
-            return choices;
         }
 
 

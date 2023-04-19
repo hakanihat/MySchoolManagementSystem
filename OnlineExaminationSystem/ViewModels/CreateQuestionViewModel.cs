@@ -14,12 +14,10 @@ namespace OnlineExaminationSystem.ViewModels
         public string QuestionType { get; set; }
 
         [Required]
-        [Display(Name = "Answers")]
-        public List<string> Answers { get; set; } =new List<string>();
-
-        [Required]
         [Display(Name = "Points")]
         public int Points { get; set; }
+
+        public List<AnswerViewModel> Answers { get; set; } = new List<AnswerViewModel>();
 
         public List<SelectListItem> QuestionTypes { get; } = new List<SelectListItem>
     {
