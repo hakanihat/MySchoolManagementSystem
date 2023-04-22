@@ -21,6 +21,7 @@ namespace OnlineExaminationSystem.ViewModels
 
         public List<SelectListItem> QuestionTypes { get; } = new List<SelectListItem>
     {
+        new SelectListItem { Text = "Single Choice", Value = "SingleChoice" },
         new SelectListItem { Text = "Multiple Choice", Value = "MultipleChoice" },
         new SelectListItem { Text = "True/False", Value = "TrueFalse" },
         new SelectListItem { Text = "Short Answer", Value = "ShortAnswer" },

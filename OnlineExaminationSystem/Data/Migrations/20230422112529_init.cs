@@ -67,11 +67,18 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Points = table.Column<int>(type: "int", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false)
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Questions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Questions_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -254,11 +261,18 @@ namespace OnlineExaminationSystem.Data.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CourseId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Exams", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Exams_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Exams_Courses_CourseId",
                         column: x => x.CourseId,
@@ -330,13 +344,13 @@ namespace OnlineExaminationSystem.Data.Migrations
                         column: x => x.ExamsId,
                         principalTable: "Exams",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ExamQuestion_Questions_QuestionsId",
                         column: x => x.QuestionsId,
                         principalTable: "Questions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -357,29 +371,29 @@ namespace OnlineExaminationSystem.Data.Migrations
                         column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ExamResults_Exams_ExamId",
                         column: x => x.ExamId,
                         principalTable: "Exams",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "1", "8667197f-e9d5-43a1-bb7c-1662756feb8c", "admin", "ADMIN" });
+                values: new object[] { "1", "4633359b-0576-48bf-bf39-94f0d0de878f", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "2", "a5828cd7-d66f-4d39-85e3-87988539694b", "student", "STUDENT" });
+                values: new object[] { "2", "354e45a3-f823-44b1-9865-c1ef7147ad68", "student", "STUDENT" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "3", "093a103f-b52c-4f08-9714-717a4524d804", "teacher", "TEACHER" });
+                values: new object[] { "3", "323b4047-56c1-44e2-9447-e941f4fdc11a", "teacher", "TEACHER" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationUserCourse_TeachersId",
@@ -447,6 +461,11 @@ namespace OnlineExaminationSystem.Data.Migrations
                 column: "ExamId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Exams_ApplicationUserId",
+                table: "Exams",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Exams_CourseId",
                 table: "Exams",
                 column: "CourseId");
@@ -465,6 +484,11 @@ namespace OnlineExaminationSystem.Data.Migrations
                 name: "IX_Notifications_UserId",
                 table: "Notifications",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Questions_ApplicationUserId",
+                table: "Questions",
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Submissions_ApplicationUserId",

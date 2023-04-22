@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using OnlineExaminationSystem.Data;
 using OnlineExaminationSystem.Models;
 using OnlineExaminationSystem.ViewModels;
+using System.Security.Claims;
 
 namespace OnlineExaminationSystem.Controllers
 {
@@ -46,12 +47,13 @@ namespace OnlineExaminationSystem.Controllers
                 Text = viewModel.QuestionText,
                 Points = viewModel.Points,
                 Type = Enum.Parse<QuestionType>(viewModel.QuestionType),
-            };
+                ApplicationUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value
+        };
 
             _context.Questions.Add(question);
             _context.SaveChanges();
             CreateQuestionAnswers(viewModel.Answers,question);
-            return RedirectToAction("Index", "Home");
+            return View();
         }
 
         private void CreateQuestionAnswers(List<AnswerViewModel> answers,Question question)

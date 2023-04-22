@@ -8,8 +8,12 @@
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
+
         public virtual ICollection<Question> Questions { get; set; }
 
         public virtual ICollection<ExamResult> ExamResults { get; set; }
     }
+
 }

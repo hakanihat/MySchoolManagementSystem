@@ -24,8 +24,8 @@ using OnlineExaminationSystem.Models;
 
 namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
 {
-    [Authorize]
-    [Authorize(Roles = "admin")]
+    //[Authorize]
+    //[Authorize(Roles = "admin")]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
