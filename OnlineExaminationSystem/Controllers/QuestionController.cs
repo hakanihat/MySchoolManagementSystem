@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using OnlineExaminationSystem.Data;
 using OnlineExaminationSystem.Models;
@@ -10,24 +11,25 @@ using System.Security.Claims;
 namespace OnlineExaminationSystem.Controllers
 {
     [Authorize(Roles = "admin")]
-    public class QuestionsController : Controller
+    public class QuestionController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public QuestionsController(ApplicationDbContext context)
+        public QuestionController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public IActionResult CreateQuestion()
+        public async Task<IActionResult> CreateQuestionAsync()
         {
             var viewModel = new CreateQuestionViewModel();
+            viewModel.Courses = await GetCoursesAsync();
             return View("CreateQuestionViewModel",viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-             public IActionResult CreateQuestion(CreateQuestionViewModel viewModel, string AnswersJson)
+             public async Task<IActionResult> CreateQuestionAsync(CreateQuestionViewModel viewModel, string AnswersJson)
         {
             // Deserialize the JSON string into a list of AnswerViewModel objects
             var answers = JsonConvert.DeserializeObject<List<AnswerViewModel>>(AnswersJson);
@@ -47,13 +49,15 @@ namespace OnlineExaminationSystem.Controllers
                 Text = viewModel.QuestionText,
                 Points = viewModel.Points,
                 Type = Enum.Parse<QuestionType>(viewModel.QuestionType),
-                ApplicationUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value
+                ApplicationUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value,
+                CourseId = viewModel.CourseId
         };
 
             _context.Questions.Add(question);
             _context.SaveChanges();
             CreateQuestionAnswers(viewModel.Answers,question);
-            return View();
+            viewModel.Courses = await GetCoursesAsync();
+            return View("CreateQuestionViewModel", viewModel);
         }
 
         private void CreateQuestionAnswers(List<AnswerViewModel> answers,Question question)
@@ -73,6 +77,16 @@ namespace OnlineExaminationSystem.Controllers
             _context.SaveChanges();
 
         }
+
+        public async Task<List<SelectListItem>> GetCoursesAsync()
+        {
+            var courses = await _context.Courses
+                .Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })
+                .ToListAsync();
+
+            return courses;
+        }
+
 
 
     }

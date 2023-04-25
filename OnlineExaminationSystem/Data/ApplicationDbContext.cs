@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OnlineExaminationSystem.Models;
+using OnlineExaminationSystem.ViewModels;
 
 namespace OnlineExaminationSystem.Data
 {
@@ -56,5 +57,7 @@ namespace OnlineExaminationSystem.Data
 
 
         }
+
+        public DbSet<OnlineExaminationSystem.ViewModels.CreateCourseViewModel>? CreateCourseViewModel { get; set; }
     }
 }

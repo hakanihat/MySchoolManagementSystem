@@ -3,9 +3,16 @@
 
 <h1>Create questions</h1>
 
-<form asp-action="CreateQuestion" asp-controller="Questions" method="post" id="form-id">
+<form asp-action="CreateQuestion" asp-controller="Question" method="post" id="form-id">
     @Html.AntiForgeryToken()
 
+    <div class="form-group">
+        <label asp-for="CourseId"></label>
+        <select asp-for="CourseId" asp-items="@Model.Courses" class="form-control"></select>
+        <span asp-validation-for="CourseId"></span>
+    </div>
+
+  
     <div class="form-group">
         <label asp-for="QuestionText"></label>
         <textarea asp-for="QuestionText" class="form-control"></textarea>
@@ -24,7 +31,7 @@
         <span asp-validation-for="Points"></span>
     </div>
 
-    <div class="form-group">
+
         <div class="form-group">
             <label asp-for="Answers"></label>
             <div id="answers-container">

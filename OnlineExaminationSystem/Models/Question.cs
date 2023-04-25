@@ -22,5 +22,8 @@ namespace OnlineExaminationSystem.Models
 
         public ICollection<Choice> Choices { get; set; }
         public ICollection<Exam> Exams { get; set; }
+        public int CourseId { get; set; }
+        public Course Course { get; set; }
+    
     }
 }

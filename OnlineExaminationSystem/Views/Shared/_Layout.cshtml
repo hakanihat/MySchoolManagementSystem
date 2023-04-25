@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - OnlineExaminationSystem</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/examQuestions.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/OnlineExaminationSystem.styles.css" asp-append-version="true" />
 </head>
 <body>
@@ -23,10 +24,13 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Questions" asp-action="CreateQuestion">Create Questions</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Question" asp-action="CreateQuestion">Create Question</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Exam" asp-action="CreateExam">Create Exam</a>
+                        </li> 
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Courses" asp-action="Create">Create Course</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
@@ -48,6 +52,11 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+    <script src="~/js/datepicker.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

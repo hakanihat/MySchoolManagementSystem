@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using OnlineExaminationSystem.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace OnlineExaminationSystem.ViewModels
 {
@@ -19,6 +21,8 @@ namespace OnlineExaminationSystem.ViewModels
         [DataType(DataType.DateTime)]
         public DateTime EndTime { get; set; }
 
+        public List<int> SelectedQuestionIds { get; set; } = new List<int>();
+        public List<SelectListItem> Questions { get; set; } = new List<SelectListItem>();
     }
 
 }

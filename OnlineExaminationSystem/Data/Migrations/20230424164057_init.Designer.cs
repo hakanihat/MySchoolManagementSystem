@@ -12,7 +12,7 @@ using OnlineExaminationSystem.Data;
 namespace OnlineExaminationSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230422112529_init")]
+    [Migration("20230424164057_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,21 +84,21 @@ namespace OnlineExaminationSystem.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "4633359b-0576-48bf-bf39-94f0d0de878f",
+                            ConcurrencyStamp = "921f0390-fd3e-466f-bb22-fc0f6837cb1e",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "354e45a3-f823-44b1-9865-c1ef7147ad68",
+                            ConcurrencyStamp = "95488a19-0177-4e9d-b5c4-27cebe4231db",
                             Name = "student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "323b4047-56c1-44e2-9447-e941f4fdc11a",
+                            ConcurrencyStamp = "f1b3f7cd-1079-40c8-a0ed-b161dbaaf158",
                             Name = "teacher",
                             NormalizedName = "TEACHER"
                         });
@@ -399,15 +399,9 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -578,6 +572,9 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Points")
                         .HasColumnType("int");
 
@@ -591,6 +588,8 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("CourseId");
 
                     b.ToTable("Questions");
                 });
@@ -660,6 +659,27 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("UserProfiles");
+                });
+
+            modelBuilder.Entity("OnlineExaminationSystem.ViewModels.CreateCourseViewModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CreateCourseViewModel");
                 });
 
             modelBuilder.Entity("ApplicationUserCourse", b =>
@@ -895,7 +915,15 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("OnlineExaminationSystem.Models.Course", "Course")
+                        .WithMany("Questions")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
+
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Submission", b =>
@@ -967,6 +995,8 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.Navigation("CourseEnrollments");
 
                     b.Navigation("Exams");
+
+                    b.Navigation("Questions");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Exam", b =>

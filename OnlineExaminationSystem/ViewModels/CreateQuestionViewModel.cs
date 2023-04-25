@@ -17,6 +17,9 @@ namespace OnlineExaminationSystem.ViewModels
         [Display(Name = "Points")]
         public int Points { get; set; }
 
+        [Required]
+        public int CourseId { get; set; }
+        public List<SelectListItem> Courses { get; set; } = new List<SelectListItem>();
         public List<AnswerViewModel> Answers { get; set; } = new List<AnswerViewModel>();
 
         public List<SelectListItem> QuestionTypes { get; } = new List<SelectListItem>

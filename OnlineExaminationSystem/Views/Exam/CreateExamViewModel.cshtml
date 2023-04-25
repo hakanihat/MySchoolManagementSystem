@@ -1,0 +1,66 @@
+﻿@using OnlineExaminationSystem.ViewModels
+@model CreateExamViewModel
+
+<h2>Create Exam</h2>
+
+<form asp-action="CreateExam" id="create-exam-form">
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartTime"></label>
+        <input asp-for="StartTime" id="start-time-input" class="form-control datetimepicker" />
+        <span asp-validation-for="StartTime"></span>
+    </div>
+
+    <div class="form-group" style="margin-bottom:20px">
+        <label asp-for="EndTime"></label>
+        <input asp-for="EndTime" id="end-time-input" class="form-control datetimepicker" />
+        <span asp-validation-for="EndTime"></span>
+    </div>
+
+
+    <div id="create-exam-inputs" >
+        <!-- dynamically generated inputs will be added here -->
+    </div>
+
+    <div class="form-group">
+        <label for="SelectedQuestionIds">Select a question</label>
+        <select name="SelectedQuestionIds" class="form-control">
+            <option value="">-- Select a question --</option>
+            @foreach (var question in Model.Questions)
+            {
+                <option value="@question.Value">@question.Text</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+
+</form>
+
+
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+    <script src="~/js/datepicker.js"></script>
+    <script src="~/js/generateDropdown.js"></script>
+    <script src="~/js/showNowDate.js"></script>
+    <script src="~/js/checkStartAndEndDates.js"></script>
+
+
+}
