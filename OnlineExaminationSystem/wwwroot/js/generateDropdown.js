@@ -1,81 +1,161 @@
 $(function () {
-    var $container = $('#create-exam-form'); // the container element where text inputs will be added
+    var $container = $('#create-exam-form');
+    var $selectedQuestions = $('select[name="SelectedQuestionIds"]');
+    var questionInputs = [];
 
-    // get the first text input and add it to the array
-    var $firstQuestionInput = $('<input>').attr('type', 'text').addClass('form-control').prop('readonly', true);
-    var $deleteButton = $('<button>').addClass('btn btn-danger').text('Delete');
-    var $inputContainer = $('<div>').addClass('form-group input-container').append($firstQuestionInput).append($deleteButton);
+    function addQuestionInput(questionId, questionText) {
+        // create the text input with name and value attributes
+        var inputName = 'SelectedQuestionIds[' + questionInputs.length + ']';
+        var $questionInput = $('<input>').attr('type', 'text').addClass('form-control').prop('readonly', true).attr('name', inputName).val(questionText);
 
-    var questionInputs = [$inputContainer]; // an array to store all the text inputs
-    var $questionDropdown = $('select[name="SelectedQuestionIds"]');
-    $questionDropdown.find('option:first').prop('disabled', true);
-    // event handler for when a dropdown value is selected
-    function onQuestionSelected($dropdown) {
-        var selectedQuestionText = $dropdown.find('option:selected').text();
-        var selectedQuestionId = $dropdown.val();
+        // create the delete button
+        var $deleteButton = $('<button>').addClass('btn btn-danger').text('Delete');
 
-        // check if "Select question" option was selected
-        if (selectedQuestionText === 'Select question') {
-            $dropdown.siblings('.text-danger').remove();
-            $dropdown.after('<span class="text-danger">Please select a valid question.</span>');
-            return;
-        }
-        // check if a question is already selected in another input
-        var alreadySelected = false;
-        for (var i = 0; i < questionInputs.length; i++) {
-            if (questionInputs[i].data('question-id') === selectedQuestionId) {
-                if (questionInputs[i].index() !== $dropdown.closest('.form-group').index()) {
+        // create the input container
+        var $inputContainer = $('<div>').addClass('form-group input-container').append($questionInput).append($deleteButton);
+        $inputContainer.data('question-id', questionId);
+
+        // add the delete button event handler
+        $deleteButton.click(function () {
+            $inputContainer.remove();
+            questionInputs.splice(questionInputs.indexOf($inputContainer), 1);
+            updateSelectedQuestionIds();
+        });
+
+        // insert the input container before the create button
+        $container.find('#create-exam-inputs').before($inputContainer);
+
+        // add the new input to the questionInputs array
+        questionInputs.push($inputContainer);
+
+        // update the selected question IDs list
+        updateSelectedQuestionIds();
+    }
+
+
+    function updateSelectedQuestionIds() {
+        var selectedQuestionIds = [];
+        questionInputs.forEach(function ($inputContainer) {
+            var questionId = $inputContainer.data('question-id');
+            selectedQuestionIds.push(questionId);
+        });
+        $('#SelectedQuestionIdsJson').val(JSON.stringify(selectedQuestionIds));
+    }
+
+
+    $selectedQuestions.change(function () {
+        var selectedQuestionId = $selectedQuestions.val();
+        var selectedQuestionText = $selectedQuestions.find('option:selected').text();
+
+        if (selectedQuestionId && selectedQuestionText) {
+            var alreadySelected = false;
+            for (var i = 0; i < questionInputs.length; i++) {
+                if (questionInputs[i].data('question-id') === selectedQuestionId) {
                     alreadySelected = true;
                     break;
                 }
             }
-        }
 
-        if (alreadySelected) {
-            // if the question is already selected in another input, show an error message
-            $dropdown.siblings('.text-danger').remove();
-            $dropdown.after('<span class="text-danger">This question has already been selected in another input.</span>');
-        } else {
-            // if the question is not already selected in another input, remove any existing error message
-            $dropdown.siblings('.text-danger').remove();
+            if (alreadySelected) {
+                var errorMessageContainer = $selectedQuestions.closest('.form-group');
+                var errorMessage = errorMessageContainer.find('.error-message');
 
-            var index = $dropdown.data('index');
-
-            // remove all the text inputs after the one immediately after the selected one
-            for (var i = questionInputs.length - 1; i > index + 1; i--) {
-                questionInputs[i].remove();
-                questionInputs.splice(i, 1);
+                if (errorMessage.length === 0) {
+                    errorMessage = $('<span>').addClass('error-message').text('This question has already been selected.');
+                    errorMessageContainer.append(errorMessage);
+                }
+            } else {
+                addQuestionInput(selectedQuestionId, selectedQuestionText);
+                $selectedQuestions.val('');
+                $selectedQuestions.closest('.form-group').find('.error-message').remove();
             }
-
-            // create a new text input for the selected question
-            var $nextQuestionInput = $('<input>').attr('type', 'text').addClass('form-control').prop('readonly', true).val(selectedQuestionText);
-            var $nextDeleteButton = $('<button>').addClass('btn btn-danger').text('Delete');
-            var $nextInputContainer = $('<div>').addClass('form-group input-container').append($nextQuestionInput).append($nextDeleteButton);
-            $nextInputContainer.data('question-id', selectedQuestionId);
-
-            $nextDeleteButton.click(function () {
-                $nextInputContainer.remove();
-                questionInputs.splice(questionInputs.indexOf($nextInputContainer), 1);
-            });
-
-            // insert the new text input before the create button
-            $container.find('#create-exam-inputs').before($nextInputContainer);
-            questionInputs.splice(index + 1, questionInputs.length - index - 1, $nextInputContainer);
-
-
-
-
-            // update the data-index attribute of the remaining dropdowns
-            $container.find('select[name="SelectedQuestionIds"]').each(function (i, el) {
-                $(el).data('index', i);
-            });
-
         }
+    });
+
+
+    $('#generate-questions-button').click(function () {
+        var numQuestions = parseInt($('#num-questions-input').val());
+        if (isNaN(numQuestions) || numQuestions <= 0) {
+            showMessage('Please enter a valid number of questions.', 'error');
+            return;
+        }
+        var courseId = $('#course-dropdown').val();
+        console.log('Course ID:', courseId);
+        if (!courseId) {
+            showMessage('Please select a course.', 'error');
+            return;
+        }
+
+        $('#message-container').empty();
+
+
+        $.getJSON('/Exam/GetQuestions', { courseId: courseId }, function (data) {
+            var questions = data;
+            console.log('Questions:', questions);
+
+            if (questions.length < numQuestions) {
+                showMessage('Not enough questions available for this course.', 'warning');
+                return;
+            }
+            // shuffle the questions array
+            questions = shuffleArray(questions);
+            // select the first numQuestions questions
+            questions = questions.slice(0, numQuestions);
+            console.log('Selected Questions:', questions);
+
+            // remove previously generated input fields
+            $('#questions-container').empty();
+
+            // iterate over the selected questions and add a question input for each one
+            questions.forEach(function (question) {
+                var alreadySelected = false;
+                for (var i = 0; i < questionInputs.length; i++) {
+                    if (questionInputs[i].data('question-id') === question.value) {
+                        alreadySelected = true;
+                        break;
+                    }
+                }
+                if (!alreadySelected) {
+                    addQuestionInput(question.value, question.text);
+                }
+            });
+        }).fail(function (error) {
+            showMessage('An error occurred while getting the questions. Please try again later.', 'error');
+            console.log('Error: ', error);
+        });
+    });
+
+    function showMessage(message, type) {
+        var messageContainer = $('#message-container');
+        messageContainer.empty();
+        var messageElement = $('<div></div>');
+        messageElement.addClass('message');
+        messageElement.addClass(type);
+        messageElement.text(message);
+        messageContainer.append(messageElement);
     }
 
-    // attach the event handler to all the dropdowns
-    $container.on('change', 'select[name="SelectedQuestionIds"]', function () {
-        var $dropdown = $(this);
-        onQuestionSelected($dropdown);
-    });
+
+    function shuffleArray(array) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            // And swap it with the current element.
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+
+        return array;
+    }
+
+
+
+
 });

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OnlineExaminationSystem.Models;
 using OnlineExaminationSystem.ViewModels;
+using System.Reflection.Emit;
 
 namespace OnlineExaminationSystem.Data
 {
@@ -28,13 +29,26 @@ namespace OnlineExaminationSystem.Data
         public DbSet<ChatRoomUser> ChatRoomUsers { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<ExamQuestion> ExamQuestions { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
 
-
+            builder.Entity<Question>()
+                .HasMany(e => e.Exams)
+                .WithMany(q => q.Questions)
+                .UsingEntity<ExamQuestion>(
+                    eq => eq.HasOne(prop => prop.Exam).WithMany().HasForeignKey(prop => prop.ExamId),
+                    eq => eq.HasOne(prop => prop.Question).WithMany().HasForeignKey(prop => prop.QuestionId),
+                    eq =>
+                    {
+                        eq.HasKey(prop => new {prop.ExamId, prop.QuestionId});
+                    }
+                );
 
             builder.Entity<Assignment>()
                 .HasOne(a => a.AssignedBy)
