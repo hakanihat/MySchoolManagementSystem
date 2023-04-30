@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using OnlineExaminationSystem.Models;
 using OnlineExaminationSystem.ViewModels;
 using System.Reflection.Emit;
@@ -36,6 +37,8 @@ namespace OnlineExaminationSystem.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+
 
 
             builder.Entity<Question>()

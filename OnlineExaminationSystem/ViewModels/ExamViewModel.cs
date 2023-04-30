@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OnlineExaminationSystem.ViewModels
 {
-    public class CreateExamViewModel
+    public class ExamViewModel
     {
         [Required]
         [StringLength(50)]

@@ -30,7 +30,7 @@ namespace OnlineExaminationSystem.Controllers
         {
         
 
-            var viewModel = new CreateExamViewModel();
+            var viewModel = new ExamViewModel();
             viewModel.Questions = await GetQuestionsAsync();
             viewModel.Courses = await GetCoursesAsync();
             return View("CreateExamViewModel", viewModel);
@@ -39,7 +39,7 @@ namespace OnlineExaminationSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateExam(CreateExamViewModel viewModel, string SelectedQuestionIdsJson)
+        public async Task<IActionResult> CreateExam(ExamViewModel viewModel, string SelectedQuestionIdsJson)
         {
             if (!ModelState.IsValid)
             {
@@ -120,6 +120,130 @@ namespace OnlineExaminationSystem.Controllers
 
             return View("SeeAllExams", exams);
 
+        }
+
+         
+        public async Task<IActionResult> Edit(int id)
+        {
+            var exam = await _context.Exams
+                .Include(e => e.Course)
+                .Include(e => e.Questions)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (exam == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new ExamViewModel
+            {
+                Name = exam.Name,
+                Description = exam.Description,
+                StartTime = exam.StartTime,
+                EndTime = exam.EndTime,
+                CourseId = exam.CourseId,
+                Courses = await GetCoursesAsync(),
+                SelectedQuestionIds = exam.Questions.Select(q => q.Id).ToList(),
+                Questions = await GetQuestionsAsync()
+            };
+
+            return View("EditExam",viewModel);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ExamViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var exam = await _context.Exams
+                    .Include(e => e.Course)
+                    .Include(e => e.Questions)
+                    .FirstOrDefaultAsync(e => e.Id == id);
+
+                exam.Name = viewModel.Name;
+                exam.Description = viewModel.Description;
+                exam.StartTime = viewModel.StartTime;
+                exam.EndTime = viewModel.EndTime;
+                exam.CourseId = viewModel.CourseId;
+
+                var selectedQuestionIds = viewModel.SelectedQuestionIds;
+                var currentQuestionIds = exam.Questions.Select(q => q.Id).ToList();
+                var addedQuestionIds = selectedQuestionIds.Except(currentQuestionIds).ToList();
+                var removedQuestionIds = currentQuestionIds.Except(selectedQuestionIds).ToList();
+
+                // Add new selected questions to ExamQuestion
+                foreach (var questionId in addedQuestionIds)
+                {
+                    var examQuestion = new ExamQuestion { ExamId = exam.Id, QuestionId = questionId };
+                    _context.ExamQuestions.Add(examQuestion);
+                }
+
+                // Remove unselected questions from ExamQuestion
+                foreach (var questionId in removedQuestionIds)
+                {
+                    var examQuestion = await _context.ExamQuestions
+                        .FirstOrDefaultAsync(eq => eq.ExamId == exam.Id && eq.QuestionId == questionId);
+                    if (examQuestion != null)
+                    {
+                        _context.ExamQuestions.Remove(examQuestion);
+                    }
+                }
+
+                try
+                {
+                    _context.Update(exam);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ExamExists(exam.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return View("EditExam", viewModel);
+            }
+
+            viewModel.Courses = await GetCoursesAsync();
+            viewModel.Questions = await GetQuestionsAsync();
+            return View("EditExam", viewModel);
+        }
+
+
+
+        private bool ExamExists(int id)
+        {
+            return _context.Exams.Any(e => e.Id == id);
+        }
+
+
+
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var exam = await _context.Exams.FindAsync(id);
+            if (exam == null)
+            {
+                return NotFound();
+            }
+
+            // Delete related records in ExamQuestion table
+            var relatedExamQuestions = await _context.ExamQuestions.Where(eq => eq.ExamId == id).ToListAsync();
+            _context.ExamQuestions.RemoveRange(relatedExamQuestions);
+
+            // Remove exam and save changes
+            _context.Exams.Remove(exam);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Home");
         }
 
 
