@@ -151,7 +151,7 @@ namespace OnlineExaminationSystem.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ExamViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, ExamViewModel viewModel, string SelectedQuestionIdsJson)
         {
             if (ModelState.IsValid)
             {
@@ -166,7 +166,8 @@ namespace OnlineExaminationSystem.Controllers
                 exam.EndTime = viewModel.EndTime;
                 exam.CourseId = viewModel.CourseId;
 
-                var selectedQuestionIds = viewModel.SelectedQuestionIds;
+                var selectedQuestionIds = JsonConvert.DeserializeObject<int[]>(SelectedQuestionIdsJson);
+  
                 var currentQuestionIds = exam.Questions.Select(q => q.Id).ToList();
                 var addedQuestionIds = selectedQuestionIds.Except(currentQuestionIds).ToList();
                 var removedQuestionIds = currentQuestionIds.Except(selectedQuestionIds).ToList();

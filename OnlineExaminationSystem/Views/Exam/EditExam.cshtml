@@ -31,7 +31,7 @@
         <span asp-validation-for="EndTime" class="text-danger"></span>
     </div>
 
- @*   <div id="selectedQuestionsContainer">
+    <div id="selectedQuestionsContainer">
         @foreach (var question in Model.Questions)
         {
             if (Model.SelectedQuestionIds.Contains(Int32.Parse(question.Value)))
@@ -39,20 +39,24 @@
                 <div id="question@(question.Value)" class="form-group">
                     <label for="Question@(question.Value)">@question.Text</label>
                     <input id="Question@(question.Value)" name="Question@(question.Value)" type="text" class="form-control" value="@question.Text" />
-                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteQuestion('@question.Value')">Delete</button>
+                    <button type="button" class="btn btn-danger btn-sm delete-question">Delete</button>
                 </div>
-
             }
         }
-    </div>*@
-
+        <input type="hidden" name="SelectedQuestionIdsJson" id="SelectedQuestionIdsJson" />
+    </div>
 
     <div class="form-group">
         <label for="SelectedQuestionIds">Select a question</label>
-        <select id="SelectedQuestionIds" name="SelectedQuestionIds" multiple class="form-control">
+        <select id="SelectedQuestionIds" name="SelectedQuestionIds" class="form-control">
             <option value="">-- Select a question --</option>
+            @foreach (var question in Model.Questions)
+            {
+                <option value="@question.Value">@question.Text</option>
+            }
         </select>
     </div>
+
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
 
@@ -62,17 +66,11 @@
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/examQuestions.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-   <script src="~/js/basicflatPickt.js"></script>
+    <script src="~/js/basicflatPickt.js"></script>
     <script src="~/js/checkDates.js"></script>
-@*    <script src="~/js/generateQuestionInEdit.js"></script>
-*@@*    <script src="~/js/filterQuestionsByCourse.js"></script>*@
-@*    <script src="~/js/exam.js"></script>
-*@   
-    <script>
-        function deleteQuestion(questionId) {
-            var questionGroup = $('#question' + questionId);
-            questionGroup.remove();
-        }
-    </script>
+    <script src="~/js/generateQuestionInEdit.js"></script>
+    <script src="~/js/deleteInputInDelete.js"></script>
+    <script src="~/js/proba.js"></script>
 
+       
     }
