@@ -22,14 +22,14 @@ namespace OnlineExaminationSystem.Controllers
 
         public async Task<IActionResult> CreateQuestionAsync()
         {
-            var viewModel = new CreateQuestionViewModel();
+            var viewModel = new QuestionViewModel();
             viewModel.Courses = await GetCoursesAsync();
             return View("CreateQuestionViewModel",viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-             public async Task<IActionResult> CreateQuestionAsync(CreateQuestionViewModel viewModel, string AnswersJson)
+             public async Task<IActionResult> CreateQuestionAsync(QuestionViewModel viewModel, string AnswersJson)
         {
             // Deserialize the JSON string into a list of AnswerViewModel objects
             var answers = JsonConvert.DeserializeObject<List<AnswerViewModel>>(AnswersJson);
@@ -77,6 +77,142 @@ namespace OnlineExaminationSystem.Controllers
             _context.SaveChanges();
 
         }
+
+        // GET: Questions/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null || _context.Questions == null)
+            {
+                return NotFound();
+            }
+
+            var question = await _context.Questions
+           .Include(q => q.Choices) // eagerly load choices
+           .FirstOrDefaultAsync(q => q.Id == id);
+
+            if (question == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new QuestionViewModel
+            {
+                QuestionText = question.Text,
+                QuestionType = question.Type.ToString(),
+                Points = question.Points,
+                CourseId = question.CourseId,
+                Courses =await GetCoursesAsync(),
+                Answers = question.Choices.Select(c => new AnswerViewModel
+                {
+                    AnswerText = c.Text,
+                    IsCorrect = c.IsCorrect
+                }).ToList()
+            };
+            return View("QuestionDetail",viewModel);
+
+        }
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var question = await _context.Questions
+                .Include(q => q.Choices)
+                .FirstOrDefaultAsync(q => q.Id == id);
+
+            if (question == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new QuestionViewModel
+            {
+                QuestionText = question.Text,
+                QuestionType = question.Type.ToString(),
+                Points = question.Points,
+                CourseId = question.CourseId,
+                Courses = await GetCoursesAsync(),
+                Answers = question.Choices.Select(c => new AnswerViewModel
+                {
+                    AnswerText = c.Text,
+                    IsCorrect = c.IsCorrect
+                }).ToList()
+            };
+
+            return View("EditQuestionViewModel", viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int? id, QuestionViewModel viewModel, string AnswersJson)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            // Deserialize the JSON string into a list of AnswerViewModel objects
+            var answers = JsonConvert.DeserializeObject<List<AnswerViewModel>>(AnswersJson);
+
+            // Assign the answers to the view model's Answers property
+            viewModel.Answers = answers;
+
+            if (!ModelState.IsValid)
+            {
+                viewModel.Courses = await GetCoursesAsync();
+                return View("EditQuestionViewModel", viewModel);
+            }
+
+            var question = await _context.Questions
+                .Include(q => q.Choices)
+                .FirstOrDefaultAsync(q => q.Id == id);
+
+            if (question == null)
+            {
+                return NotFound();
+            }
+
+            question.Text = viewModel.QuestionText;
+            question.Points = viewModel.Points;
+            question.Type = Enum.Parse<QuestionType>(viewModel.QuestionType);
+            question.ApplicationUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            question.CourseId = viewModel.CourseId;
+
+            // Delete existing choices
+            _context.Choices.RemoveRange(question.Choices);
+
+            // Create new choices
+            CreateQuestionAnswers(viewModel.Answers, question);
+
+            try
+            {
+                _context.Update(question);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!QuestionExists(question.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            viewModel.Courses = await GetCoursesAsync();
+            return View("EditQuestionViewModel", viewModel);
+        }
+
+        private bool QuestionExists(int id)
+        {
+            return _context.Questions.Any(e => e.Id == id);
+        }
+
+
 
         public async Task<List<SelectListItem>> GetCoursesAsync()
         {

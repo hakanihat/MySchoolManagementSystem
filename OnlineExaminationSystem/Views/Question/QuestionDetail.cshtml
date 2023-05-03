@@ -1,0 +1,46 @@
+﻿@using OnlineExaminationSystem.ViewModels
+@model QuestionViewModel
+
+<h2>Question Details</h2>
+
+<div>
+    <h4>Question Text</h4>
+    <p>@Model.QuestionText</p>
+</div>
+
+<div>
+    <h4>Question Type</h4>
+    <p>@Model.QuestionType</p>
+</div>
+
+<div>
+    <h4>Points</h4>
+    <p>@Model.Points</p>
+</div>
+
+<div>
+    <h4>Course</h4>
+    <p>@Model.CourseId</p>
+</div>
+
+<div>
+    <h4>Answers</h4>
+    <ul>
+        @foreach (var answer in Model.Answers)
+        {
+            <li>
+                <span>@answer.AnswerText</span>
+                @if (answer.IsCorrect)
+                {
+                    <span class="text-success">Correct Answer</span>
+                }
+            </li>
+        }
+    </ul>
+</div>
+
+<form method="post" asp-action="Edit">
+
+    <button type="submit" class="btn btn-primary">Edit Question</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to Questions</a>
+</form>

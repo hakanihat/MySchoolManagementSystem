@@ -41,6 +41,14 @@
                     <input id="Question@(question.Value)" name="Question@(question.Value)" type="text" class="form-control" value="@question.Text" />
                     <button type="button" class="btn btn-danger btn-sm delete-question">Delete</button>
                 </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <a asp-controller="Question" asp-action="Details" asp-route-id="@question.Value" class="btn btn-primary">Details</a>
+                    </div>
+                    <div class="col-md-6">
+                        <a asp-controller="Question" asp-action="Edit" asp-route-id="@question.Value" class="btn btn-primary">Edit</a>
+                    </div>
+                </div>
             }
         }
         <input type="hidden" name="SelectedQuestionIdsJson" id="SelectedQuestionIdsJson" />

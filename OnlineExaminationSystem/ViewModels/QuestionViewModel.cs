@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OnlineExaminationSystem.ViewModels
 {
-    public class CreateQuestionViewModel
+    public class QuestionViewModel
     {
         [Required]
         [Display(Name = "Question Text")]
