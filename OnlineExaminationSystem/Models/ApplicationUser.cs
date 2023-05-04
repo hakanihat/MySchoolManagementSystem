@@ -5,9 +5,11 @@ namespace OnlineExaminationSystem.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public long? SchoolNumber { get; set; }
+        public int? GroupId { get; set; }
+        public Group Group { get; set; }
         public virtual ICollection<ExamResult> ExamResults { get; set; }
         public virtual UserProfile UserProfile { get; set; }
-        public virtual ICollection<CourseEnrollment> CourseEnrollments { get; set; }
         public virtual ICollection<Course> Courses { get; set; }
         public virtual ICollection<Assignment> Assignments { get; set; }
         public virtual ICollection<ChatRoomUser> ChatRoomUsers { get; set; }

@@ -18,7 +18,8 @@ namespace OnlineExaminationSystem.Data
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Course> Courses { get; set; }
-        public DbSet<CourseEnrollment> CourseEnrollments { get; set; }
+
+        public DbSet<Group> Groups { get; set; }
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<Submission> Submissions { get; set; }
         public DbSet<Exam> Exams { get; set; }
@@ -56,13 +57,13 @@ namespace OnlineExaminationSystem.Data
             builder.Entity<Assignment>()
                 .HasOne(a => a.AssignedBy)
                 .WithMany()
-                .HasForeignKey(a => a.AssignedById)
+                .HasForeignKey(a => a.AssignedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Assignment>()
                 .HasOne(a => a.AssignedTo)
                 .WithMany()
-                .HasForeignKey(a => a.AssignedToId)
+                .HasForeignKey(a => a.AssignedToUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
 
