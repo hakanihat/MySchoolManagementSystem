@@ -12,8 +12,8 @@ using OnlineExaminationSystem.Data;
 namespace OnlineExaminationSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230504170653_makeGroupNullable")]
-    partial class makeGroupNullable
+    [Migration("20230505215649_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -69,21 +69,21 @@ namespace OnlineExaminationSystem.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "71b3649c-8f9c-49aa-9591-7e6edc37488f",
+                            ConcurrencyStamp = "b1c21e92-a8ec-44d0-a7db-227f27d22868",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "effb45ee-c8e3-4e60-b224-6a8f2d66f1a7",
+                            ConcurrencyStamp = "2bedf6a7-dc78-4dbb-be17-9d5ada89e357",
                             Name = "student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "4cfe8902-0d31-4a64-999f-022e4e6654df",
+                            ConcurrencyStamp = "9b2e66b5-4de4-481f-a8e7-238ccdc6087a",
                             Name = "teacher",
                             NormalizedName = "TEACHER"
                         });
@@ -199,6 +199,31 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("OnlineExaminationSystem.Models.Answer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("Answers");
+                });
+
             modelBuilder.Entity("OnlineExaminationSystem.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -244,6 +269,9 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<long?>("SchoolNumber")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -277,9 +305,6 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("AssignedByUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -288,7 +313,7 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("CourseId")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -309,8 +334,6 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("AssignedByUserId");
 
@@ -358,31 +381,6 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ChatRoomUsers");
-                });
-
-            modelBuilder.Entity("OnlineExaminationSystem.Models.Choice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<bool>("IsCorrect")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuestionId");
-
-                    b.ToTable("Choices");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Course", b =>
@@ -601,6 +599,29 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.ToTable("Questions");
                 });
 
+            modelBuilder.Entity("OnlineExaminationSystem.Models.StudentAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AnswerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExamResultId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnswerId");
+
+                    b.HasIndex("ExamResultId");
+
+                    b.ToTable("StudentAnswers");
+                });
+
             modelBuilder.Entity("OnlineExaminationSystem.Models.Submission", b =>
                 {
                     b.Property<int>("Id")
@@ -755,6 +776,17 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OnlineExaminationSystem.Models.Answer", b =>
+                {
+                    b.HasOne("OnlineExaminationSystem.Models.Question", "Question")
+                        .WithMany("Answers")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("OnlineExaminationSystem.Models.ApplicationUser", b =>
                 {
                     b.HasOne("OnlineExaminationSystem.Models.Group", "Group")
@@ -766,25 +798,23 @@ namespace OnlineExaminationSystem.Data.Migrations
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Assignment", b =>
                 {
-                    b.HasOne("OnlineExaminationSystem.Models.ApplicationUser", null)
-                        .WithMany("Assignments")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("OnlineExaminationSystem.Models.ApplicationUser", "AssignedBy")
-                        .WithMany()
+                        .WithMany("AssignmentsBy")
                         .HasForeignKey("AssignedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("OnlineExaminationSystem.Models.ApplicationUser", "AssignedTo")
-                        .WithMany()
+                        .WithMany("AssignmentsTo")
                         .HasForeignKey("AssignedToUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("OnlineExaminationSystem.Models.Course", null)
+                    b.HasOne("OnlineExaminationSystem.Models.Course", "Course")
                         .WithMany("Assignments")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("OnlineExaminationSystem.Models.Exam", "Exam")
                         .WithMany()
@@ -795,6 +825,8 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.Navigation("AssignedBy");
 
                     b.Navigation("AssignedTo");
+
+                    b.Navigation("Course");
 
                     b.Navigation("Exam");
                 });
@@ -816,17 +848,6 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.Navigation("ChatRoom");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("OnlineExaminationSystem.Models.Choice", b =>
-                {
-                    b.HasOne("OnlineExaminationSystem.Models.Question", "Question")
-                        .WithMany("Choices")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Exam", b =>
@@ -935,6 +956,25 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.Navigation("Course");
                 });
 
+            modelBuilder.Entity("OnlineExaminationSystem.Models.StudentAnswer", b =>
+                {
+                    b.HasOne("OnlineExaminationSystem.Models.Answer", "Answer")
+                        .WithMany()
+                        .HasForeignKey("AnswerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnlineExaminationSystem.Models.ExamResult", "ExamResult")
+                        .WithMany("StudentAnswers")
+                        .HasForeignKey("ExamResultId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Answer");
+
+                    b.Navigation("ExamResult");
+                });
+
             modelBuilder.Entity("OnlineExaminationSystem.Models.Submission", b =>
                 {
                     b.HasOne("OnlineExaminationSystem.Models.ApplicationUser", "ApplicationUser")
@@ -967,7 +1007,9 @@ namespace OnlineExaminationSystem.Data.Migrations
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("Assignments");
+                    b.Navigation("AssignmentsBy");
+
+                    b.Navigation("AssignmentsTo");
 
                     b.Navigation("ChatRoomUsers");
 
@@ -1009,6 +1051,11 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.Navigation("ExamResults");
                 });
 
+            modelBuilder.Entity("OnlineExaminationSystem.Models.ExamResult", b =>
+                {
+                    b.Navigation("StudentAnswers");
+                });
+
             modelBuilder.Entity("OnlineExaminationSystem.Models.Group", b =>
                 {
                     b.Navigation("Students");
@@ -1016,7 +1063,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Question", b =>
                 {
-                    b.Navigation("Choices");
+                    b.Navigation("Answers");
                 });
 #pragma warning restore 612, 618
         }

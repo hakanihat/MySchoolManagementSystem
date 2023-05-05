@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations;
 using OnlineExaminationSystem.Models;
 using OnlineExaminationSystem.ViewModels;
@@ -41,7 +42,7 @@ namespace OnlineExaminationSystem.Data
             base.OnModelCreating(builder);
 
 
-
+           
 
             builder.Entity<Question>()
                 .HasMany(e => e.Exams)
@@ -54,18 +55,18 @@ namespace OnlineExaminationSystem.Data
                         eq.HasKey(prop => new {prop.ExamId, prop.QuestionId});
                     }
                 );
-
             builder.Entity<Assignment>()
                 .HasOne(a => a.AssignedBy)
-                .WithMany()
+                .WithMany(u => u.AssignmentsBy)
                 .HasForeignKey(a => a.AssignedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Assignment>()
                 .HasOne(a => a.AssignedTo)
-                .WithMany()
+                .WithMany(u => u.AssignmentsTo)
                 .HasForeignKey(a => a.AssignedToUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
 
 
             builder.Entity<IdentityRole>().HasData(

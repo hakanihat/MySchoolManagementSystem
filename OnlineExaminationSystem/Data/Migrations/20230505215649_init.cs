@@ -13,8 +13,13 @@ namespace OnlineExaminationSystem.Data.Migrations
                 name: "GroupId",
                 table: "AspNetUsers",
                 type: "int",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
+
+            migrationBuilder.AddColumn<long>(
+                name: "SchoolNumber",
+                table: "AspNetUsers",
+                type: "bigint",
+                nullable: true);
 
             migrationBuilder.CreateTable(
                 name: "ChatRooms",
@@ -264,17 +269,11 @@ namespace OnlineExaminationSystem.Data.Migrations
                     AssignedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     AssignedToUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ExamId = table.Column<int>(type: "int", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CourseId = table.Column<int>(type: "int", nullable: true)
+                    CourseId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Assignments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Assignments_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Assignments_AspNetUsers_AssignedByUserId",
                         column: x => x.AssignedByUserId,
@@ -291,13 +290,14 @@ namespace OnlineExaminationSystem.Data.Migrations
                         name: "FK_Assignments_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Assignments_Exams_ExamId",
                         column: x => x.ExamId,
                         principalTable: "Exams",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -325,11 +325,11 @@ namespace OnlineExaminationSystem.Data.Migrations
                         column: x => x.ExamId,
                         principalTable: "Exams",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Choices",
+                name: "Answers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -340,9 +340,9 @@ namespace OnlineExaminationSystem.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Choices", x => x.Id);
+                    table.PrimaryKey("PK_Answers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Choices_Questions_QuestionId",
+                        name: "FK_Answers_Questions_QuestionId",
                         column: x => x.QuestionId,
                         principalTable: "Questions",
                         principalColumn: "Id",
@@ -398,23 +398,49 @@ namespace OnlineExaminationSystem.Data.Migrations
                         column: x => x.AssignmentId,
                         principalTable: "Assignments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudentAnswers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AnswerId = table.Column<int>(type: "int", nullable: false),
+                    ExamResultId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentAnswers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StudentAnswers_Answers_AnswerId",
+                        column: x => x.AnswerId,
+                        principalTable: "Answers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudentAnswers_ExamResults_ExamResultId",
+                        column: x => x.ExamResultId,
+                        principalTable: "ExamResults",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "1", "4c774888-2dbe-4a5d-85d3-158bce8f2e02", "admin", "ADMIN" });
+                values: new object[] { "1", "b1c21e92-a8ec-44d0-a7db-227f27d22868", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "2", "f36cb4f1-b012-4782-9de0-aaa2029e48b3", "student", "STUDENT" });
+                values: new object[] { "2", "2bedf6a7-dc78-4dbb-be17-9d5ada89e357", "student", "STUDENT" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "3", "19969fe0-4a9a-47a2-a545-0ce08c6308cf", "teacher", "TEACHER" });
+                values: new object[] { "3", "9b2e66b5-4de4-481f-a8e7-238ccdc6087a", "teacher", "TEACHER" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_GroupId",
@@ -422,14 +448,14 @@ namespace OnlineExaminationSystem.Data.Migrations
                 column: "GroupId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Answers_QuestionId",
+                table: "Answers",
+                column: "QuestionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ApplicationUserCourse_TeachersId",
                 table: "ApplicationUserCourse",
                 column: "TeachersId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Assignments_ApplicationUserId",
-                table: "Assignments",
-                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Assignments_AssignedByUserId",
@@ -460,11 +486,6 @@ namespace OnlineExaminationSystem.Data.Migrations
                 name: "IX_ChatRoomUsers_UserId",
                 table: "ChatRoomUsers",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Choices_QuestionId",
-                table: "Choices",
-                column: "QuestionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExamQuestions_QuestionId",
@@ -517,6 +538,16 @@ namespace OnlineExaminationSystem.Data.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_StudentAnswers_AnswerId",
+                table: "StudentAnswers",
+                column: "AnswerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentAnswers_ExamResultId",
+                table: "StudentAnswers",
+                column: "ExamResultId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Submissions_ApplicationUserId",
                 table: "Submissions",
                 column: "ApplicationUserId");
@@ -537,8 +568,7 @@ namespace OnlineExaminationSystem.Data.Migrations
                 table: "AspNetUsers",
                 column: "GroupId",
                 principalTable: "Groups",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -554,16 +584,10 @@ namespace OnlineExaminationSystem.Data.Migrations
                 name: "ChatRoomUsers");
 
             migrationBuilder.DropTable(
-                name: "Choices");
-
-            migrationBuilder.DropTable(
                 name: "CreateCourseViewModel");
 
             migrationBuilder.DropTable(
                 name: "ExamQuestions");
-
-            migrationBuilder.DropTable(
-                name: "ExamResults");
 
             migrationBuilder.DropTable(
                 name: "Groups");
@@ -575,19 +599,28 @@ namespace OnlineExaminationSystem.Data.Migrations
                 name: "Notifications");
 
             migrationBuilder.DropTable(
+                name: "StudentAnswers");
+
+            migrationBuilder.DropTable(
                 name: "Submissions");
 
             migrationBuilder.DropTable(
                 name: "UserProfiles");
 
             migrationBuilder.DropTable(
-                name: "Questions");
-
-            migrationBuilder.DropTable(
                 name: "ChatRooms");
 
             migrationBuilder.DropTable(
+                name: "Answers");
+
+            migrationBuilder.DropTable(
+                name: "ExamResults");
+
+            migrationBuilder.DropTable(
                 name: "Assignments");
+
+            migrationBuilder.DropTable(
+                name: "Questions");
 
             migrationBuilder.DropTable(
                 name: "Exams");
@@ -616,6 +649,10 @@ namespace OnlineExaminationSystem.Data.Migrations
 
             migrationBuilder.DropColumn(
                 name: "GroupId",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "SchoolNumber",
                 table: "AspNetUsers");
         }
     }

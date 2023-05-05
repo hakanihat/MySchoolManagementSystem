@@ -19,6 +19,7 @@ namespace OnlineExaminationSystem.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private Course course;
 
         public AssignmentController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -39,21 +40,33 @@ namespace OnlineExaminationSystem.Controllers
 
         // GET: Assignment/Create
         // GET: Assignment/Create
-        public async Task<IActionResult> Create(int examId)
+        public async Task<IActionResult> Create(int? examId)
         {
             var students = await _userManager.GetUsersInRoleAsync("Student");
             var studentsWithProfile = _context.Users.Include(u => u.UserProfile).Include(g => g.Group).Where(u => students.Contains(u)).ToList();
-
-
+            var exams = await _context.Exams.ToListAsync();
+            course = await _context.Courses
+        .Where(c => c.Exams.Any(e => e.Id == examId))
+        .FirstOrDefaultAsync(); // check why is null
             var viewModel = new AssignmentViewModel
             {
-                ExamId = examId,
-                Users = studentsWithProfile.Select(s => new StudentViewModel
+                ExamId = examId.HasValue ? (int)examId : 0,
+                Exams = exams.Select(e => new ExamViewModel
                 {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Description = e.Description,
+                    StartTime = e.StartTime,
+                    EndTime = e.EndTime,
+                    CourseId = e.CourseId
+                }).ToList(),
+                Users = studentsWithProfile.Select(s => new StudentViewModel
+                { Id = s.Id,
                     SchoolNumber = s.SchoolNumber ?? 0,
                     FullName = $"{s.UserProfile.FullName}",
                     GroupName = $"{s.Group.Name}"
-                }).ToList()
+                }).ToList(),
+                CourseId = course.Id
 
             };
 
@@ -66,27 +79,59 @@ namespace OnlineExaminationSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AssignmentViewModel viewModel)
         {
+            var students = await _userManager.GetUsersInRoleAsync("Student");
+            var studentsWithProfile = _context.Users.Include(u => u.UserProfile).Include(g => g.Group).Where(u => students.Contains(u)).ToList();
+            var exams = await _context.Exams.ToListAsync();
+            
+            viewModel.Exams = exams.Select(e => new ExamViewModel
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+                StartTime = e.StartTime,
+                EndTime = e.EndTime,
+                CourseId = course.Id
+            }).ToList();
+
+            viewModel.Users = studentsWithProfile.Select(s => new StudentViewModel
+            {
+                Id =s.Id,
+                SchoolNumber = s.SchoolNumber ?? 0,
+                FullName = $"{s.UserProfile.FullName}",
+                GroupName = $"{s.Group.Name}"
+            }).ToList();
+
             if (ModelState.IsValid)
             {
-                var assignment = new Assignment
+                foreach (var userId in viewModel.AssignedToUserId)
                 {
-                    Title = viewModel.Title,
-                    Description = viewModel.Description,
-                    DueDate = viewModel.DueDate,
-                    MaxPoints = viewModel.MaxPoints,
-                    AssignedByUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value,
-                    AssignedToUserId = viewModel.AssignedToUserId,
-                    ExamId = viewModel.ExamId
-                };
+                    var assignment = new Assignment
+                    {
+                        Title = viewModel.Title,
+                        Description = viewModel.Description,
+                        DueDate = viewModel.DueDate,
+                        MaxPoints = viewModel.MaxPoints,
+                        AssignedByUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value,
+                        AssignedToUserId = userId,
+                        ExamId = viewModel.ExamId,
+                        CourseId = course.Id
+                    };
 
-                _context.Add(assignment);
+                    Console.WriteLine(assignment.AssignedByUserId);
+
+                    _context.Add(assignment);
+                }
+
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                return View("AssignmentViewModel", viewModel);
             }
 
-            var students = await _userManager.GetUsersInRoleAsync("Student");
+       
+
             return View("AssignmentViewModel", viewModel);
         }
+
+
     }
 }

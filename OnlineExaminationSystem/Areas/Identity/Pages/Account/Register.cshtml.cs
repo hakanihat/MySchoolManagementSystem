@@ -116,6 +116,7 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
             [Display(Name = "Role")]
             public string Role { get; set; }
 
+            [Display(Name = "School number")]
             public long? SchoolNumber { get; set; }
 
             public int? Group { get; set; }
@@ -158,6 +159,12 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
                 {
                     user.GroupId = group.Id;
                 }
+
+                if (Input.SchoolNumber.HasValue)
+                {
+                    user.SchoolNumber = Input.SchoolNumber;
+                }
+
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
