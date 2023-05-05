@@ -62,18 +62,18 @@ namespace OnlineExaminationSystem.Controllers
 
         private void CreateQuestionAnswers(List<AnswerViewModel> answers,Question question)
         {
-            var choices = new List<Choice>();
+            var ans = new List<Answer>();
 
             foreach (var answer in answers)
             {
-                choices.Add(new Choice
+                ans.Add(new Answer
                 {
                     Text = answer.AnswerText,
                     IsCorrect = answer.IsCorrect,
                     QuestionId = question.Id
                 });
             }
-            _context.Choices.AddRange(choices);
+            _context.Answers.AddRange(ans);
             _context.SaveChanges();
 
         }
@@ -87,7 +87,7 @@ namespace OnlineExaminationSystem.Controllers
             }
 
             var question = await _context.Questions
-           .Include(q => q.Choices) // eagerly load choices
+           .Include(q => q.Answers) // eagerly load choices
            .FirstOrDefaultAsync(q => q.Id == id);
 
             if (question == null)
@@ -102,7 +102,7 @@ namespace OnlineExaminationSystem.Controllers
                 Points = question.Points,
                 CourseId = question.CourseId,
                 Courses =await GetCoursesAsync(),
-                Answers = question.Choices.Select(c => new AnswerViewModel
+                Answers = question.Answers.Select(c => new AnswerViewModel
                 {
                     AnswerText = c.Text,
                     IsCorrect = c.IsCorrect
@@ -119,7 +119,7 @@ namespace OnlineExaminationSystem.Controllers
             }
 
             var question = await _context.Questions
-                .Include(q => q.Choices)
+                .Include(q => q.Answers)
                 .FirstOrDefaultAsync(q => q.Id == id);
 
             if (question == null)
@@ -134,7 +134,7 @@ namespace OnlineExaminationSystem.Controllers
                 Points = question.Points,
                 CourseId = question.CourseId,
                 Courses = await GetCoursesAsync(),
-                Answers = question.Choices.Select(c => new AnswerViewModel
+                Answers = question.Answers.Select(c => new AnswerViewModel
                 {
                     AnswerText = c.Text,
                     IsCorrect = c.IsCorrect
@@ -166,7 +166,7 @@ namespace OnlineExaminationSystem.Controllers
             }
 
             var question = await _context.Questions
-                .Include(q => q.Choices)
+                .Include(q => q.Answers)
                 .FirstOrDefaultAsync(q => q.Id == id);
 
             if (question == null)
@@ -181,7 +181,7 @@ namespace OnlineExaminationSystem.Controllers
             question.CourseId = viewModel.CourseId;
 
             // Delete existing choices
-            _context.Choices.RemoveRange(question.Choices);
+            _context.Answers.RemoveRange(question.Answers);
 
             // Create new choices
             CreateQuestionAnswers(viewModel.Answers, question);

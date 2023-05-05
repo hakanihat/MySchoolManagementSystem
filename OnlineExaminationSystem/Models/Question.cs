@@ -20,7 +20,7 @@ namespace OnlineExaminationSystem.Models
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
 
-        public ICollection<Choice> Choices { get; set; }
+        public ICollection<Answer> Answers { get; set; }
         public ICollection<Exam> Exams { get; set; }
         public int CourseId { get; set; }
         public Course Course { get; set; }

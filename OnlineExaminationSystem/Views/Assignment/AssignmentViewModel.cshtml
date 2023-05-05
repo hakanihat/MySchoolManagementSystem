@@ -32,11 +32,40 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="AssignedToUserId"></label>
-        <select asp-for="AssignedToUserId" asp-items="@Model.Users" class="form-control">
-            <option value="">-- Select a student --</option>
-        </select>
-        <span asp-validation-for="AssignedToUserId" class="text-danger"></span>
+        <label>Select students:</label>
+
+        <input id="searchBar" type="text" class="form-control" placeholder="Search by Group or School Number">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Group</th>
+                    <th>School Number</th>
+                    <th>Full Name</th>
+                    <th>Assigned?</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody">
+                @foreach (var user in Model.Users)
+                {
+                    <tr>
+                        <td>@user.SchoolNumber</td>
+                        <td>@user.FullName</td>
+                        <td>@user.GroupName</td>
+                        <td>
+                            <input type="checkbox" asp-for="AssignedToUserId" value="@user.SchoolNumber" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+        <div class="form-check">
+            <input type="checkbox" id="selectAllCheckbox" class="form-check-input" />
+            <label class="form-check-label" for="selectAllCheckbox">Select all</label>
+        </div>
+
     </div>
 
     <input type="hidden" asp-for="ExamId" />
@@ -47,3 +76,31 @@
     </div>
 
 </form>
+
+@section Scripts {
+    <script>
+        document.getElementById("selectAllCheckbox").addEventListener("click", function () {
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].id !== "selectAllCheckbox") {
+                    checkboxes[i].checked = this.checked;
+                }
+            }
+        });
+
+        document.getElementById("searchBar").addEventListener("input", function () {
+            var input = this.value.toLowerCase();
+            var rows = document.querySelectorAll("tbody tr");
+            for (var i = 0; i < rows.length; i++) {
+                var schoolNumber = rows[i].querySelectorAll("td")[0].textContent.toLowerCase();
+                var fullName = rows[i].querySelectorAll("td")[1].textContent.toLowerCase();
+                var group = rows[i].querySelectorAll("td")[2].textContent.toLowerCase();
+                if (schoolNumber.indexOf(input) > -1 || fullName.indexOf(input) > -1 || group.indexOf(input) > -1) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        });
+    </script>
+}

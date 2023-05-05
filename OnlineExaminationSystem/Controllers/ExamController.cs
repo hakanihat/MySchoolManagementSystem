@@ -109,7 +109,7 @@ namespace OnlineExaminationSystem.Controllers
             IQueryable<Exam> examsQuery = _context.Exams
                 .Include(e => e.Course)
                 .Include(e => e.Questions)
-                    .ThenInclude(q => q.Choices);
+                    .ThenInclude(q => q.Answers);
 
             if (User.IsInRole("teacher"))
             {

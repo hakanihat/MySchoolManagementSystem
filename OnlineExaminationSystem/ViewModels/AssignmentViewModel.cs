@@ -36,7 +36,7 @@ namespace OnlineExaminationSystem.ViewModels
         [Required]
         [Display(Name = "Assigned To")]
         public string AssignedToUserId { get; set; }
-        public IEnumerable<SelectListItem> Users { get; set; }
+        public IEnumerable<StudentViewModel> Users { get; set; }
     }
 
 }

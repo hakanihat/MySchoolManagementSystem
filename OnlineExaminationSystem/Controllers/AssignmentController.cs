@@ -42,16 +42,17 @@ namespace OnlineExaminationSystem.Controllers
         public async Task<IActionResult> Create(int examId)
         {
             var students = await _userManager.GetUsersInRoleAsync("Student");
-            var studentsWithProfile = _context.Users.Include(u => u.UserProfile).Where(u => students.Contains(u)).ToList();
+            var studentsWithProfile = _context.Users.Include(u => u.UserProfile).Include(g => g.Group).Where(u => students.Contains(u)).ToList();
 
 
             var viewModel = new AssignmentViewModel
             {
                 ExamId = examId,
-                Users = studentsWithProfile.Select(s => new SelectListItem
+                Users = studentsWithProfile.Select(s => new StudentViewModel
                 {
-                    Value = $"{s.SchoolNumber}",
-                    Text = $"{s.UserProfile.FullName}"
+                    SchoolNumber = s.SchoolNumber ?? 0,
+                    FullName = $"{s.UserProfile.FullName}",
+                    GroupName = $"{s.Group.Name}"
                 }).ToList()
 
             };
