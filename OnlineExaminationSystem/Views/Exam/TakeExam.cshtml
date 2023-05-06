@@ -1,0 +1,27 @@
+﻿@using OnlineExaminationSystem.ViewModels
+@model TakeExamViewModel
+
+<h1>@Model.ExamName</h1>
+
+<form method="post">
+    <input type="hidden" name="examId" value="@Model.ExamId" />
+
+    @foreach (var question in Model.Questions)
+    {
+        <h3>@question.Text</h3>
+
+        <input type="hidden" name="questions[@question.Id].questionId" value="@question.Id" />
+
+        <div>
+            @foreach (var answer in question.Answers)
+            {
+                <div>
+                    <input type="checkbox" name="questions[@question.Id].answers[@answer.Id].isSelected" value="true" />
+                    <label>@answer.Text</label>
+                </div>
+            }
+        </div>
+    }
+
+    <button type="submit">Submit Exam</button>
+</form>

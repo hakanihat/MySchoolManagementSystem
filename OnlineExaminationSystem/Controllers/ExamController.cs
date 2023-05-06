@@ -11,7 +11,7 @@ using System.Security.Claims;
 
 namespace OnlineExaminationSystem.Controllers
 {
-    [Authorize(Roles = "admin")]
+    
     public class ExamController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,12 +20,12 @@ namespace OnlineExaminationSystem.Controllers
         {
             _context = context;
         }
-
+        [Authorize(Roles = "admin")]
         public IActionResult Index()
         {
             return View();
         }
-
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateExam()
         {
         
@@ -36,7 +36,7 @@ namespace OnlineExaminationSystem.Controllers
             return View("CreateExamViewModel", viewModel);
         }
 
-
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateExam(ExamViewModel viewModel, string SelectedQuestionIdsJson)
@@ -248,6 +248,36 @@ namespace OnlineExaminationSystem.Controllers
         }
 
 
+        public async Task<IActionResult> TakeExam(int id)
+        {
+            var exam = await _context.Exams
+                .Include(e => e.Questions)
+                .ThenInclude(q => q.Answers)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (exam == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new TakeExamViewModel
+            {
+                ExamId = exam.Id,
+                ExamName = exam.Name,
+                Questions = exam.Questions.Select(q => new TakeExamQuestionViewModel
+                {
+                    Id = q.Id,
+                    Text = q.Text,
+                    Answers = q.Answers.Select(o => new TakeExamAnswerViewModel
+                    {
+                        Id = o.Id,
+                        Text = o.Text
+                    }).ToList()
+                }).ToList()
+            };
+
+            return View(viewModel);
+        }
 
 
 

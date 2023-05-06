@@ -1,0 +1,18 @@
+﻿@using OnlineExaminationSystem.ViewModels
+@model StudentAssignmentViewModel
+
+<h1>@Model.Title</h1>
+
+<div>
+    <p>@Model.Description</p>
+    <p>Due date: @Model.DueDate.ToShortDateString()</p>
+    <p>Max points: @Model.MaxPoints</p>
+    <p>Course: @Model.CourseName</p>
+    <p>Exam: @Model.ExamName</p>
+    <div>
+        <!-- Other details of the assignment -->
+        <a class="btn btn-primary btn-sm" href="@Url.Action("TakeExam", "Exam", new { id = Model.ExamId })">Start Exam</a>
+
+    </div>
+
+</div>

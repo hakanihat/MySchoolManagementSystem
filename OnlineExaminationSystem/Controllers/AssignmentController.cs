@@ -45,9 +45,10 @@ namespace OnlineExaminationSystem.Controllers
             var students = await _userManager.GetUsersInRoleAsync("Student");
             var studentsWithProfile = _context.Users.Include(u => u.UserProfile).Include(g => g.Group).Where(u => students.Contains(u)).ToList();
             var exams = await _context.Exams.ToListAsync();
+            var courses = await _context.Courses.ToListAsync();
             course = await _context.Courses
-        .Where(c => c.Exams.Any(e => e.Id == examId))
-        .FirstOrDefaultAsync(); // check why is null
+              .Where(c => c.Exams.Any(e => e.Id == examId))
+                .FirstOrDefaultAsync(); // check why is null
             var viewModel = new AssignmentViewModel
             {
                 ExamId = examId.HasValue ? (int)examId : 0,
@@ -66,8 +67,13 @@ namespace OnlineExaminationSystem.Controllers
                     FullName = $"{s.UserProfile.FullName}",
                     GroupName = $"{s.Group.Name}"
                 }).ToList(),
-                CourseId = course.Id
-
+                CourseId = course?.Id ?? 0,
+                Courses = courses.Select(c => new CourseViewModel // map courses to CourseViewModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description
+                }).ToList()
             };
 
             return View("AssignmentViewModel",viewModel);
@@ -82,7 +88,8 @@ namespace OnlineExaminationSystem.Controllers
             var students = await _userManager.GetUsersInRoleAsync("Student");
             var studentsWithProfile = _context.Users.Include(u => u.UserProfile).Include(g => g.Group).Where(u => students.Contains(u)).ToList();
             var exams = await _context.Exams.ToListAsync();
-            
+            var courses = await _context.Courses.ToListAsync();
+
             viewModel.Exams = exams.Select(e => new ExamViewModel
             {
                 Id = e.Id,
@@ -90,15 +97,22 @@ namespace OnlineExaminationSystem.Controllers
                 Description = e.Description,
                 StartTime = e.StartTime,
                 EndTime = e.EndTime,
-                CourseId = course.Id
+                CourseId = e?.CourseId ?? 0
             }).ToList();
 
             viewModel.Users = studentsWithProfile.Select(s => new StudentViewModel
             {
-                Id =s.Id,
+                Id = s.Id,
                 SchoolNumber = s.SchoolNumber ?? 0,
                 FullName = $"{s.UserProfile.FullName}",
                 GroupName = $"{s.Group.Name}"
+            }).ToList();
+
+            viewModel.Courses = courses.Select(c => new CourseViewModel
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description
             }).ToList();
 
             if (ModelState.IsValid)
@@ -114,7 +128,7 @@ namespace OnlineExaminationSystem.Controllers
                         AssignedByUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value,
                         AssignedToUserId = userId,
                         ExamId = viewModel.ExamId,
-                        CourseId = course.Id
+                        CourseId = viewModel.CourseId
                     };
 
                     Console.WriteLine(assignment.AssignedByUserId);
@@ -127,10 +141,73 @@ namespace OnlineExaminationSystem.Controllers
                 return View("AssignmentViewModel", viewModel);
             }
 
-       
-
             return View("AssignmentViewModel", viewModel);
         }
+
+        // GET: Assignment/StudentAssignments
+        public async Task<IActionResult> StudentAssignments()
+        {
+            // Get the current user
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            // Get all the assignments assigned to the current user
+            var assignments = await _context.Assignments
+                .Include(a => a.AssignedBy)
+                .Include(a => a.AssignedTo)
+                .Include(a => a.Course)
+                .Include(a => a.Exam)
+                .Where(a => a.AssignedToUserId == currentUser.Id)
+                .ToListAsync();
+
+            // Map the assignments to a view model
+            var viewModel = assignments.Select(a => new StudentAssignmentViewModel
+            {
+                Id = a.Id,
+                Title = a.Title,
+                Description = a.Description,
+                DueDate = a.DueDate,
+                MaxPoints = a.MaxPoints,
+                CourseId = a.CourseId,
+                CourseName = a.Course.Name,
+                ExamId = a.ExamId,
+                ExamName = a.Exam.Name
+            }).ToList();
+
+            return View("StudentAssignmentViewModel",viewModel);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            // Retrieve the assignment with the specified id from the database
+            var assignment = await _context.Assignments
+                .Include(a => a.Course)
+                .Include(a => a.Exam)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (assignment == null)
+            {
+                // If the assignment is not found, return a 404 error
+                return NotFound();
+            }
+
+            // Create a new instance of the AssignmentViewModel and set its properties
+            var viewModel = new StudentAssignmentViewModel
+            {
+                Id = assignment.Id,
+                Title = assignment.Title,
+                Description = assignment.Description,
+                DueDate = assignment.DueDate,
+                MaxPoints = assignment.MaxPoints,
+                CourseId = assignment.CourseId,
+                CourseName = assignment.Course.Name,
+                ExamId = assignment.ExamId,
+                ExamName = assignment.Exam.Name
+            };
+
+            // Pass the view model to the Details view
+            return View("StudentAssignmentDetailsViewModel", viewModel);
+        }
+
 
 
     }

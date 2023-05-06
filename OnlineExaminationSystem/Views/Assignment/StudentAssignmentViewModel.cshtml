@@ -1,0 +1,49 @@
+﻿@using OnlineExaminationSystem.ViewModels
+@model List<StudentAssignmentViewModel>
+
+<div class="container">
+    <h2>Assigned Assignments</h2>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Due Date</th>
+                        <th>Max Points</th>
+                        <th>Course</th>
+                        <th>Exam</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var assignment in Model)
+                    {
+                        <tr>
+                            <td>@assignment.Title</td>
+                            <td>@assignment.Description</td>
+                            <td>@assignment.DueDate.ToShortDateString()</td>
+                            <td>@assignment.MaxPoints</td>
+                            <td>@assignment.CourseName</td>
+                            <td>@assignment.ExamName</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="@Url.Action("Details", "Assignment", new { id = assignment.Id })">Details</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(function () {
+            $('.table').DataTable({
+                responsive: true
+            });
+        });
+    </script>
+}
