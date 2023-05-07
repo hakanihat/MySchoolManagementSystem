@@ -11,7 +11,7 @@
     <p>Exam: @Model.ExamName</p>
     <div>
         <!-- Other details of the assignment -->
-        <a class="btn btn-primary btn-sm" href="@Url.Action("TakeExam", "Exam", new { id = Model.ExamId, assignmentId = Model.AssignmentId })">Start Exam</a>
+        <a class="btn btn-primary btn-sm" href="@Url.Action("TakeExam", "Exam", new { id = Model.ExamId, assignmentId = Model.Id })">Start Exam</a>
 
     </div>
 

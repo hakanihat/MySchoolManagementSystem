@@ -12,7 +12,7 @@
         public string ApplicationUserId { get; set; }
         public virtual ApplicationUser ApplicationUser { get; set; }
 
-        public virtual ICollection<StudentAnswer> StudentAnswers { get; set; }
+        public virtual ICollection<StudentAnswer> StudentAnswers { get; set; } = new List<StudentAnswer>();
     }
 
 }

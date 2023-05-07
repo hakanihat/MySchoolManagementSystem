@@ -22,7 +22,7 @@
                             @foreach (var answer in question.Answers)
                             {
                                 <div style="display: flex; align-items: center;">
-                                    <input type="radio" name="questions[@question.Id].selectedAnswerId" value="@answer.Id" style="margin-right: 10px;" />
+                                    <input type="radio" name="questions[@question.Id].Answers[@answer.Id].Selected" value="true" style="margin-right: 10px;" />
                                     <label style="margin-bottom: 0;">@answer.Text</label>
                                 </div>
                             }
@@ -34,7 +34,7 @@
                             @foreach (var answer in question.Answers)
                             {
                                 <div style="display: flex; align-items: center;">
-                                    <input type="checkbox" name="questions[@question.Id].selectedAnswerIds" value="@answer.Id" style="margin-right: 10px;" />
+                                    <input type="checkbox" name="questions[@question.Id].Answers[@answer.Id].Selected" value="true" style="margin-right: 10px;" />
                                     <label style="margin-bottom: 0;">@answer.Text</label>
                                 </div>
                             }
@@ -42,7 +42,7 @@
                     }
                     else if (question.QuestionType == QuestionType.Essay)
                     {
-                        <textarea name="questions[@question.Id].essayAnswer" style="width: 100%;"></textarea>
+                        <textarea name="questions[@question.Id].Answer" style="width: 100%;"></textarea>
                     }
                 </div>
             </div>
@@ -52,4 +52,5 @@
             <button type="submit">Submit Exam</button>
         </div>
     </form>
+
 </div>

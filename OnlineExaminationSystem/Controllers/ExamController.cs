@@ -280,7 +280,7 @@ namespace OnlineExaminationSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> TakeExam(TakeExamViewModel model,int assignmentId)
+        public async Task<IActionResult> TakeExam(TakeExamViewModel model, int assignmentId)
         {
             // Retrieve the current user's ID
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -299,15 +299,24 @@ namespace OnlineExaminationSystem.Controllers
                 var studentAnswer = new StudentAnswer
                 {
                     AnswerId = answer.Id,
-                    EssayAnswer = answer.EssayAnswer
+                    SubmissionId = submission.Id
                 };
 
                 submission.StudentAnswers.Add(studentAnswer);
             }
 
-            // Save the Submission object to the database
-            _context.Submissions.Add(submission);
-            await _context.SaveChangesAsync();
+            try
+            {
+                // Save the Submission object to the database
+                _context.Submissions.Add(submission);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log the error or display it to the user
+                Console.WriteLine(ex.Message);
+                throw;
+            }
 
             return RedirectToAction("Index", "Home");
         }
