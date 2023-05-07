@@ -279,6 +279,41 @@ namespace OnlineExaminationSystem.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> TakeExam(TakeExamViewModel model,int assignmentId)
+        {
+            // Retrieve the current user's ID
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Create a new Submission object
+            var submission = new Submission
+            {
+                ApplicationUserId = userId,
+                AssignmentId = assignmentId,
+                SubmissionTime = DateTime.Now
+            };
+
+            // Loop through the student's answers and add them to the Submission object
+            foreach (var answer in model.Questions.SelectMany(q => q.Answers))
+            {
+                var studentAnswer = new StudentAnswer
+                {
+                    AnswerId = answer.Id,
+                    EssayAnswer = answer.EssayAnswer
+                };
+
+                submission.StudentAnswers.Add(studentAnswer);
+            }
+
+            // Save the Submission object to the database
+            _context.Submissions.Add(submission);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Home");
+        }
+
+
+
 
 
     }

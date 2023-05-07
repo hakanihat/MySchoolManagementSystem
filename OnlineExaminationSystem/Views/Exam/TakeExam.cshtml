@@ -1,27 +1,55 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model TakeExamViewModel
 
-<h1>@Model.ExamName</h1>
+<div class="text-center">
+    <h1>@Model.ExamName</h1>
 
-<form method="post">
-    <input type="hidden" name="examId" value="@Model.ExamId" />
+    <form method="post">
+        <input type="hidden" name="examId" value="@Model.ExamId" />
 
-    @foreach (var question in Model.Questions)
-    {
-        <h3>@question.Text</h3>
+        @foreach (var question in Model.Questions)
+        {
+            <div style="margin-bottom: 20px; padding: 10px; border: 2px solid gray;">
+                <h3 style="text-align: left;">@(Model.Questions.IndexOf(question) + 1). @question.Text</h3>
 
-        <input type="hidden" name="questions[@question.Id].questionId" value="@question.Id" />
+                <input type="hidden" name="questions[@question.Id].questionId" value="@question.Id" />
+                <input type="hidden" name="questions[@question.Id].questionType" value="@question.QuestionType" />
 
-        <div>
-            @foreach (var answer in question.Answers)
-            {
-                <div>
-                    <input type="checkbox" name="questions[@question.Id].answers[@answer.Id].isSelected" value="true" />
-                    <label>@answer.Text</label>
+                <div style="margin-top: 10px;">
+                    @if (question.QuestionType == QuestionType.SingleChoice || question.QuestionType == QuestionType.TrueFalse)
+                    {
+                        <div style="display: flex; flex-direction: column;">
+                            @foreach (var answer in question.Answers)
+                            {
+                                <div style="display: flex; align-items: center;">
+                                    <input type="radio" name="questions[@question.Id].selectedAnswerId" value="@answer.Id" style="margin-right: 10px;" />
+                                    <label style="margin-bottom: 0;">@answer.Text</label>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else if (question.QuestionType == QuestionType.MultipleChoice)
+                    {
+                        <div style="display: flex; flex-direction: column;">
+                            @foreach (var answer in question.Answers)
+                            {
+                                <div style="display: flex; align-items: center;">
+                                    <input type="checkbox" name="questions[@question.Id].selectedAnswerIds" value="@answer.Id" style="margin-right: 10px;" />
+                                    <label style="margin-bottom: 0;">@answer.Text</label>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else if (question.QuestionType == QuestionType.Essay)
+                    {
+                        <textarea name="questions[@question.Id].essayAnswer" style="width: 100%;"></textarea>
+                    }
                 </div>
-            }
-        </div>
-    }
+            </div>
+        }
 
-    <button type="submit">Submit Exam</button>
-</form>
+        <div class="text-center">
+            <button type="submit">Submit Exam</button>
+        </div>
+    </form>
+</div>

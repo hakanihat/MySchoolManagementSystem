@@ -5,7 +5,8 @@
         public int Id { get; set; }
         public int AnswerId { get; set; }
         public virtual Answer Answer { get; set; }
-        public int ExamResultId { get; set; }
-        public virtual ExamResult ExamResult { get; set; }
+        public int SubmissionId { get; set; }
+        public virtual Submission Submission { get; set; }
     }
+
 }
