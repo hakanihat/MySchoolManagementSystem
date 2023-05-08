@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using OnlineExaminationSystem.Data;
 using OnlineExaminationSystem.Models;
@@ -248,12 +249,12 @@ namespace OnlineExaminationSystem.Controllers
         }
 
 
-        public async Task<IActionResult> TakeExam(int id)
+        public async Task<IActionResult> TakeExam(int examId, int assignmentId)
         {
             var exam = await _context.Exams
                 .Include(e => e.Questions)
                 .ThenInclude(q => q.Answers)
-                .FirstOrDefaultAsync(e => e.Id == id);
+                .FirstOrDefaultAsync(e => e.Id == examId);
 
             if (exam == null)
             {
@@ -264,6 +265,7 @@ namespace OnlineExaminationSystem.Controllers
             {
                 ExamId = exam.Id,
                 ExamName = exam.Name,
+                AssignmentId= assignmentId,
                 Questions = exam.Questions.Select(q => new TakeExamQuestionViewModel
                 {
                     Id = q.Id,
@@ -274,14 +276,20 @@ namespace OnlineExaminationSystem.Controllers
                         Text = o.Text
                     }).ToList()
                 }).ToList()
+                
             };
 
             return View(viewModel);
         }
 
+
+
         [HttpPost]
-        public async Task<IActionResult> TakeExam(TakeExamViewModel model, int assignmentId)
+        public async Task<IActionResult> TakeExam(TakeExamViewModel model, string answersJson)
         {
+            // Deserialize the answersJson parameter to a List<string>
+            List<int> answers = JsonConvert.DeserializeObject<List<int>>(answersJson);
+
             // Retrieve the current user's ID
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -289,19 +297,18 @@ namespace OnlineExaminationSystem.Controllers
             var submission = new Submission
             {
                 ApplicationUserId = userId,
-                AssignmentId = assignmentId,
+                AssignmentId = model.AssignmentId,
                 SubmissionTime = DateTime.Now
             };
 
-            // Loop through the student's answers and add them to the Submission object
-            foreach (var answer in model.Questions.SelectMany(q => q.Answers))
+            // Loop through the selected answers and add them to the Submission object
+            foreach (var answerId in answers)
             {
                 var studentAnswer = new StudentAnswer
                 {
-                    AnswerId = answer.Id,
-                    SubmissionId = submission.Id
+                    AnswerId = answerId,
+                    Submission = submission
                 };
-
                 submission.StudentAnswers.Add(studentAnswer);
             }
 
@@ -318,8 +325,81 @@ namespace OnlineExaminationSystem.Controllers
                 throw;
             }
 
-            return RedirectToAction("Index", "Home");
+            var examResult = await CreateExamResultAsync(model.ExamId, userId, answers, submission);
+
+
+            return RedirectToAction("Detail", "ExamResult", new { id = examResult.Id });
         }
+
+        private async Task<ExamResult> CreateExamResultAsync(int examId, string userId, List<int> answerIds,Submission sub)
+        {
+            // Retrieve the Exam object
+            var exam = await _context.Exams
+                .Include(e => e.Questions)
+                    .ThenInclude(q => q.Answers)
+                .FirstOrDefaultAsync(e => e.Id == examId);
+            if (exam == null)
+            {
+                throw new ArgumentException($"No exam found with ID {examId}");
+            }
+
+            // Calculate the score
+            var correctAnswers = exam.Questions.SelectMany(q => q.Answers).Where(a => a.IsCorrect).Select(a => a.Id).ToList();
+            var selectedCorrectAnswers = answerIds.Intersect(correctAnswers).ToList();
+            var essayQuestions = exam.Questions.Where(q => q.Type == QuestionType.Essay).ToList();
+
+            var score = 0;
+            foreach (var ans in selectedCorrectAnswers)
+            {
+                var answer = await _context.Answers.FindAsync(ans);
+                if (answer != null && answer.IsCorrect)
+                {
+                    var question = await _context.Questions.FindAsync(answer.QuestionId);
+                    if (question != null)
+                    {
+                        score += question.Points;
+                    }
+                }
+            }
+            string comment= "Final result";
+            if (essayQuestions!=null && essayQuestions.Count > 0)
+            {
+              comment  = "Wait for teachers points!"; // fix it 
+            }
+
+
+            // Create a new ExamResult object
+            var result = new ExamResult
+            {
+                ExamId = examId,
+                Score = score,
+                Comment = comment , // fix it later
+                ApplicationUserId = userId,
+                StudentAnswers = new List<StudentAnswer>()
+            };
+
+            // Create a StudentAnswer object for each selected answer and add them to the ExamResult
+            foreach (var answerId in answerIds)
+            {
+                var answer = await _context.Answers.FindAsync(answerId);
+                if (answer != null)
+                {
+                    var studentAnswer = new StudentAnswer
+                    {
+                        Answer = answer,
+                        Submission = sub
+                    };
+                    result.StudentAnswers.Add(studentAnswer);
+                }
+            }
+
+            // Save the ExamResult object to the database
+            _context.ExamResults.Add(result);
+            await _context.SaveChangesAsync();
+
+            return result;
+        }
+
 
 
 

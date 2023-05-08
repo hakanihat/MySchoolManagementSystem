@@ -3,8 +3,8 @@
     public class ExamResult
     {
         public int Id { get; set; }
-        public int Score { get; set; }
-        public string Comment { get; set; }
+        public int? Score { get; set; }
+        public string? Comment { get; set; }
         public int ExamId { get; set; }
         public virtual Exam Exam { get; set; }
 

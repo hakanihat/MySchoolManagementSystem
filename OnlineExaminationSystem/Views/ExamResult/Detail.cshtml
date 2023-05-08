@@ -1,0 +1,32 @@
+﻿@using OnlineExaminationSystem.ViewModels
+@model ExamResultViewModel
+
+<h1>Exam Result: @Model.ExamName</h1>
+
+<p><strong>Score:</strong> @Model.Score / @Model.TotalPoints</p>
+<p><strong>Number of Correct Answers:</strong> @Model.CorrectAnswers</p>
+<p><strong>Comment:</strong> @Model.Comment</p>
+
+<h2>Your Answers</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Question</th>
+            <th>Your Answer</th>
+            <th>Correct Answer</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var answer in Model.StudentAnswers)
+        {
+            <tr>
+                <td>@answer.QuestionText</td>
+                <td>@answer.Text</td>
+                <td>@(answer.IsCorrect ? "Correct" : "Incorrect")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" asp-controller="Home">Back to Dashboard</a>
