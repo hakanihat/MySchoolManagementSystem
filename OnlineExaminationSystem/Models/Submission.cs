@@ -13,6 +13,7 @@
         public virtual ApplicationUser ApplicationUser { get; set; }
 
         public virtual ICollection<StudentAnswer> StudentAnswers { get; set; } = new List<StudentAnswer>();
+        public virtual ExamResult ExamResult { get; set; }
     }
 
 }

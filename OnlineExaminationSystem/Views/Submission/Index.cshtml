@@ -1,0 +1,56 @@
+﻿@using OnlineExaminationSystem.ViewModels
+@model List<SubmissionViewModel>
+
+<h1>Submissions</h1>
+
+<div class="form-group">
+    <label for="searchInput">Search:</label>
+    <input type="text" class="form-control" id="searchInput" placeholder="Enter search term">
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>User School Number</th>
+            <th>Course Name</th>
+            <th>Group Name</th>
+            <th>Assignment Name</th>
+            <th>Submission Date</th>
+        </tr>
+    </thead>
+    <tbody id="submissionsTableBody">
+        @foreach (var submission in Model)
+        {
+            <tr>
+                <td>@submission.UserSchoolNumber</td>
+                <td>@submission.CourseName</td>
+                <td>@submission.GroupName</td>
+                <td>@submission.AssignmentName</td>
+                <td>@submission.SubmissionDate</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@submission.ExamResultId" class="btn btn-primary">Check the result</a>
+
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+@section scripts {
+    <script>
+        $(function () {
+            $("#searchInput").on("input", function () {
+                var searchTerm = $(this).val().toLowerCase();
+                $("#submissionsTableBody tr").each(function () {
+                    var rowText = $(this).text().toLowerCase();
+                    if (rowText.indexOf(searchTerm) === -1) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
+            });
+        });
+    </script>
+}

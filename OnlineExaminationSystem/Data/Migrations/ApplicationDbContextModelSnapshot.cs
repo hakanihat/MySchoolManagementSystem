@@ -67,21 +67,21 @@ namespace OnlineExaminationSystem.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "26d0d268-2c95-4faf-a1d4-d7c6492df653",
+                            ConcurrencyStamp = "8f96d129-4bd3-4ba3-9725-f0eae04cfdb7",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "2f8fd7f3-f9bd-4c63-b2c6-30ed8fa78ac2",
+                            ConcurrencyStamp = "73fd2464-804f-4d99-9b71-cd7470a50bc4",
                             Name = "student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "716eb9ae-2487-480d-92e0-00086bd236b8",
+                            ConcurrencyStamp = "f824be18-0d21-46b0-9528-405cd0722318",
                             Name = "teacher",
                             NormalizedName = "TEACHER"
                         });
@@ -476,11 +476,17 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.Property<int?>("Score")
                         .HasColumnType("int");
 
+                    b.Property<int>("SubmissionId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("ExamId");
+
+                    b.HasIndex("SubmissionId")
+                        .IsUnique();
 
                     b.ToTable("ExamResults");
                 });
@@ -900,9 +906,17 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("OnlineExaminationSystem.Models.Submission", "Submission")
+                        .WithOne("ExamResult")
+                        .HasForeignKey("OnlineExaminationSystem.Models.ExamResult", "SubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Exam");
+
+                    b.Navigation("Submission");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Message", b =>
@@ -1070,6 +1084,9 @@ namespace OnlineExaminationSystem.Data.Migrations
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Submission", b =>
                 {
+                    b.Navigation("ExamResult")
+                        .IsRequired();
+
                     b.Navigation("StudentAnswers");
                 });
 #pragma warning restore 612, 618

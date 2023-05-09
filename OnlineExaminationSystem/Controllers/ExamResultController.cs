@@ -66,5 +66,76 @@ namespace OnlineExaminationSystem.Controllers
 
             return View(viewModel);
         }
+
+        public async Task<IActionResult> Edit(int submissionId)
+        {
+            var submission = await _context.Submissions
+                .Include(s => s.Assignment)
+                .ThenInclude(a => a.Exam)
+                .Include(s => s.ExamResult)
+                .FirstOrDefaultAsync(s => s.Id == submissionId);
+
+            if (submission == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new ExamResultViewModel
+            {
+                Id = submission.Id,
+                Score = submission.ExamResult?.Score ?? 0,
+                Comment = submission.ExamResult.Comment,
+                TotalPoints = submission.Assignment.Exam.Questions.Sum(q => q.Points),
+                CorrectAnswers = submission.ExamResult.StudentAnswers.Count(a => a.Answer.IsCorrect),
+                ExamName = submission.Assignment.Exam.Name,
+                StudentAnswers = submission.ExamResult.StudentAnswers.Select(a => new TakeExamAnswerViewModel
+                {
+                    Id = a.Id,
+                    QuestionText = a.Answer.Question.Text,
+                    Text = a.Answer.Text,
+                    IsCorrect = a.Answer.IsCorrect,
+                }).ToList()
+            };
+
+            return View(viewModel);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ExamResultViewModel viewModel)
+        {
+            if (id != viewModel.Id)
+            {
+                return NotFound();
+            }
+
+            var submission = await _context.Submissions
+                .Include(s => s.StudentAnswers)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (submission == null)
+            {
+                return NotFound();
+            }
+
+            submission.ExamResult.Score = viewModel.Score;
+            submission.ExamResult.Comment = viewModel.Comment;
+
+            //foreach (var answerViewModel in viewModel.StudentAnswers)
+            //{
+            //    var answer = submission.StudentAnswers.FirstOrDefault(a => a.Id == answerViewModel.Id);
+            //    if (answer != null)
+            //    {
+            //        answer.Points = answerViewModel.Points;
+            //    }
+            //}
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index), "Home");
+        }
+
+   
     }
 }

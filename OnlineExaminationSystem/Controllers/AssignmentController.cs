@@ -62,7 +62,8 @@ namespace OnlineExaminationSystem.Controllers
                     CourseId = e.CourseId
                 }).ToList(),
                 Users = studentsWithProfile.Select(s => new StudentViewModel
-                { Id = s.Id,
+                {
+                    Id = s.Id,
                     SchoolNumber = s.SchoolNumber ?? 0,
                     FullName = $"{s.UserProfile.FullName}",
                     GroupName = $"{s.Group.Name}"
@@ -76,7 +77,7 @@ namespace OnlineExaminationSystem.Controllers
                 }).ToList()
             };
 
-            return View("AssignmentViewModel",viewModel);
+            return View("AssignmentViewModel", viewModel);
         }
 
 
@@ -117,25 +118,27 @@ namespace OnlineExaminationSystem.Controllers
 
             if (ModelState.IsValid)
             {
-                foreach (var userId in viewModel.AssignedToUserId)
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
-                    var assignment = new Assignment
+                    foreach (var userId in viewModel.AssignedToUserId)
                     {
-                        Title = viewModel.Title,
-                        Description = viewModel.Description,
-                        DueDate = viewModel.DueDate,
-                        MaxPoints = viewModel.MaxPoints,
-                        AssignedByUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value,
-                        AssignedToUserId = userId,
-                        ExamId = viewModel.ExamId,
-                        CourseId = viewModel.CourseId
-                    };
+                        var assignment = new Assignment
+                        {
+                            Title = viewModel.Title,
+                            Description = viewModel.Description,
+                            DueDate = viewModel.DueDate,
+                            MaxPoints = viewModel.MaxPoints,
+                            AssignedByUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value,
+                            AssignedToUserId = userId,
+                            ExamId = viewModel.ExamId,
+                            CourseId = viewModel.CourseId
+                        };
 
-                    Console.WriteLine(assignment.AssignedByUserId);
+                        Console.WriteLine(assignment.AssignedByUserId);
+                        _context.Add(assignment);
+                    }
 
-                    _context.Add(assignment);
                 }
-
                 await _context.SaveChangesAsync();
 
                 return View("AssignmentViewModel", viewModel);
@@ -157,7 +160,7 @@ namespace OnlineExaminationSystem.Controllers
                 .Include(a => a.Course)
                 .Include(a => a.Exam)
                 .Where(a => a.AssignedToUserId == currentUser.Id)
-                .ToListAsync();
+                .ToListAsync(); // should add differen query for different  roles
 
             // Map the assignments to a view model
             var viewModel = assignments.Select(a => new StudentAssignmentViewModel
@@ -173,7 +176,7 @@ namespace OnlineExaminationSystem.Controllers
                 ExamName = a.Exam.Name
             }).ToList();
 
-            return View("StudentAssignmentViewModel",viewModel);
+            return View("StudentAssignmentViewModel", viewModel);
         }
 
         public async Task<IActionResult> Details(int id)

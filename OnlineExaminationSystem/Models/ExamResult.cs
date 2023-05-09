@@ -11,6 +11,9 @@
         public string ApplicationUserId { get; set; }
         public virtual ApplicationUser ApplicationUser { get; set; }
 
+        public int SubmissionId { get; set; }
+        public virtual Submission Submission { get; set; }
+
         public virtual ICollection<StudentAnswer> StudentAnswers { get; set; }
     }
 }

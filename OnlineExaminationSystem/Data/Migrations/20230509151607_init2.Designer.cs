@@ -12,8 +12,8 @@ using OnlineExaminationSystem.Data;
 namespace OnlineExaminationSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230507220316_replaceExamResultWithSubmission")]
-    partial class replaceExamResultWithSubmission
+    [Migration("20230509151607_init2")]
+    partial class init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -69,21 +69,21 @@ namespace OnlineExaminationSystem.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "bf8049aa-4ee4-4219-acab-914fa083baa3",
+                            ConcurrencyStamp = "8f96d129-4bd3-4ba3-9725-f0eae04cfdb7",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "14c9ba69-41a7-494b-b0e9-ad2e969d600e",
+                            ConcurrencyStamp = "73fd2464-804f-4d99-9b71-cd7470a50bc4",
                             Name = "student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "e6ef63ca-d4cf-486f-a145-a9efbf09f612",
+                            ConcurrencyStamp = "f824be18-0d21-46b0-9528-405cd0722318",
                             Name = "teacher",
                             NormalizedName = "TEACHER"
                         });
@@ -470,13 +470,15 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Comment")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ExamId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Score")
+                    b.Property<int?>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubmissionId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -484,6 +486,9 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("ExamId");
+
+                    b.HasIndex("SubmissionId")
+                        .IsUnique();
 
                     b.ToTable("ExamResults");
                 });
@@ -903,9 +908,17 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("OnlineExaminationSystem.Models.Submission", "Submission")
+                        .WithOne("ExamResult")
+                        .HasForeignKey("OnlineExaminationSystem.Models.ExamResult", "SubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Exam");
+
+                    b.Navigation("Submission");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Message", b =>
@@ -1073,6 +1086,9 @@ namespace OnlineExaminationSystem.Data.Migrations
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Submission", b =>
                 {
+                    b.Navigation("ExamResult")
+                        .IsRequired();
+
                     b.Navigation("StudentAnswers");
                 });
 #pragma warning restore 612, 618

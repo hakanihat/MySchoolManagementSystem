@@ -311,7 +311,8 @@ namespace OnlineExaminationSystem.Controllers
                 };
                 submission.StudentAnswers.Add(studentAnswer);
             }
-
+            var examResult = await CreateExamResultAsync(model.ExamId, userId, answers, submission);
+            submission.ExamResult = examResult;
             try
             {
                 // Save the Submission object to the database
@@ -324,9 +325,6 @@ namespace OnlineExaminationSystem.Controllers
                 Console.WriteLine(ex.Message);
                 throw;
             }
-
-            var examResult = await CreateExamResultAsync(model.ExamId, userId, answers, submission);
-
 
             return RedirectToAction("Detail", "ExamResult", new { id = examResult.Id });
         }
@@ -375,7 +373,8 @@ namespace OnlineExaminationSystem.Controllers
                 Score = score,
                 Comment = comment , // fix it later
                 ApplicationUserId = userId,
-                StudentAnswers = new List<StudentAnswer>()
+                StudentAnswers = new List<StudentAnswer>(),
+                Submission = sub
             };
 
             // Create a StudentAnswer object for each selected answer and add them to the ExamResult
