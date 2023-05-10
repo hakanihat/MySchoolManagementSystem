@@ -1,6 +1,12 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model ExamResultViewModel
 
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exam Result</title>
+    <link rel="stylesheet" href="~/css/examResults.css" />
+</head>
 <h1>Exam Result: @Model.ExamName</h1>
 
 <p><strong>Score:</strong> @Model.Score / @Model.TotalPoints</p>
@@ -9,7 +15,28 @@
 
 <h2>Your Answers</h2>
 
+<h3>Short Answer / Essay Questions</h3>
 <table>
+    <thead>
+        <tr>
+            <th>Question</th>
+            <th>Your Answer</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var answer in Model.ShortAnsEssayAnswers)
+        {
+            <tr>
+                <td>@answer.QuestionText</td>
+                <td>@answer.AnswerText</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Multiple Choice / True or False Questions</h3>
+<table >
+
     <thead>
         <tr>
             <th>Question</th>
@@ -18,11 +45,20 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var answer in Model.StudentAnswers)
+        @foreach (var answer in Model.SMTFAnswers)
         {
             <tr>
                 <td>@answer.QuestionText</td>
-                <td>@answer.Text</td>
+                <td>
+                    @if (answer.AnswerId.HasValue)
+                    {
+                        @answer.AnswerText
+                    }
+                    else
+                    {
+                        <em>No answer provided</em>
+                    }
+                </td>
                 <td>@(answer.IsCorrect ? "Correct" : "Incorrect")</td>
             </tr>
         }

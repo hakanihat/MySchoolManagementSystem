@@ -8,6 +8,8 @@
         public double TotalPoints { get; set; }
         public int CorrectAnswers { get; set; }
         public string ExamName { get; set; }
-        public List<TakeExamAnswerViewModel> StudentAnswers { get; set; }
+        public List<ShortAnsEssayViewModel> ShortAnsEssayAnswers { get; set; }
+        public List<SMTFAnswersViewModel> SMTFAnswers { get; set; }
     }
+
 }
