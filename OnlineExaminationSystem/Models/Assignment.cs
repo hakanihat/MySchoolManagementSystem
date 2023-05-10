@@ -6,7 +6,7 @@
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime DueDate { get; set; }
-        public int MaxPoints { get; set; }
+        public double MaxPoints { get; set; }
 
         public string AssignedByUserId { get; set; }
         public virtual ApplicationUser AssignedBy { get; set; }

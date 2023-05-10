@@ -12,8 +12,8 @@ using OnlineExaminationSystem.Data;
 namespace OnlineExaminationSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230509151607_init2")]
-    partial class init2
+    [Migration("20230510083013_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -69,21 +69,21 @@ namespace OnlineExaminationSystem.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "8f96d129-4bd3-4ba3-9725-f0eae04cfdb7",
+                            ConcurrencyStamp = "03290cf8-4b13-4bba-b7b3-1e0a7fac8a40",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "73fd2464-804f-4d99-9b71-cd7470a50bc4",
+                            ConcurrencyStamp = "613ec3ea-db57-4333-93cb-d19d0a50355e",
                             Name = "student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "f824be18-0d21-46b0-9528-405cd0722318",
+                            ConcurrencyStamp = "d92b07a3-6e6c-49d6-875e-bfcc574f0723",
                             Name = "teacher",
                             NormalizedName = "TEACHER"
                         });
@@ -612,20 +612,28 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("AnswerId")
+                    b.Property<int?>("AnswerId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ExamResultId")
                         .HasColumnType("int");
 
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
                     b.Property<int>("SubmissionId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AnswerId");
 
                     b.HasIndex("ExamResultId");
+
+                    b.HasIndex("QuestionId");
 
                     b.HasIndex("SubmissionId");
 
@@ -974,13 +982,17 @@ namespace OnlineExaminationSystem.Data.Migrations
                 {
                     b.HasOne("OnlineExaminationSystem.Models.Answer", "Answer")
                         .WithMany()
-                        .HasForeignKey("AnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AnswerId");
 
                     b.HasOne("OnlineExaminationSystem.Models.ExamResult", null)
                         .WithMany("StudentAnswers")
                         .HasForeignKey("ExamResultId");
+
+                    b.HasOne("OnlineExaminationSystem.Models.Question", "Question")
+                        .WithMany("StudentAnswers")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("OnlineExaminationSystem.Models.Submission", "Submission")
                         .WithMany("StudentAnswers")
@@ -989,6 +1001,8 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Answer");
+
+                    b.Navigation("Question");
 
                     b.Navigation("Submission");
                 });
@@ -1082,6 +1096,8 @@ namespace OnlineExaminationSystem.Data.Migrations
             modelBuilder.Entity("OnlineExaminationSystem.Models.Question", b =>
                 {
                     b.Navigation("Answers");
+
+                    b.Navigation("StudentAnswers");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Submission", b =>

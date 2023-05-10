@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OnlineExaminationSystem.Data.Migrations
 {
-    public partial class init2 : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -413,7 +413,9 @@ namespace OnlineExaminationSystem.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AnswerId = table.Column<int>(type: "int", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AnswerId = table.Column<int>(type: "int", nullable: true),
+                    QuestionId = table.Column<int>(type: "int", nullable: false),
                     SubmissionId = table.Column<int>(type: "int", nullable: false),
                     ExamResultId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -424,13 +426,18 @@ namespace OnlineExaminationSystem.Data.Migrations
                         name: "FK_StudentAnswers_Answers_AnswerId",
                         column: x => x.AnswerId,
                         principalTable: "Answers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_StudentAnswers_ExamResults_ExamResultId",
                         column: x => x.ExamResultId,
                         principalTable: "ExamResults",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_StudentAnswers_Questions_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Questions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_StudentAnswers_Submissions_SubmissionId",
                         column: x => x.SubmissionId,
@@ -442,17 +449,17 @@ namespace OnlineExaminationSystem.Data.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "1", "8f96d129-4bd3-4ba3-9725-f0eae04cfdb7", "admin", "ADMIN" });
+                values: new object[] { "1", "03290cf8-4b13-4bba-b7b3-1e0a7fac8a40", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "2", "73fd2464-804f-4d99-9b71-cd7470a50bc4", "student", "STUDENT" });
+                values: new object[] { "2", "613ec3ea-db57-4333-93cb-d19d0a50355e", "student", "STUDENT" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "3", "f824be18-0d21-46b0-9528-405cd0722318", "teacher", "TEACHER" });
+                values: new object[] { "3", "d92b07a3-6e6c-49d6-875e-bfcc574f0723", "teacher", "TEACHER" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_GroupId",
@@ -564,6 +571,11 @@ namespace OnlineExaminationSystem.Data.Migrations
                 name: "IX_StudentAnswers_ExamResultId",
                 table: "StudentAnswers",
                 column: "ExamResultId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentAnswers_QuestionId",
+                table: "StudentAnswers",
+                column: "QuestionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StudentAnswers_SubmissionId",

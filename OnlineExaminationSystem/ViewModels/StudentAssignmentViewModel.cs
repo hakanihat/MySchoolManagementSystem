@@ -9,7 +9,7 @@ namespace OnlineExaminationSystem.ViewModels
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime DueDate { get; set; }
-        public int MaxPoints { get; set; }
+        public double MaxPoints { get; set; }
         public int CourseId { get; set; }
         [Display(Name = "Course Name")]
         public string CourseName { get; set; }

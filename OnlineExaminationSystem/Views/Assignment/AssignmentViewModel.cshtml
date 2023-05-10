@@ -36,7 +36,7 @@
 
     <div class="form-group">
         <label asp-for="DueDate"></label>
-        <input asp-for="DueDate" class="form-control" />
+        <input id="due-date-input" asp-for="DueDate" class="form-control" />
         <span asp-validation-for="DueDate" class="text-danger"></span>
     </div>
 
@@ -137,5 +137,14 @@
             }
         });
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script >
+        flatpickr("#due-date-input", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            defaultDate: new Date()
+        });</script>
 
 }

@@ -28,7 +28,6 @@ namespace OnlineExaminationSystem.Controllers
             var userId = _userManager.GetUserId(User);
 
             // Find the exam result with the specified ID that belongs to the current user
-            // Find the exam result with the specified ID that belongs to the current user
             var examResult = await _context.ExamResults
                 .Include(er => er.Exam)
                     .ThenInclude(e => e.Questions)
@@ -37,15 +36,36 @@ namespace OnlineExaminationSystem.Controllers
                         .ThenInclude(a => a.Question)
                 .FirstOrDefaultAsync(er => er.Id == id && er.ApplicationUserId == userId);
 
-
             if (examResult == null)
             {
                 return NotFound();
             }
 
+            // Create a dictionary to hold the student's answers
+            var studentAnswers = new Dictionary<int, string>();
+
+            // Loop through the student's answers and add them to the dictionary
+            foreach (var studentAnswer in examResult.StudentAnswers)
+            {
+                if (studentAnswer.AnswerId.HasValue)
+                {
+                    var answer = await _context.Answers.FindAsync(studentAnswer.AnswerId.Value);
+
+                    if (answer != null)
+                    {
+                        studentAnswers[answer.QuestionId] = answer.Text;
+                    }
+                }
+                else
+                {
+                    studentAnswers[studentAnswer.QuestionId] = studentAnswer.Text;
+                }
+            }
+
             // Calculate the total points and number of correct answers
-            int totalPoints = examResult.Exam.Questions.Sum(q => q.Points);
-            int correctAnswers = examResult.StudentAnswers.Count(sa => sa.Answer.IsCorrect);
+            double totalPoints = examResult.Exam.Questions.Sum(q => q.Points);
+            int correctAnswers = examResult.StudentAnswers.Count(sa => sa.Answer != null && sa.Answer.IsCorrect);
+
 
             // Create the view model
             var viewModel = new ExamResultViewModel
@@ -56,16 +76,17 @@ namespace OnlineExaminationSystem.Controllers
                 TotalPoints = totalPoints,
                 CorrectAnswers = correctAnswers,
                 ExamName = examResult.Exam.Name,
-                StudentAnswers = examResult.StudentAnswers.Select(sa => new TakeExamAnswerViewModel
+                StudentAnswers = examResult.Exam.Questions.Select(q => new TakeExamAnswerViewModel
                 {
-                    Text = sa.Answer.Text,
-                    IsCorrect = sa.Answer.IsCorrect,
-                    QuestionText = sa.Answer.Question.Text
+                    Text = studentAnswers.ContainsKey(q.Id) ? studentAnswers[q.Id] : "",
+                    IsCorrect = q.Answers.Any(a => a.IsCorrect),
+                    QuestionText = q.Text
                 }).ToList()
             };
 
             return View(viewModel);
         }
+
 
         public async Task<IActionResult> Edit(int submissionId)
         {

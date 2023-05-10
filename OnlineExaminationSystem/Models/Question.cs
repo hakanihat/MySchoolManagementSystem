@@ -14,14 +14,15 @@ namespace OnlineExaminationSystem.Models
     {
         public int Id { get; set; }
         public string Text { get; set; }
-        public int Points { get; set; }
+        public double Points { get; set; }
         public QuestionType Type { get; set; }
 
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
 
-        public ICollection<Answer> Answers { get; set; }
-        public ICollection<Exam> Exams { get; set; }
+        public virtual ICollection<Answer> Answers { get; set; }
+        public virtual ICollection<StudentAnswer> StudentAnswers { get; set; }
+        public virtual ICollection<Exam> Exams { get; set; }
         public int CourseId { get; set; }
         public Course Course { get; set; }
     

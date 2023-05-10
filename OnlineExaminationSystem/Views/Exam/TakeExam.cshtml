@@ -10,6 +10,7 @@
 
         @* Hidden JSON object to store selected answers *@
         <input type="hidden" id="answersJson" name="answersJson" value="" />
+        <input type="hidden" id="textAnswersJson" name="textAnswersJson" value="" />
 
         @foreach (var question in Model.Questions)
         {
@@ -43,13 +44,15 @@
                             }
                         </div>
                     }
-                    else if (question.QuestionType == QuestionType.Essay)
+                    else if (question.QuestionType == QuestionType.Essay || question.QuestionType == QuestionType.ShortAnswer)
                     {
-                        <textarea name="questions[@question.Id].answerId" style="width: 100%;"></textarea>
+                        <textarea name="@question.Id" style="width: 100%;"></textarea>
                     }
+
                 </div>
             </div>
         }
+
 
         <div class="text-center">
             <button type="button" id="submitExam">Submit Exam</button>
@@ -65,6 +68,7 @@
             $("#submitExam").click(function () {
                 var formData = $("#examForm").serializeArray();
                 var selectedAnswerIds = [];
+                var textAnswers = {};
 
                 for (var i = 0; i < formData.length; i++) {
                     var key = formData[i].name;
@@ -74,20 +78,27 @@
                         selectedAnswerIds.push(value);
                     } else if (key.endsWith("selectedAnswerIds")) {
                         selectedAnswerIds = selectedAnswerIds.concat(value.split(","));
+                    } else if (key.match(/^\d+$/)) {
+                        textAnswers[key] = value;
                     }
                 }
 
                 var jsonData = JSON.stringify(selectedAnswerIds);
                 console.log(jsonData);
 
-                // Set the value of the hidden input field to the JSON data
+                // Set the value of the hidden input fields to the JSON data
                 $("#answersJson").val(jsonData);
+                $("#textAnswersJson").val(JSON.stringify(textAnswers));
 
                 // Submit the form
                 document.getElementById("examForm").submit();
             });
         });
     </script>
+
+
+
+
 }
 
     
