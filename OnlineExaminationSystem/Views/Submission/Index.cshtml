@@ -28,7 +28,7 @@
                 <td>@submission.AssignmentName</td>
                 <td>@submission.SubmissionDate</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@submission.ExamResultId" class="btn btn-primary">Check the result</a>
+                    <a asp-action="Edit" asp-controller="ExamResult" asp-route-submissionId="@submission.SubmissionId" class="btn btn-primary">Check the result</a>
 
                 </td>
             </tr>

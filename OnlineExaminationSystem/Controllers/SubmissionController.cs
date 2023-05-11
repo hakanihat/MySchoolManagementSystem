@@ -31,6 +31,7 @@ public class SubmissionController : Controller
         {
             var model = new SubmissionViewModel
             {
+                SubmissionId = submission.Id,
                 UserSchoolNumber = submission.ApplicationUser.SchoolNumber ?? 0,
                 CourseName = submission.Assignment.Course.Name,
                 GroupName = submission.ApplicationUser.Group.Name,

@@ -42,7 +42,7 @@ namespace OnlineExaminationSystem.Controllers
             }
 
             // Create a dictionary to hold the student's answers
-            var studentAnswers = new Dictionary<int, string>();
+            var studentAnswers = new Dictionary<int, List<string>>();
 
             // Loop through the student's answers and add them to the dictionary
             foreach (var studentAnswer in examResult.StudentAnswers)
@@ -53,20 +53,32 @@ namespace OnlineExaminationSystem.Controllers
 
                     if (answer != null)
                     {
-                        studentAnswers[answer.QuestionId] = answer.Text;
+                        if (studentAnswers.ContainsKey(answer.QuestionId))
+                        {
+                            studentAnswers[answer.QuestionId].Add(answer.Text);
+                        }
+                        else
+                        {
+                            studentAnswers.Add(answer.QuestionId, new List<string> { answer.Text });
+                        }
                     }
                 }
                 else
                 {
-                    studentAnswers[studentAnswer.QuestionId] = studentAnswer.Text;
+                    if (studentAnswers.ContainsKey(studentAnswer.QuestionId))
+                    {
+                        studentAnswers[studentAnswer.QuestionId].Add(studentAnswer.Text);
+                    }
+                    else
+                    {
+                        studentAnswers.Add(studentAnswer.QuestionId, new List<string> { studentAnswer.Text });
+                    }
                 }
             }
 
             // Calculate the total points and number of correct answers
             double totalPoints = examResult.Exam.Questions.Sum(q => q.Points);
-            int correctAnswers = examResult.StudentAnswers.Count(sa => sa.Answer != null && sa.Answer.IsCorrect);
-
-
+           
             // Create the view model
             var viewModel = new ExamResultViewModel
             {
@@ -74,24 +86,24 @@ namespace OnlineExaminationSystem.Controllers
                 Score = examResult?.Score ?? 0,
                 Comment = examResult?.Comment ?? "Final result",
                 TotalPoints = totalPoints,
-                CorrectAnswers = correctAnswers,
                 ExamName = examResult.Exam.Name,
                 ShortAnsEssayAnswers = examResult.Exam.Questions.Where(q => q.Type == QuestionType.ShortAnswer || q.Type == QuestionType.Essay)
                     .Select(q => new ShortAnsEssayViewModel
                     {
                         QuestionId = q.Id,
                         QuestionText = q.Text,
-                        AnswerText = studentAnswers.ContainsKey(q.Id) ? studentAnswers[q.Id] : ""
+                        AnswerText = studentAnswers.ContainsKey(q.Id) ? studentAnswers[q.Id]?.FirstOrDefault() ?? "" : ""
                     }).ToList(),
                 SMTFAnswers = examResult.Exam.Questions.Where(q => q.Type != QuestionType.ShortAnswer && q.Type != QuestionType.Essay)
-                    .Select(q => new SMTFAnswersViewModel
-                    {
-                        QuestionId = q.Id,
-                        QuestionText = q.Text,
-                        AnswerId = examResult.StudentAnswers.FirstOrDefault(sa => sa.Answer.QuestionId == q.Id)?.AnswerId,
-                        AnswerText = studentAnswers.ContainsKey(q.Id) ? studentAnswers[q.Id] : "",
-                        IsCorrect = examResult.StudentAnswers.Any(sa => sa.Answer.QuestionId == q.Id)
-                    }).ToList()
+                .Select(q => new SMTFAnswersViewModel
+                {
+                    QuestionId = q.Id,
+                    QuestionText = q.Text,
+                    AnswerId = examResult.StudentAnswers.FirstOrDefault(sa => sa.Answer.QuestionId == q.Id)?.AnswerId,
+                    CorrectAnswerText = q.Answers.Where(a => a.IsCorrect).Select(a => a.Text).ToList(),
+                    AnswerText = studentAnswers.ContainsKey(q.Id) ? studentAnswers[q.Id].ToList() : new List<string>(),
+                    IsCorrect = examResult.StudentAnswers.Any(sa => sa.Answer.QuestionId == q.Id)
+                }).ToList()
             };
 
             return View(viewModel);
@@ -117,7 +129,7 @@ namespace OnlineExaminationSystem.Controllers
             }
 
             // Create a dictionary to hold the student's answers
-            var studentAnswers = new Dictionary<int, string>();
+            var studentAnswers = new Dictionary<int, List<string>>();
 
             // Loop through the student's answers and add them to the dictionary
             foreach (var studentAnswer in submission.ExamResult.StudentAnswers)
@@ -128,14 +140,29 @@ namespace OnlineExaminationSystem.Controllers
 
                     if (answer != null)
                     {
-                        studentAnswers[answer.QuestionId] = answer.Text;
+                        if (studentAnswers.ContainsKey(answer.QuestionId))
+                        {
+                            studentAnswers[answer.QuestionId].Add(answer.Text);
+                        }
+                        else
+                        {
+                            studentAnswers.Add(answer.QuestionId, new List<string> { answer.Text });
+                        }
                     }
                 }
                 else
                 {
-                    studentAnswers[studentAnswer.QuestionId] = studentAnswer.Text;
+                    if (studentAnswers.ContainsKey(studentAnswer.QuestionId))
+                    {
+                        studentAnswers[studentAnswer.QuestionId].Add(studentAnswer.Text);
+                    }
+                    else
+                    {
+                        studentAnswers.Add(studentAnswer.QuestionId, new List<string> { studentAnswer.Text });
+                    }
                 }
             }
+
 
             double totalPoints = submission.ExamResult.Exam.Questions.Sum(q => q.Points);
             int correctAnswers = submission.ExamResult.StudentAnswers.Count(sa => sa.Answer != null && sa.Answer.IsCorrect);
@@ -146,28 +173,27 @@ namespace OnlineExaminationSystem.Controllers
                 Score = submission.ExamResult?.Score ?? 0,
                 Comment = submission.ExamResult?.Comment ?? "Final result",
                 TotalPoints = totalPoints,
-                CorrectAnswers = correctAnswers,
                 ExamName = submission.ExamResult.Exam.Name,
                 ShortAnsEssayAnswers = submission.ExamResult.Exam.Questions.Where(q => q.Type == QuestionType.ShortAnswer || q.Type == QuestionType.Essay)
                    .Select(q => new ShortAnsEssayViewModel
                    {
                        QuestionId = q.Id,
                        QuestionText = q.Text,
-                       AnswerText = studentAnswers.ContainsKey(q.Id) ? studentAnswers[q.Id] : ""
+                       AnswerText = studentAnswers.ContainsKey(q.Id) ? studentAnswers[q.Id]?.FirstOrDefault() ?? "" : ""
                    }).ToList(),
                 SMTFAnswers = submission.ExamResult.Exam.Questions.Where(q => q.Type != QuestionType.ShortAnswer && q.Type != QuestionType.Essay)
-                   .Select(q => new SMTFAnswersViewModel
-                   {
-                       QuestionId = q.Id,
-                       QuestionText = q.Text,
-                       AnswerId = submission.ExamResult.StudentAnswers.FirstOrDefault(sa => sa.Answer.QuestionId == q.Id)?.AnswerId,
-                       AnswerText = studentAnswers.ContainsKey(q.Id) ? studentAnswers[q.Id] : "",
-                       IsCorrect = submission.ExamResult.StudentAnswers.Any(sa => sa.Answer.QuestionId == q.Id && sa.Answer.IsCorrect)
-                   }).ToList()
+                        .Select(q => new SMTFAnswersViewModel
+                        {
+                            QuestionId = q.Id,
+                            QuestionText = q.Text,
+                            AnswerId = submission.ExamResult.StudentAnswers.FirstOrDefault(sa => sa.Answer.QuestionId == q.Id)?.AnswerId,
+                            CorrectAnswerText = q.Answers.Where(a => a.IsCorrect).Select(a => a.Text).ToList(),
+                            AnswerText = studentAnswers.ContainsKey(q.Id) ? studentAnswers[q.Id].ToList() : new List<string>(),
+                            IsCorrect = submission.ExamResult.StudentAnswers.Any(sa => sa.Answer.QuestionId == q.Id)
+                        }).ToList()
             };
             return View(viewModel);
         }
-
 
 
         [HttpPost]
@@ -179,32 +205,30 @@ namespace OnlineExaminationSystem.Controllers
                 return NotFound();
             }
 
-            var submission = await _context.Submissions
-                .Include(s => s.StudentAnswers)
-                .FirstOrDefaultAsync(s => s.Id == id);
-
-            if (submission == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                var examResult = await _context.ExamResults.FindAsync(id);
+
+                if (examResult == null)
+                {
+                    return NotFound();
+                }
+
+                examResult.Score = viewModel.Score;
+                examResult.Comment = viewModel.Comment;
+
+                _context.Update(examResult);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Home");
+
             }
 
-            submission.ExamResult.Score = viewModel.Score;
-            submission.ExamResult.Comment = viewModel.Comment;
-
-            //foreach (var answerViewModel in viewModel.StudentAnswers)
-            //{
-            //    var answer = submission.StudentAnswers.FirstOrDefault(a => a.Id == answerViewModel.Id);
-            //    if (answer != null)
-            //    {
-            //        answer.Points = answerViewModel.Points;
-            //    }
-            //}
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index), "Home");
+            return View(viewModel);
         }
 
-   
+
+
+
     }
 }

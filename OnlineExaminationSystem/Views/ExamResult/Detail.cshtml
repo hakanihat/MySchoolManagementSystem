@@ -10,7 +10,6 @@
 <h1>Exam Result: @Model.ExamName</h1>
 
 <p><strong>Score:</strong> @Model.Score / @Model.TotalPoints</p>
-<p><strong>Number of Correct Answers:</strong> @Model.CorrectAnswers</p>
 <p><strong>Comment:</strong> @Model.Comment</p>
 
 <h2>Your Answers</h2>
@@ -52,14 +51,30 @@
                 <td>
                     @if (answer.AnswerId.HasValue)
                     {
-                        @answer.AnswerText
+                        @foreach (var choice in answer.AnswerText)
+                        {
+                            <div>@choice</div>
+                        }
                     }
                     else
                     {
                         <em>No answer provided</em>
                     }
                 </td>
-                <td>@(answer.IsCorrect ? "Correct" : "Incorrect")</td>
+                <td>
+                    @if (answer.CorrectAnswerText.Any())
+                    {
+                        foreach (var correctAnswer in answer.CorrectAnswerText)
+                        {
+                            <div>@correctAnswer</div>
+                        }
+                    }
+                    else
+                    {
+                        <em>No correct answer</em>
+                    }
+                </td>
+
             </tr>
         }
     </tbody>

@@ -4,6 +4,7 @@ namespace OnlineExaminationSystem.ViewModels
 {
     public class SubmissionViewModel
     {
+        public int SubmissionId { get; set; }
         public long UserSchoolNumber { get; set; }
         public string CourseName { get; set; }
         public string GroupName { get; set; }

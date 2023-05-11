@@ -380,13 +380,14 @@ namespace OnlineExaminationSystem.Controllers
 
                 var correctAnswers = question.Answers.Where(a => a.IsCorrect).Select(a => a.Id).ToList();
                 var selectedCorrectAnswers = answerIds.Intersect(correctAnswers).ToList();
-                var incorrectAnswerIds = answerIds.Except(correctAnswers).ToList();
+                var incorrectAnswerIds = question.Answers.Where(a => !a.IsCorrect).Select(a => a.Id).ToList();
+                var selectedIncorrectAnswers = answerIds.Intersect(incorrectAnswerIds).ToList();
 
                 if (question.Type == QuestionType.MultipleChoice)
                 {
-                    if (incorrectAnswerIds.Any())
+                    if (selectedIncorrectAnswers.Any())
                     {
-                        score += question.Points * (selectedCorrectAnswers.Count / (double)correctAnswers.Count);
+                       continue;
                     }
                     else
                     {
