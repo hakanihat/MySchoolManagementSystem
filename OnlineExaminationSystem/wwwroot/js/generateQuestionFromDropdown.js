@@ -73,7 +73,9 @@ $(function () {
     });
 
 
-    $('#generate-questions-button').click(function () {
+    $('#generate-questions-button').click(function (event) {
+        event.preventDefault();
+        console.log('Button clicked');
         var numQuestions = parseInt($('#num-questions-input').val());
         if (isNaN(numQuestions) || numQuestions <= 0) {
             showMessage('Please enter a valid number of questions.', 'error');

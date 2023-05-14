@@ -5,6 +5,9 @@
     <h1>@Model.ExamName</h1>
 
     <form method="post" id="examForm" asp-route-answersJson="answersJson">
+        <div class="timer">
+            <span id="hours">0@((int)Math.Floor((double)Model.ExamDuration / 60))</span>:<span id="minutes">0@((int)Math.Floor((double)Model.ExamDuration % 60))</span>:<span id="seconds">00</span>
+        </div>
         <input type="hidden" name="examId" value="@Model.ExamId" />
         <input type="hidden" name="assignmentId" value="@Model.AssignmentId" />
 
@@ -30,6 +33,7 @@
                                     <label style="margin-bottom: 0;">@answer.Text</label>
                                 </div>
                             }
+                            <input type="radio" name="questions[@question.Id].selectedAnswerId" value="-1" checked style="display:none" />
                         </div>
                     }
                     else if (question.QuestionType == QuestionType.MultipleChoice)
@@ -38,11 +42,12 @@
                             @foreach (var answer in question.Answers)
                             {
                                 <div style="display: flex; align-items: center;">
-                                    <input type="checkbox" name="questions[@question.Id].selectedAnswerIds" value="@answer.Id" style="margin-right: 10px;" />
+                                    <input type="checkbox" name="questions[@question.Id].selectedAnswerIds" value="@answer.Id" style="margin-right: 10px;"  />
                                     <label style="margin-bottom: 0;">@answer.Text</label>
                                 </div>
                             }
-                        </div>
+@*                            <input type="checkbox" id="unansweredCheckbox-@question.Id" name="questions[@question.Id].selectedAnswerId" value="unanswered" checked  />
+*@                        </div>
                     }
                     else if (question.QuestionType == QuestionType.Essay || question.QuestionType == QuestionType.ShortAnswer)
                     {
@@ -54,6 +59,7 @@
         }
 
 
+
         <div class="text-center">
             <button type="button" id="submitExam">Submit Exam</button>
         </div>
@@ -63,38 +69,81 @@
 
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            $("#submitExam").click(function () {
-                var formData = $("#examForm").serializeArray();
-                var selectedAnswerIds = [];
-                var textAnswers = {};
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@*    <script>
+        var examDuration = @Model.ExamDuration * 60; // Convert to seconds
 
-                for (var i = 0; i < formData.length; i++) {
-                    var key = formData[i].name;
-                    var value = formData[i].value;
+        var x = setInterval(function () {
+            var hours = Math.floor(examDuration / 3600);
+            var minutes = Math.floor((examDuration % 3600) / 60);
+            var seconds = Math.floor(examDuration % 60);
 
-                    if (key.endsWith("selectedAnswerId")) {
-                        selectedAnswerIds.push(value);
-                    } else if (key.endsWith("selectedAnswerIds")) {
-                        selectedAnswerIds = selectedAnswerIds.concat(value.split(","));
-                    } else if (key.match(/^\d+$/)) {
-                        textAnswers[key] = value;
-                    }
-                }
+            // Update the timer element with the remaining time
+            document.getElementById("hours").innerHTML = hours < 10 ? "0" + hours : hours;
+            document.getElementById("minutes").innerHTML = minutes < 10 ? "0" + minutes : minutes;
+            document.getElementById("seconds").innerHTML = seconds < 10 ? "0" + seconds : seconds;
 
-                var jsonData = JSON.stringify(selectedAnswerIds);
-                console.log(jsonData);
+            examDuration--;
 
-                // Set the value of the hidden input fields to the JSON data
-                $("#answersJson").val(jsonData);
-                $("#textAnswersJson").val(JSON.stringify(textAnswers));
-
-                // Submit the form
+            // If the countdown is finished, display "Time's Up" and submit the exam
+            if (examDuration < 0) {
+                clearInterval(x);
+                document.getElementById("hours").innerHTML = "00";
+                document.getElementById("minutes").innerHTML = "00";
+                document.getElementById("seconds").innerHTML = "00";
                 document.getElementById("examForm").submit();
-            });
-        });
-    </script>
+            }
+        }, 1000);
+    </script>*@
+
+
+
+<script>
+$(document).ready(function () {
+  $("#submitExam").click(function () {
+    var formData = $("#examForm").serializeArray();
+    var selectedAnswers = {};
+    var textAnswers = {};
+
+    for (var i = 0; i < formData.length; i++) {
+      var key = formData[i].name;
+      var value = formData[i].value;
+
+      if (key.endsWith("selectedAnswerId")) {
+        var questionId = key.replace("questions[", "").replace("].selectedAnswerId", "");
+        if (!selectedAnswers[questionId]) {
+          selectedAnswers[questionId] = [value];
+        } else {
+          selectedAnswers[questionId].push(value);
+        }
+      } else if (key.endsWith("selectedAnswerIds")) {
+        var questionId = key.replace("questions[", "").replace("].selectedAnswerIds", "");
+        var answerIds = value.split(",");
+        if (!selectedAnswers[questionId]) {
+          selectedAnswers[questionId] = answerIds;
+        } else {
+          selectedAnswers[questionId] = selectedAnswers[questionId].concat(answerIds);
+        }
+      } else if (key.match(/^\d+$/)) {
+        textAnswers[key] = value;
+      }
+    }
+
+    var jsonData = JSON.stringify(selectedAnswers);
+    console.log(jsonData);
+
+    // Set the value of the hidden input fields to the JSON data
+    $("#answersJson").val(jsonData);
+    $("#textAnswersJson").val(JSON.stringify(textAnswers));
+
+    // Submit the form
+    document.getElementById("examForm").submit();
+  });
+});
+</script>
+
+
+
 
 
 

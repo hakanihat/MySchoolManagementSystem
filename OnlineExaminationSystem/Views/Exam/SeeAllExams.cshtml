@@ -20,8 +20,7 @@
                 <td>@exam.Name</td>
                 <td>@exam.Course.Name</td>
                 <td>@exam.Description</td>
-                <td>@exam.StartTime</td>
-                <td>@exam.EndTime</td>
+                <td>@exam.ExamDuration</td>
                 <td>
                     <a asp-action="Edit" asp-controller="Exam" asp-route-id="@exam.Id" class="btn btn-primary">Edit</a>
                     <form asp-action="Delete" asp-route-id="@exam.Id" method="post">

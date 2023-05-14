@@ -57,8 +57,7 @@ namespace OnlineExaminationSystem.Controllers
                     Id = e.Id,
                     Name = e.Name,
                     Description = e.Description,
-                    StartTime = e.StartTime,
-                    EndTime = e.EndTime,
+                    ExamDuration = e.ExamDuration,
                     CourseId = e.CourseId
                 }).ToList(),
                 Users = studentsWithProfile.Select(s => new StudentViewModel
@@ -96,8 +95,7 @@ namespace OnlineExaminationSystem.Controllers
                 Id = e.Id,
                 Name = e.Name,
                 Description = e.Description,
-                StartTime = e.StartTime,
-                EndTime = e.EndTime,
+                ExamDuration = e.ExamDuration,
                 CourseId = e?.CourseId ?? 0
             }).ToList();
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineExaminationSystem.Data;
 
@@ -11,9 +12,10 @@ using OnlineExaminationSystem.Data;
 namespace OnlineExaminationSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230513164747_changeDateToTimeInExam")]
+    partial class changeDateToTimeInExam
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +36,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasIndex("TeachersId");
 
-                    b.ToTable("ApplicationUserCourse", (string)null);
+                    b.ToTable("ApplicationUserCourse");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -67,21 +69,21 @@ namespace OnlineExaminationSystem.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "3439b822-6c08-45e1-9371-2475a0dbc754",
+                            ConcurrencyStamp = "b7921fab-e68b-424c-a5cd-8ac2168a24e6",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "8a4eccfc-5daa-4574-b33c-1c9371f0dd6b",
+                            ConcurrencyStamp = "82175e79-4122-4aed-b5de-0650e98913fc",
                             Name = "student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "8a71bf51-5e7e-4200-bd31-8424098f594b",
+                            ConcurrencyStamp = "b8d8c2c0-c2de-44a5-b878-e6cb0c9735bb",
                             Name = "teacher",
                             NormalizedName = "TEACHER"
                         });
@@ -219,7 +221,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers", (string)null);
+                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.ApplicationUser", b =>
@@ -341,7 +343,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasIndex("ExamId");
 
-                    b.ToTable("Assignments", (string)null);
+                    b.ToTable("Assignments");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.ChatRoom", b =>
@@ -354,7 +356,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ChatRooms", (string)null);
+                    b.ToTable("ChatRooms");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.ChatRoomUser", b =>
@@ -378,7 +380,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ChatRoomUsers", (string)null);
+                    b.ToTable("ChatRoomUsers");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Course", b =>
@@ -399,7 +401,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Courses", (string)null);
+                    b.ToTable("Courses");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Exam", b =>
@@ -421,8 +423,8 @@ namespace OnlineExaminationSystem.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ExamDuration")
-                        .HasColumnType("int");
+                    b.Property<TimeSpan>("ExamTime")
+                        .HasColumnType("time");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -434,7 +436,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Exams", (string)null);
+                    b.ToTable("Exams");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.ExamQuestion", b =>
@@ -449,7 +451,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("ExamQuestions", (string)null);
+                    b.ToTable("ExamQuestions");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.ExamResult", b =>
@@ -485,7 +487,7 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.HasIndex("SubmissionId")
                         .IsUnique();
 
-                    b.ToTable("ExamResults", (string)null);
+                    b.ToTable("ExamResults");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Group", b =>
@@ -502,7 +504,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Groups", (string)null);
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Message", b =>
@@ -533,7 +535,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Messages", (string)null);
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Notification", b =>
@@ -562,7 +564,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Question", b =>
@@ -596,7 +598,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.StudentAnswer", b =>
@@ -632,7 +634,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasIndex("SubmissionId");
 
-                    b.ToTable("StudentAnswers", (string)null);
+                    b.ToTable("StudentAnswers");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.Submission", b =>
@@ -659,7 +661,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasIndex("AssignmentId");
 
-                    b.ToTable("Submissions", (string)null);
+                    b.ToTable("Submissions");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.UserProfile", b =>
@@ -695,7 +697,7 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserProfiles", (string)null);
+                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.ViewModels.CreateCourseViewModel", b =>
@@ -716,7 +718,7 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CreateCourseViewModel", (string)null);
+                    b.ToTable("CreateCourseViewModel");
                 });
 
             modelBuilder.Entity("ApplicationUserCourse", b =>

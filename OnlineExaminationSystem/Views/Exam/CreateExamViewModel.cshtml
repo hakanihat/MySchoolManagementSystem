@@ -5,7 +5,6 @@
 
 <form asp-action="CreateExam" id="create-exam-form">
 
-
     <div id="message-container"></div>
 
     <div class="form-group">
@@ -18,8 +17,6 @@
             }
         </select>
     </div>
- 
-
 
     <div class="form-group">
         <label asp-for="Name"></label>
@@ -34,18 +31,10 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="StartTime"></label>
-        <input asp-for="StartTime" id="start-time-input" class="form-control " />
-        <span asp-validation-for="StartTime"></span>
+        <label asp-for="ExamDuration"></label>
+        <input asp-for="ExamDuration" id="exam-time-input" class="form-control " />
+        <span asp-validation-for="ExamDuration"></span>
     </div>
-
-    <div class="form-group" style="margin-bottom:20px">
-        <label asp-for="EndTime"></label>
-        <input asp-for="EndTime" id="end-time-input" class="form-control " />
-        <span asp-validation-for="EndTime"></span>
-        <span id="time-error" style="color:red;display:none;"></span>
-    </div>
-
 
     <div class="form-group">
         <div id="create-exam-inputs"></div>
@@ -75,6 +64,7 @@
 
 
 
+
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
@@ -82,8 +72,7 @@
     <link rel="stylesheet" href="~/css/examQuestions.css" asp-append-version="true" />
    
     <script src="~/js/flatpickr.js"></script>
-    <script src="~/js/generateDropdown.js"></script>
-    <script src="~/js/showNowDate.js"></script>
+    <script src="~/js/generateQuestionFromDropdown.js"></script>
     <script src="~/js/checkDates.js"></script>
     <script src="~/js/filterQuestionsByCourse.js"></script>
     }

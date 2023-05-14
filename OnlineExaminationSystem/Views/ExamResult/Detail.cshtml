@@ -62,7 +62,7 @@
                     }
                 </td>
                 <td>
-                    @if (answer.CorrectAnswerText.Any())
+                    @if (answer.CorrectAnswerText!=null && answer.CorrectAnswerText.Any())
                     {
                         foreach (var correctAnswer in answer.CorrectAnswerText)
                         {

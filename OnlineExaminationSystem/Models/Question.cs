@@ -21,7 +21,7 @@ namespace OnlineExaminationSystem.Models
         public ApplicationUser ApplicationUser { get; set; }
 
         public virtual ICollection<Answer> Answers { get; set; }
-        public virtual ICollection<StudentAnswer> StudentAnswers { get; set; }
+        public virtual ICollection<StudentAnswer>? StudentAnswers { get; set; }
         public virtual ICollection<Exam> Exams { get; set; }
         public int CourseId { get; set; }
         public Course Course { get; set; }

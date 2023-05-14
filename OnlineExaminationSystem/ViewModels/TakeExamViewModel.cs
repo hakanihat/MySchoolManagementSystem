@@ -6,8 +6,7 @@
         public string ExamName { get; set; }
 
         public int AssignmentId { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public int ExamDuration { get; set; }
         public List<TakeExamQuestionViewModel> Questions { get; set; }
     }
 }
