@@ -26,7 +26,10 @@ namespace OnlineExaminationSystem.ViewModels
 
         [BindNever]
         public List<int> SelectedQuestionIds { get; set; } = new List<int>();
+        [BindNever]
         public List<SelectListItem> Questions { get; set; } = new List<SelectListItem>();
+        public bool IsCheatSecured { get; set; }
+
     }
 
 

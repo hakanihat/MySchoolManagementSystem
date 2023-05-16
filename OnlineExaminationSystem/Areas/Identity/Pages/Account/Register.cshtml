@@ -55,6 +55,18 @@
                 <label asp-for="Input.Group"></label>
                 <span asp-validation-for="Input.Group" class="text-danger"></span>
             </div>
+            <div class="form-floating">
+                <select asp-for="Input.Courses" class="form-select" aria-label="Select courses" multiple>
+                    @foreach (var course in Model.Courses)
+                    {
+                        <option value="@course.Value">@course.Text</option>
+                    }
+                </select>
+                <label asp-for="Input.Courses">Courses</label>
+                <span asp-validation-for="Input.Courses" class="text-danger"></span>
+            </div>
+
+
 
 
             <div class="form-floating">
@@ -121,9 +133,11 @@
 </div>
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/uploadPicture.js"></script>
-    <script src="~/js/hideGroupDropdown.js"></script>
+    <script src="~/js/hideDripdownsInRegistration.js"></script>
     <script src="~/js/groupCheckValues.js"></script>
 
 }

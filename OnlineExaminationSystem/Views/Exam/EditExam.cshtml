@@ -21,15 +21,25 @@
     </div>
     <div class="form-group">
         <label asp-for="ExamDuration" class="control-label"></label>
-        <input asp-for="ExamDuration" class="form-control flatpickr" data-enable-time="true" data-date-format="Y-m-d H:i" />
+        <input asp-for="ExamDuration" class="form-control" type="number" min="1" />
         <span asp-validation-for="ExamDuration" class="text-danger"></span>
     </div>
+    <div class="form-group">
+        <div class="form-check">
+            <input asp-for="IsCheatSecured" class="form-check-input" />
+            <label class="form-check-label" asp-for="IsCheatSecured"></label>
+        </div>
+        <span asp-validation-for="IsCheatSecured" class="text-danger"></span>
+    </div>
+
+
+
 
 
     <div id="selectedQuestionsContainer">
         @foreach (var question in Model.Questions)
         {
-            if (Model.SelectedQuestionIds.Contains(Int32.Parse(question.Value)))
+            if (Model.SelectedQuestionIds?.Contains(Int32.Parse(question.Value)) ?? false)
             {
                 <div id="question@(question.Value)" class="form-group">
                     <label for="Question@(question.Value)">@question.Text</label>
@@ -51,14 +61,20 @@
 
     <div class="form-group">
         <label for="SelectedQuestionIds">Select a question</label>
-        <select id="SelectedQuestionIds" name="SelectedQuestionIds" class="form-control">
-            <option value="">-- Select a question --</option>
+        <select id="SelectedQuestionIds" name="SelectedQuestionIds" class="form-control" data-val="false" data-val-required="">
+            <option value="" selected>-- Select a question --</option>
             @foreach (var question in Model.Questions)
             {
                 <option value="@question.Value">@question.Text</option>
             }
         </select>
     </div>
+
+
+
+
+
+
 
     <button type="submit" class="btn btn-primary">Save</button>
 </form>

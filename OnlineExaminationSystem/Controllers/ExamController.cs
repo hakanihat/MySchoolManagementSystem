@@ -54,6 +54,7 @@ namespace OnlineExaminationSystem.Controllers
                 Name = viewModel.Name,
                 Description = viewModel.Description,
                 ExamDuration = viewModel.ExamDuration,
+                IsCheatSecured = viewModel.IsCheatSecured,
                 ApplicationUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value,
                 CourseId = viewModel.CourseId
             };
@@ -140,6 +141,7 @@ namespace OnlineExaminationSystem.Controllers
                 Name = exam.Name,
                 Description = exam.Description,
                 ExamDuration = exam.ExamDuration,
+                IsCheatSecured = exam.IsCheatSecured,
                 CourseId = exam.CourseId,
                 Courses = await GetCoursesAsync(),
                 SelectedQuestionIds = exam.Questions.Select(q => q.Id).ToList(),
@@ -152,7 +154,8 @@ namespace OnlineExaminationSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ExamViewModel viewModel, string SelectedQuestionIdsJson)
         {
-            if (ModelState.IsValid)
+ 
+            if (ModelState.ErrorCount <=1)
             {
                 var exam = await _context.Exams
                     .Include(e => e.Course)
@@ -162,32 +165,35 @@ namespace OnlineExaminationSystem.Controllers
                 exam.Name = viewModel.Name;
                 exam.Description = viewModel.Description;
                 exam.ExamDuration = viewModel.ExamDuration;
+                exam.IsCheatSecured = viewModel.IsCheatSecured;
                 exam.CourseId = viewModel.CourseId;
 
-                var selectedQuestionIds = JsonConvert.DeserializeObject<int[]>(SelectedQuestionIdsJson);
-  
-                var currentQuestionIds = exam.Questions.Select(q => q.Id).ToList();
-                var addedQuestionIds = selectedQuestionIds.Except(currentQuestionIds).ToList();
-                var removedQuestionIds = currentQuestionIds.Except(selectedQuestionIds).ToList();
-
-                // Add new selected questions to ExamQuestion
-                foreach (var questionId in addedQuestionIds)
+                if (SelectedQuestionIdsJson != null)
                 {
-                    var examQuestion = new ExamQuestion { ExamId = exam.Id, QuestionId = questionId };
-                    _context.ExamQuestions.Add(examQuestion);
-                }
+                    var selectedQuestionIds = JsonConvert.DeserializeObject<int[]>(SelectedQuestionIdsJson);
 
-                // Remove unselected questions from ExamQuestion
-                foreach (var questionId in removedQuestionIds)
-                {
-                    var examQuestion = await _context.ExamQuestions
-                        .FirstOrDefaultAsync(eq => eq.ExamId == exam.Id && eq.QuestionId == questionId);
-                    if (examQuestion != null)
+                    var currentQuestionIds = exam.Questions.Select(q => q.Id).ToList();
+                    var addedQuestionIds = selectedQuestionIds.Except(currentQuestionIds).ToList();
+                    var removedQuestionIds = currentQuestionIds.Except(selectedQuestionIds).ToList();
+
+                    // Add new selected questions to ExamQuestion
+                    foreach (var questionId in addedQuestionIds)
                     {
-                        _context.ExamQuestions.Remove(examQuestion);
+                        var examQuestion = new ExamQuestion { ExamId = exam.Id, QuestionId = questionId };
+                        _context.ExamQuestions.Add(examQuestion);
+                    }
+
+                    // Remove unselected questions from ExamQuestion
+                    foreach (var questionId in removedQuestionIds)
+                    {
+                        var examQuestion = await _context.ExamQuestions
+                            .FirstOrDefaultAsync(eq => eq.ExamId == exam.Id && eq.QuestionId == questionId);
+                        if (examQuestion != null)
+                        {
+                            _context.ExamQuestions.Remove(examQuestion);
+                        }
                     }
                 }
-
                 try
                 {
                     _context.Update(exam);
@@ -262,6 +268,7 @@ namespace OnlineExaminationSystem.Controllers
             {
                 ExamId = exam.Id,
                 ExamName = exam.Name,
+                IsSecure = exam.IsCheatSecured,
                 AssignmentId= assignmentId,
                 ExamDuration = exam.ExamDuration,
                 Questions = exam.Questions.Select(q => new TakeExamQuestionViewModel
@@ -269,6 +276,7 @@ namespace OnlineExaminationSystem.Controllers
                     Id = q.Id,
                     Text = q.Text,
                     QuestionType = q.Type, // set the QuestionType property
+                    Points = q.Points,
                     Answers = q.Answers.Select(o => new TakeExamAnswerViewModel
                     {
                         Id = o.Id,
@@ -278,7 +286,7 @@ namespace OnlineExaminationSystem.Controllers
 
 
             };
-
+            ShuffleQuestions(viewModel.Questions);
             return View(viewModel);
         }
 
@@ -355,6 +363,8 @@ namespace OnlineExaminationSystem.Controllers
             {
                 // Save the Submission object to the database
                 _context.Submissions.Add(submission);
+                var assignment = await _context.Assignments.FindAsync(model.AssignmentId);
+                assignment.IsExamSubmited = true;
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -400,7 +410,7 @@ namespace OnlineExaminationSystem.Controllers
 
                 if (question.Type == QuestionType.MultipleChoice)
                 {
-                    if (selectedIncorrectAnswers.Any())
+                    if (selectedIncorrectAnswers.Any() || !selectedCorrectAnswers.Any())
                     {
                        continue;
                     }
@@ -444,7 +454,19 @@ namespace OnlineExaminationSystem.Controllers
 
 
 
-
+        private void ShuffleQuestions(List<TakeExamQuestionViewModel> questions)
+        {
+            var rng = new Random();
+            int n = questions.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                var question = questions[k];
+                questions[k] = questions[n];
+                questions[n] = question;
+            }
+        }
 
 
 

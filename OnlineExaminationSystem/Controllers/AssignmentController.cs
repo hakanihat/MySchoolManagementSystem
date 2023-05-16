@@ -49,6 +49,17 @@ namespace OnlineExaminationSystem.Controllers
             course = await _context.Courses
               .Where(c => c.Exams.Any(e => e.Id == examId))
                 .FirstOrDefaultAsync(); // check why is null
+            double totalPoints = 0;
+            if (examId != null)
+            {
+                var exam = await _context.Exams
+                    .Include(e => e.Questions)
+                      .FirstOrDefaultAsync(e => e.Id == examId);
+                totalPoints = exam.Questions.Sum(q => q.Points);
+            }
+
+
+       
             var viewModel = new AssignmentViewModel
             {
                 ExamId = examId.HasValue ? (int)examId : 0,
@@ -67,6 +78,7 @@ namespace OnlineExaminationSystem.Controllers
                     FullName = $"{s.UserProfile.FullName}",
                     GroupName = $"{s.Group.Name}"
                 }).ToList(),
+                MaxPoints = totalPoints,
                 CourseId = course?.Id ?? 0,
                 Courses = courses.Select(c => new CourseViewModel // map courses to CourseViewModel
                 {

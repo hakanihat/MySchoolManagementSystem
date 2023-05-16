@@ -12,6 +12,7 @@ namespace OnlineExaminationSystem.Models
         public ApplicationUser ApplicationUser { get; set; }
         public int CourseId { get; set; }
         public Course Course { get; set; }
+        public bool IsCheatSecured { get; set; }
         public virtual ICollection<Question> Questions { get; set; }
 
         public virtual ICollection<ExamResult> ExamResults { get; set; }

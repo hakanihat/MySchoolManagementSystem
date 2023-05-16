@@ -1,4 +1,5 @@
 ﻿@using OnlineExaminationSystem.ViewModels
+@using OnlineExaminationSystem.Common
 @model ExamViewModel
 
 <h2>Create Exam</h2>
@@ -25,9 +26,9 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Description"></label>
-        <input asp-for="Description" class="form-control" />
-        <span asp-validation-for="Description"></span>
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 
     <div class="form-group">
@@ -35,6 +36,15 @@
         <input asp-for="ExamDuration" id="exam-time-input" class="form-control " />
         <span asp-validation-for="ExamDuration"></span>
     </div>
+    <div class="form-group">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="isCheatSecured" name="IsCheatSecured" value="true">
+            <label class="form-check-label" for="isCheatSecured" data-toggle="tooltip" data-placement="top" title="@ConstantStrings.CheatSecurityExplanation">
+                Cheat Security
+            </label>
+        </div>
+    </div>
+
 
     <div class="form-group">
         <div id="create-exam-inputs"></div>
@@ -72,6 +82,7 @@
     <link rel="stylesheet" href="~/css/examQuestions.css" asp-append-version="true" />
    
     <script src="~/js/flatpickr.js"></script>
+    <script src="~/js/enableTooltip.js"></script>
     <script src="~/js/generateQuestionFromDropdown.js"></script>
     <script src="~/js/checkDates.js"></script>
     <script src="~/js/filterQuestionsByCourse.js"></script>

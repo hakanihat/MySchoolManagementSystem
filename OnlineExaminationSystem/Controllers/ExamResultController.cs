@@ -226,6 +226,9 @@ namespace OnlineExaminationSystem.Controllers
                 examResult.Comment = viewModel.Comment;
 
                 _context.Update(examResult);
+                var submission = await _context.Submissions.FindAsync(examResult.SubmissionId);
+                submission.isResultChecked = true;
+                _context.Update(submission);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("Index", "Home");

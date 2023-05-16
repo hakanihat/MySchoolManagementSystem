@@ -1,4 +1,6 @@
-﻿namespace OnlineExaminationSystem.Models
+﻿using System.ComponentModel;
+
+namespace OnlineExaminationSystem.Models
 {
     public class Assignment
     {
@@ -7,7 +9,8 @@
         public string Description { get; set; }
         public DateTime DueDate { get; set; }
         public double MaxPoints { get; set; }
-
+        [DefaultValue(false)]
+        public bool IsExamSubmited { get; set; }
         public string AssignedByUserId { get; set; }
         public virtual ApplicationUser AssignedBy { get; set; }
 

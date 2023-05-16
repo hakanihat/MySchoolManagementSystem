@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineExaminationSystem.Data;
 
@@ -11,9 +12,10 @@ using OnlineExaminationSystem.Data;
 namespace OnlineExaminationSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230516170532_boolsToSubmissionAndAssignment")]
+    partial class boolsToSubmissionAndAssignment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,21 +54,21 @@ namespace OnlineExaminationSystem.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "f305103b-6e43-4905-8799-5a8c3994ec4a",
+                            ConcurrencyStamp = "ee32a477-ff14-4c08-af14-a22f29170e38",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "e9e62a15-707e-43b1-8ddf-3708c90521b0",
+                            ConcurrencyStamp = "bdd44567-9af3-4ef2-b6a2-d02ef005ac88",
                             Name = "student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "0d2bd762-d9e8-45ca-8790-d3d947bcbbc3",
+                            ConcurrencyStamp = "2598741d-f5cf-4a6b-a273-643b34fe164f",
                             Name = "teacher",
                             NormalizedName = "TEACHER"
                         });
@@ -411,9 +413,6 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.Property<int>("ExamDuration")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsCheatSecured")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()

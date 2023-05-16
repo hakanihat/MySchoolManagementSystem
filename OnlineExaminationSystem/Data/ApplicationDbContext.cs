@@ -13,7 +13,7 @@ namespace OnlineExaminationSystem.Data
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-               :  base(options)
+               : base(options)
         {
         }
 
@@ -33,6 +33,7 @@ namespace OnlineExaminationSystem.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<ExamQuestion> ExamQuestions { get; set; }
+        public DbSet<TeacherCourse> TeacherCourses { get; set; }
         public DbSet<StudentAnswer> StudentAnswers { get; set; }
 
 
@@ -41,8 +42,19 @@ namespace OnlineExaminationSystem.Data
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<Course>()
+        .HasMany(t => t.Teachers)
+        .WithMany(c => c.Courses)
+        .UsingEntity<TeacherCourse>(
+                tc => tc.HasOne(prop => prop.ApplicationUser).WithMany().HasForeignKey(prop => prop.ApplicationUserId),
+                tc => tc.HasOne(prop => prop.Course).WithMany().HasForeignKey(prop => prop.CourseId),
+                tc =>
+                {
+                    tc.HasKey(prop => new { prop.ApplicationUserId, prop.CourseId });
+                }
+                );
 
-           
+
 
             builder.Entity<Question>()
                 .HasMany(e => e.Exams)
@@ -52,7 +64,7 @@ namespace OnlineExaminationSystem.Data
                     eq => eq.HasOne(prop => prop.Question).WithMany().HasForeignKey(prop => prop.QuestionId),
                     eq =>
                     {
-                        eq.HasKey(prop => new {prop.ExamId, prop.QuestionId});
+                        eq.HasKey(prop => new { prop.ExamId, prop.QuestionId });
                     }
                 );
             builder.Entity<Assignment>()

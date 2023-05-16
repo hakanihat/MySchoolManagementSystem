@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OnlineExaminationSystem.Data;
 using OnlineExaminationSystem.Models;
@@ -59,6 +60,8 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
 
         public IList<SelectListItem> Roles { get; set; }// added by me
         public IList<SelectListItem> Groups { get; set; }// added by me
+        public IList<SelectListItem> Courses { get; set; }// added by me
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -121,6 +124,8 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
 
             public int? Group { get; set; }
 
+            public List<int> Courses { get; set; }
+
             [Display(Name = "Full Name")]
             public string FullName { get; set; }
 
@@ -141,8 +146,10 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            Roles = _roleManager.Roles.Select(r => new SelectListItem { Value = r.Name, Text = r.Name }).ToList();
-            Groups = _context.Groups.Select(g => new SelectListItem { Value = g.Id.ToString(), Text = g.Name }).ToList();    
+            Roles = await _roleManager.Roles.Select(r => new SelectListItem { Value = r.Name, Text = r.Name }).ToListAsync();
+            Groups = await _context.Groups.Select(g => new SelectListItem { Value = g.Id.ToString(), Text = g.Name }).ToListAsync();
+            Courses = await _context.Courses.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToListAsync();
+
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -165,6 +172,21 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
                     user.SchoolNumber = Input.SchoolNumber;
                 }
 
+                var courseIds = Input.Courses;
+                var courses = await _context.Courses
+                     .Where(c => courseIds.Contains(c.Id))
+                         .ToListAsync();
+
+                foreach (var course in courses)
+                {
+                    var teacherCourse = new TeacherCourse
+                    {
+                        ApplicationUserId = user.Id,
+                        CourseId = course.Id
+                    };
+
+                    _context.TeacherCourses.Add(teacherCourse);
+                }
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

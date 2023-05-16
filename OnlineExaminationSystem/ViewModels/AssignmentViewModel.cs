@@ -24,8 +24,7 @@ namespace OnlineExaminationSystem.ViewModels
 
         [Required]
         [Display(Name = "Max Points")]
-        [Range(1, int.MaxValue, ErrorMessage = "The {0} field must be greater than or equal to {1}.")]
-        public int MaxPoints { get; set; }
+        public double MaxPoints { get; set; }
 
         [Required]
         [Display(Name = "Course")]

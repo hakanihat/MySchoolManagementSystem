@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineExaminationSystem.Data;
 
@@ -11,9 +12,10 @@ using OnlineExaminationSystem.Data;
 namespace OnlineExaminationSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230516141556_makeSomeColumnsNullable")]
+    partial class makeSomeColumnsNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +23,21 @@ namespace OnlineExaminationSystem.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("ApplicationUserCourse", b =>
+                {
+                    b.Property<int>("CoursesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TeachersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CoursesId", "TeachersId");
+
+                    b.HasIndex("TeachersId");
+
+                    b.ToTable("ApplicationUserCourse");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -52,21 +69,21 @@ namespace OnlineExaminationSystem.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "f305103b-6e43-4905-8799-5a8c3994ec4a",
+                            ConcurrencyStamp = "903210fe-4de8-49a5-89f1-a9f891bf9057",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "e9e62a15-707e-43b1-8ddf-3708c90521b0",
+                            ConcurrencyStamp = "2807162c-e8ee-47df-a56e-ff41fa2f1331",
                             Name = "student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "0d2bd762-d9e8-45ca-8790-d3d947bcbbc3",
+                            ConcurrencyStamp = "84c3606c-412a-4a2a-8bff-92aa85bfdf58",
                             Name = "teacher",
                             NormalizedName = "TEACHER"
                         });
@@ -309,9 +326,6 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.Property<int>("ExamId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsExamSubmited")
-                        .HasColumnType("bit");
-
                     b.Property<double>("MaxPoints")
                         .HasColumnType("float");
 
@@ -411,9 +425,6 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.Property<int>("ExamDuration")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsCheatSecured")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -644,9 +655,6 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.Property<DateTime>("SubmissionTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("isResultChecked")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
@@ -654,21 +662,6 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.HasIndex("AssignmentId");
 
                     b.ToTable("Submissions");
-                });
-
-            modelBuilder.Entity("OnlineExaminationSystem.Models.TeacherCourse", b =>
-                {
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ApplicationUserId", "CourseId");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("TeacherCourses");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.UserProfile", b =>
@@ -723,6 +716,21 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CreateCourseViewModel");
+                });
+
+            modelBuilder.Entity("ApplicationUserCourse", b =>
+                {
+                    b.HasOne("OnlineExaminationSystem.Models.Course", null)
+                        .WithMany()
+                        .HasForeignKey("CoursesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnlineExaminationSystem.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("TeachersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1010,25 +1018,6 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Assignment");
-                });
-
-            modelBuilder.Entity("OnlineExaminationSystem.Models.TeacherCourse", b =>
-                {
-                    b.HasOne("OnlineExaminationSystem.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineExaminationSystem.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-
-                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.UserProfile", b =>

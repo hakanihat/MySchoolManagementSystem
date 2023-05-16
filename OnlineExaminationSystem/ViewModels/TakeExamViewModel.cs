@@ -4,6 +4,7 @@
     {
         public int ExamId { get; set; }
         public string ExamName { get; set; }
+        public bool IsSecure { get; set; }
 
         public int AssignmentId { get; set; }
         public int ExamDuration { get; set; }
