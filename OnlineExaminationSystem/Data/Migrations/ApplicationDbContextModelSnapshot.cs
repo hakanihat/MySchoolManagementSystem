@@ -52,21 +52,21 @@ namespace OnlineExaminationSystem.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "f305103b-6e43-4905-8799-5a8c3994ec4a",
+                            ConcurrencyStamp = "5c5339ed-6f92-471c-901c-03e69920da5f",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "e9e62a15-707e-43b1-8ddf-3708c90521b0",
+                            ConcurrencyStamp = "bc7fb507-7a48-434b-a5dc-d2fac8274347",
                             Name = "student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "0d2bd762-d9e8-45ca-8790-d3d947bcbbc3",
+                            ConcurrencyStamp = "a60949a5-dab9-43d2-a652-0a6493660e13",
                             Name = "teacher",
                             NormalizedName = "TEACHER"
                         });
@@ -308,9 +308,6 @@ namespace OnlineExaminationSystem.Data.Migrations
 
                     b.Property<int>("ExamId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsExamSubmited")
-                        .HasColumnType("bit");
 
                     b.Property<double>("MaxPoints")
                         .HasColumnType("float");

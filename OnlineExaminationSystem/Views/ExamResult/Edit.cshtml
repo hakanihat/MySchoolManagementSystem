@@ -23,7 +23,7 @@
 
     @if (Model.ShortAnsEssayAnswers.Any())
     {
-        <table style="border: 2px solid black">
+        <table style="border-collapse: collapse; border: 2px solid black;">
             <thead>
                 <tr>
                     <th style="border: 1px solid black; padding: 5px;">Question</th>
@@ -33,10 +33,10 @@
             <tbody>
                 @foreach (var question in Model.ShortAnsEssayAnswers)
                 {
-                    <tr>
+                    <tr style="border: 1px solid black;">
                         <td style="border: 1px solid black; padding: 5px;">@question.QuestionText</td>
                         <td style="border: 1px solid black; padding: 5px;">
-                            <textarea asp-for="@question.AnswerText" rows="4" cols="50"></textarea>
+                            <textarea asp-for="@question.AnswerText" rows="4" cols="50" readonly style="resize:vertical; border: none; padding: 0;"></textarea>
                         </td>
                     </tr>
                 }
@@ -50,7 +50,7 @@
 
     @if (Model.SMTFAnswers.Any())
     {
-        <table style="border: 2px solid black">
+        <table style="border-collapse: collapse; border: 2px solid black;">
             <thead>
                 <tr>
                     <th style="border: 1px solid black; padding: 5px;">Question</th>
@@ -61,9 +61,9 @@
             <tbody>
                 @foreach (var answer in Model.SMTFAnswers)
                 {
-                    <tr>
-                        <td>@answer.QuestionText</td>
-                        <td>
+                    <tr style="border: 1px solid black;">
+                        <td style="border: 1px solid black; padding: 5px;">@answer.QuestionText</td>
+                        <td style="border: 1px solid black; padding: 5px;">
                             @if (answer.AnswerId.HasValue)
                             {
                                 @foreach (var choice in answer.AnswerText)
@@ -76,7 +76,7 @@
                                 <em>No answer provided</em>
                             }
                         </td>
-                        <td>
+                        <td style="border: 1px solid black; padding: 5px;">
                             @if (answer.CorrectAnswerText.Any())
                             {
                                 foreach (var correctAnswer in answer.CorrectAnswerText)
@@ -91,15 +91,15 @@
                         </td>
                     </tr>
                 }
-
             </tbody>
         </table>
     }
 
+
     <hr />
 
     <div>
-        <button type="submit">Save Changes</button>
-        <a asp-action="Details" asp-route-id="@Model.Id">Cancel</a>
+        <button type="submit">Return the result</button>
+        <a asp-action="Detail" asp-route-id="@Model.Id">Cancel</a>
     </div>
 </form>

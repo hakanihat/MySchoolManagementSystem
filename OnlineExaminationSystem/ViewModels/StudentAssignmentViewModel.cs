@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using OnlineExaminationSystem.Models;
+using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
 namespace OnlineExaminationSystem.ViewModels
@@ -8,6 +9,8 @@ namespace OnlineExaminationSystem.ViewModels
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+
+        public int? ExamResultId { get; set; }   
         public DateTime DueDate { get; set; }
         public double MaxPoints { get; set; }
         public int CourseId { get; set; }
@@ -16,5 +19,7 @@ namespace OnlineExaminationSystem.ViewModels
         public int ExamId { get; set; }
         [Display(Name = "Exam Name")]
         public string ExamName { get; set; }
+
+
     }
 }

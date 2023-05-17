@@ -363,8 +363,8 @@ namespace OnlineExaminationSystem.Controllers
             {
                 // Save the Submission object to the database
                 _context.Submissions.Add(submission);
-                var assignment = await _context.Assignments.FindAsync(model.AssignmentId);
-                assignment.IsExamSubmited = true;
+                //var assignment = await _context.Assignments.FindAsync(model.AssignmentId);
+                //assignment.IsExamSubmited = true;
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -468,6 +468,28 @@ namespace OnlineExaminationSystem.Controllers
             }
         }
 
+        // GET: Exam/GetExams
+        [HttpGet]
+        public IActionResult GetExams(int? courseId)
+        {
+            if (courseId.HasValue)
+            {
+                // Filter exams based on the selected course ID
+                var filteredExams = _context.Exams
+                    .Where(e => e.CourseId == courseId)
+                    .Select(e => new { value = e.Id, text = $"{e.Name} - {e.Description}" })
+                    .ToList();
+
+                return Json(filteredExams);
+            }
+
+            // If no course ID is provided, return all exams
+            var exams = _context.Exams
+                .Select(e => new { value = e.Id, text = $"{e.Name} - {e.Description}" })
+                .ToList();
+
+            return Json(exams);
+        }
 
 
     }

@@ -33,6 +33,7 @@ public class SubmissionController : Controller
             {
                 SubmissionId = submission.Id,
                 UserSchoolNumber = submission.ApplicationUser.SchoolNumber ?? 0,
+                IsResultChecked = submission.isResultChecked,
                 CourseName = submission.Assignment.Course.Name,
                 GroupName = submission.ApplicationUser.Group.Name,
                 AssignmentName = submission.Assignment.Title,

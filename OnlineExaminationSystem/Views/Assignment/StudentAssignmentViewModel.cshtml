@@ -1,49 +1,91 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model List<StudentAssignmentViewModel>
 
+<head>
+
+</head>
+
 <div class="container">
     <h2>Assigned Assignments</h2>
     <div class="row">
         <div class="col-sm-12">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Due Date</th>
-                        <th>Max Points</th>
-                        <th>Course</th>
-                        <th>Exam</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var assignment in Model)
-                    {
+            <h4>Upcoming</h4>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>@assignment.Title</td>
-                            <td>@assignment.Description</td>
-                            <td>@assignment.DueDate.ToShortDateString()</td>
-                            <td>@assignment.MaxPoints</td>
-                            <td>@assignment.CourseName</td>
-                            <td>@assignment.ExamName</td>
-                            <td>
-                                <a class="btn btn-primary btn-sm" href="@Url.Action("Details", "Assignment", new { id = assignment.Id })">Details</a>
-                            </td>
+                            <th>Title</th>
+                            <th>Due Date</th>
+                            <th>Max Points</th>
+                            <th>Course</th>
+                            <th>Exam</th>
+                            <th>Actions</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var assignment in Model.Where(a => a.ExamResultId == null))
+                        {
+                            <tr class="clickable-row" data-url="@Url.Action("Details", "Assignment", new { id = assignment.Id })">
+                                <td>@assignment.Title</td>
+                                <td>@assignment.DueDate.ToString("F")</td>
+                                <td>@assignment.MaxPoints</td>
+                                <td>@assignment.CourseName</td>
+                                <td>@assignment.ExamName</td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm" href="@Url.Action("Details", "Assignment", new { id = assignment.Id })">OPEN</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <h4>Completed</h4>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Due Date</th>
+                            <th>Max Points</th>
+                            <th>Course</th>
+                            <th>Exam</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var assignment in Model.Where(a => a.ExamResultId != null))
+                        {
+                            <tr class="clickable-row" data-url="@Url.Action("Detail", "ExamResult", new { id = assignment.ExamResultId })">
+                                <td>@assignment.Title</td>
+                                <td>@assignment.DueDate.ToString("F")</td>
+                                <td>@assignment.MaxPoints</td>
+                                <td>@assignment.CourseName</td>
+                                <td>@assignment.ExamName</td>
+                                <td>
+                                    @if (assignment.ExamResultId.HasValue)
+                                    {
+                                        <a class="btn btn-primary btn-sm" href="@Url.Action("Detail", "ExamResult", new { id = assignment.ExamResultId })">RESULT</a>
+                                    }
+                                    else
+                                    {
+                                        <span>No Exam Result</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
+
+
 @section scripts {
-    <script>
-        $(function () {
-            $('.table').DataTable({
-                responsive: true
-            });
-        });
-    </script>
+    <script src="~/js/clickableTableRows.js"></script>
 }

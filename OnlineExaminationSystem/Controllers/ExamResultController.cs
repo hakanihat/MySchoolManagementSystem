@@ -108,10 +108,10 @@ namespace OnlineExaminationSystem.Controllers
                      AnswerId = examResult.StudentAnswers?.FirstOrDefault(sa => sa.QuestionId == q.Id)?.AnswerId ?? null,
                      CorrectAnswerText = q.Answers?.Where(a => a.IsCorrect).Select(a => a.Text).ToList(),
                      AnswerText = studentAnswers.ContainsKey(q.Id) ? studentAnswers[q.Id].ToList() : new List<string>(),
-                     IsCorrect = examResult.StudentAnswers.Any(sa => sa.Answer != null && sa.Answer.QuestionId == q.Id) 
+                     IsCorrect = examResult.StudentAnswers.Any(sa => sa.Answer != null && sa.Answer.QuestionId == q.Id)
                  }).ToList()
 
-        };
+            };
 
 
             return View(viewModel);
@@ -122,14 +122,15 @@ namespace OnlineExaminationSystem.Controllers
         public async Task<IActionResult> Edit(int submissionId)
         {
             var submission = await _context.Submissions
-                .Include(s => s.Assignment)
+               .Include(s => s.Assignment)
                     .ThenInclude(a => a.Exam)
-                        .ThenInclude(e => e.Questions)
-                .Include(s => s.ExamResult)
+                         .ThenInclude(e => e.Questions)
+               .Include(s => s.ExamResult)
                     .ThenInclude(er => er.StudentAnswers)
-                        .ThenInclude(sa => sa.Answer)
-                            .ThenInclude(a => a.Question)
-                .FirstOrDefaultAsync(s => s.Id == submissionId);
+                         .ThenInclude(sa => sa.Answer)
+                                .ThenInclude(a => a.Question)
+               .FirstOrDefaultAsync(s => s.Id == submissionId);
+
 
             if (submission == null)
             {

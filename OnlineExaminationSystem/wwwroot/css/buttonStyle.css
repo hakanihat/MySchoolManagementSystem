@@ -1,0 +1,24 @@
+﻿/* styles.css */
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color:#000080;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+    .btn:hover {
+        background-color: #0F52BA;
+    }
+
+    .btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4);
+    }
+
+    .btn:active {
+        transform: translateY(2px);
+    }

@@ -71,6 +71,7 @@ namespace OnlineExaminationSystem.Controllers
                     ExamDuration = e.ExamDuration,
                     CourseId = e.CourseId
                 }).ToList(),
+                
                 Users = studentsWithProfile.Select(s => new StudentViewModel
                 {
                     Id = s.Id,
@@ -78,6 +79,7 @@ namespace OnlineExaminationSystem.Controllers
                     FullName = $"{s.UserProfile.FullName}",
                     GroupName = $"{s.Group.Name}"
                 }).ToList(),
+
                 MaxPoints = totalPoints,
                 CourseId = course?.Id ?? 0,
                 Courses = courses.Select(c => new CourseViewModel // map courses to CourseViewModel
@@ -170,9 +172,16 @@ namespace OnlineExaminationSystem.Controllers
                 .Include(a => a.Course)
                 .Include(a => a.Exam)
                 .Where(a => a.AssignedToUserId == currentUser.Id)
-                .ToListAsync(); // should add differen query for different  roles
+                .ToListAsync();
 
-            // Map the assignments to a view model
+            // Get the submissions and associated exam results for the current user
+            var submissions = await _context.Submissions
+                .Include(s => s.Assignment)
+                .Include(s => s.ExamResult)
+                .Where(s => s.ApplicationUserId == currentUser.Id && assignments.Contains(s.Assignment))
+                .ToListAsync();
+
+            // Map the assignments to a view model and include the associated submissions and exam results
             var viewModel = assignments.Select(a => new StudentAssignmentViewModel
             {
                 Id = a.Id,
@@ -183,11 +192,17 @@ namespace OnlineExaminationSystem.Controllers
                 CourseId = a.CourseId,
                 CourseName = a.Course.Name,
                 ExamId = a.ExamId,
-                ExamName = a.Exam.Name
+                ExamName = a.Exam.Name,
+                ExamResultId = submissions.FirstOrDefault(s => s.AssignmentId == a.Id)?.ExamResult?.Id ?? null
             }).ToList();
 
             return View("StudentAssignmentViewModel", viewModel);
         }
+
+
+
+
+
 
         public async Task<IActionResult> Details(int id)
         {
@@ -219,6 +234,21 @@ namespace OnlineExaminationSystem.Controllers
 
             // Pass the view model to the Details view
             return View("StudentAssignmentDetailsViewModel", viewModel);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetExamTotalPoints(int examId)
+        {
+            // Retrieve the exam with the given examId from your data source
+            var exam = await _context.Exams
+                           .Include(e => e.Questions)
+                             .FirstOrDefaultAsync(e => e.Id == examId);
+            var totalPoints = exam.Questions.Sum(q => q.Points);
+        
+
+            // Return the total points as a JSON response
+            return Json(totalPoints);
         }
 
 

@@ -14,26 +14,8 @@
 
 <h2>Your Answers</h2>
 
-<h3>Short Answer / Essay Questions</h3>
-<table>
-    <thead>
-        <tr>
-            <th>Question</th>
-            <th>Your Answer</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var answer in Model.ShortAnsEssayAnswers)
-        {
-            <tr>
-                <td>@answer.QuestionText</td>
-                <td>@answer.AnswerText</td>
-            </tr>
-        }
-    </tbody>
-</table>
 
-<h3>Multiple Choice / True or False Questions</h3>
+
 <table >
 
     <thead>
@@ -79,5 +61,22 @@
         }
     </tbody>
 </table>
-
+<table>
+    <thead>
+        <tr>
+            <th>Question</th>
+            <th>Your Answer</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var answer in Model.ShortAnsEssayAnswers)
+        {
+            <tr>
+                <td>@answer.QuestionText</td>
+                <td>@answer.AnswerText</td>
+                <td>@answer.AnswerText</td>
+            </tr>
+        }
+    </tbody>
+</table>
 <a asp-action="Index" asp-controller="Home">Back to Dashboard</a>

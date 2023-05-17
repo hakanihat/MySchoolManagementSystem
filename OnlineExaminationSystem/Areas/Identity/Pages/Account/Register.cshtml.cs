@@ -142,19 +142,16 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
         }
 
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task OnGetAsync()
         {
-            ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             Roles = await _roleManager.Roles.Select(r => new SelectListItem { Value = r.Name, Text = r.Name }).ToListAsync();
             Groups = await _context.Groups.Select(g => new SelectListItem { Value = g.Id.ToString(), Text = g.Name }).ToListAsync();
             Courses = await _context.Courses.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToListAsync();
-
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync()
         {
-            returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -172,11 +169,12 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
                     user.SchoolNumber = Input.SchoolNumber;
                 }
 
+                if (Input.Courses!= null) {
                 var courseIds = Input.Courses;
                 var courses = await _context.Courses
-                     .Where(c => courseIds.Contains(c.Id))
-                         .ToListAsync();
-
+                    .Where(c => courseIds.Contains(c.Id))
+                    .ToListAsync();
+            
                 foreach (var course in courses)
                 {
                     var teacherCourse = new TeacherCourse
@@ -187,7 +185,7 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
 
                     _context.TeacherCourses.Add(teacherCourse);
                 }
-
+                }
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
@@ -215,7 +213,7 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                        values: new { area = "Identity", userId = userId, code = code },
                         protocol: Request.Scheme);
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
@@ -223,14 +221,14 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        return RedirectToPage("/Index");
                     }
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);

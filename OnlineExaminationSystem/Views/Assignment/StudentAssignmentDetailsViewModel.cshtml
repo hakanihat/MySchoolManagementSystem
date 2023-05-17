@@ -5,7 +5,7 @@
 
 <div>
     <p>@Model.Description</p>
-    <p>Due date: @Model.DueDate.ToShortDateString()</p>
+    <p>Due date: @Model.DueDate.ToString("F")</p>
     <p>Max points: @Model.MaxPoints</p>
     <p>Course: @Model.CourseName</p>
     <p>Exam: @Model.ExamName</p>
@@ -16,3 +16,8 @@
     </div>
 
 </div>
+
+@section scripts{
+
+
+}

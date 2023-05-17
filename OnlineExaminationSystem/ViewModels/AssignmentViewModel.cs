@@ -17,6 +17,8 @@ namespace OnlineExaminationSystem.ViewModels
         [Display(Name = "Description")]
         public string Description { get; set; }
   
+        public bool IsExamSubmitted { get; set; }
+
         [Required]
         [DataType(DataType.DateTime)]
         [Display(Name = "Due Date")]

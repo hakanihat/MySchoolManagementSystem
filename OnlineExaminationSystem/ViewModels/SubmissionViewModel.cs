@@ -6,6 +6,7 @@ namespace OnlineExaminationSystem.ViewModels
     {
         public int SubmissionId { get; set; }
         public long UserSchoolNumber { get; set; }
+        public bool IsResultChecked { get; set; }
         public string CourseName { get; set; }
         public string GroupName { get; set; }
         public string AssignmentName { get; set; }
