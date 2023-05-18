@@ -18,6 +18,21 @@ namespace OnlineExaminationSystem.Controllers
             return View();
         }
 
+        public IActionResult AdminHomePage()
+        {
+            return View();
+        }
+
+        public IActionResult TeacherHomePage()
+        {
+            return View();
+        }
+
+        public IActionResult StudentHomePage()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
@@ -29,4 +44,5 @@ namespace OnlineExaminationSystem.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
+
 }

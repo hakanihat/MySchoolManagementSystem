@@ -97,6 +97,7 @@ namespace OnlineExaminationSystem.Controllers
 
             var viewModel = new QuestionViewModel
             {
+                QuestionId = question.Id,
                 QuestionText = question.Text,
                 QuestionType = question.Type.ToString(),
                 Points = question.Points,
@@ -206,6 +207,28 @@ namespace OnlineExaminationSystem.Controllers
             viewModel.Courses = await GetCoursesAsync();
             return View("EditQuestionViewModel", viewModel);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var question = await _context.Questions.FindAsync(id);
+            if (question == null)
+            {
+                return NotFound();
+            }
+
+            // Delete associated records in ExamQuestions table
+            var examQuestions = await _context.ExamQuestions.Where(eq => eq.QuestionId == id).ToListAsync();
+            _context.ExamQuestions.RemoveRange(examQuestions);
+
+            // Remove the question
+            _context.Questions.Remove(question);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Home"); // Redirect to the desired page after deletion
+        }
+
 
         private bool QuestionExists(int id)
         {

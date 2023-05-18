@@ -44,3 +44,7 @@
     <button type="submit" class="btn btn-primary">Edit Question</button>
     <a asp-action="Index" class="btn btn-secondary">Back to Questions</a>
 </form>
+<form method="post" action="@Url.Action("Delete", "Question", new { id = Model.QuestionId })" onsubmit="return confirm('Are you sure you want to delete this question?');">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Delete Question</button>
+</form>

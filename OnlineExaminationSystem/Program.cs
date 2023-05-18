@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using OnlineExaminationSystem.Data;
 using OnlineExaminationSystem.Models;
+using OnlineExaminationSystem.Services;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +18,10 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
+builder.Services.Configure<SendGridEmailSenderOptions>(builder.Configuration.GetSection("SendGridEmailSenderOptions"));
+
 
 
 builder.Services.AddControllersWithViews();

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using EllipticCurve;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +18,12 @@ namespace OnlineExaminationSystem.Controllers
     public class ExamController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ExamController(ApplicationDbContext context)
+        public ExamController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         [Authorize(Roles = "admin")]
         public IActionResult Index()
@@ -94,12 +98,36 @@ namespace OnlineExaminationSystem.Controllers
 
         public async Task<List<SelectListItem>> GetCoursesAsync()
         {
-            var courses = await _context.Courses
-                .Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })
-                .ToListAsync();
+            var currentUser = await _userManager.GetUserAsync(User);
 
-            return courses;
+            // Check if the user is an admin
+            var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
+
+            // Retrieve the courses based on the user's role
+            List<Course> courses;
+            if (isAdmin)
+            {
+                courses = await _context.Courses.ToListAsync();
+        
+            }
+            else
+            {
+                courses = await _context.TeacherCourses
+                 .Where(tc => tc.ApplicationUserId == currentUser.Id) // Assuming there is a UserId property in the UserCourse entity representing the user
+                  .Select(uc => uc.Course)
+                  .ToListAsync();
+         
+            }
+
+            var courseItems = courses.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            }).ToList();
+
+            return courseItems;
         }
+
 
 
         [Authorize(Roles = "admin, teacher")]

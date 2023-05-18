@@ -22,11 +22,13 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, UserManager<ApplicationUser> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -110,13 +112,27 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+
+                    if (await _userManager.IsInRoleAsync(user, "admin"))
+                    {
+                        return RedirectToAction("AdminHomePage", "Home");
+                    }
+                    else if (await _userManager.IsInRoleAsync(user, "teacher"))
+                    {
+                        return RedirectToAction("TeacherHomePage", "Home");
+                    }
+                    else if (await _userManager.IsInRoleAsync(user, "student"))
+                    {
+                        return RedirectToAction("StudentHomePage", "Home");
+                    }
+
+                    // If the user's role is not recognized or handled, you can add a default redirection or display an error message.
+                    ModelState.AddModelError(string.Empty, "User role not recognized.");
+                    return Page();
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -137,5 +153,6 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
     }
 }

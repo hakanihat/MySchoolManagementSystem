@@ -14,47 +14,40 @@
     <link rel="stylesheet" href="~/css/timer.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/OnlineExaminationSystem.styles.css" asp-append-version="true" />
 </head>
-<body style="background-color:darkorange">
+<body style="background-color:aliceblue">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background-color:#f2dfd7">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background-color:darkorange">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">OnlineExaminationSystem</a>
+                @if (User.IsInRole("admin"))
+                {
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="AdminHomePage">HIT</a>
+                }
+                else if (User.IsInRole("teacher"))
+                {
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="TeacherHomePage">HIT</a>
+                }
+                else if (User.IsInRole("student"))
+                {
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="StudentHomePage">HIT</a>
+                }     
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Question" asp-action="CreateQuestion">Create Question</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Exam" asp-action="CreateExam">Create Exam</a>
-                        </li> 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Courses" asp-action="Create">Create Course</a>
-                        </li><li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Exam" asp-action="Detail">See Exams</a>
-                        </li> 
-                       <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Groups" asp-action="Create">Create group</a>
-                        </li> 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Assignment" asp-action="Create">Create assignment</a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Assignment" asp-action="StudentAssignments">See assignments</a>
-                        </li>  
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Submission" asp-action="Index">See submissons</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register"> <i class="bi bi-person-add"></i> Register user</a>
-                        </li>
+                        @if (User.IsInRole("admin"))
+                        {
+                            <partial name="_AdminPartial" />
+                        }
+                        else if (User.IsInRole("teacher"))
+                        {
+                            <partial name="_TeacherPartial" />
+                        }
+                        else if (User.IsInRole("student"))
+                        {
+                            <partial name="_StudentPartial" />
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

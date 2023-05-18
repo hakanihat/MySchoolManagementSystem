@@ -6,6 +6,8 @@ namespace OnlineExaminationSystem.ViewModels
     public class QuestionViewModel
     {
         [Required]
+        public int QuestionId { get; set; }
+        [Required]
         [Display(Name = "Question Text")]
         public string QuestionText { get; set; }
 
