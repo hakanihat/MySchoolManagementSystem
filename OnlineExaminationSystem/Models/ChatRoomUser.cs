@@ -2,7 +2,7 @@
 {
     public class ChatRoomUser
     {
-        public int Id { get; set; }
+        public int RoomId { get; set; }
         public virtual ChatRoom ChatRoom { get; set; }
 
         public string UserId { get; set; }

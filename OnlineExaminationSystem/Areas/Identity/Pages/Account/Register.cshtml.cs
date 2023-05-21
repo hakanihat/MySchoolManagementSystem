@@ -201,6 +201,15 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
                         UserId = user.Id
                     };
 
+                    var chatPanel = new ChatPanel
+                    {
+                        ApplicationUserId = user.Id,
+                        User = user,
+                        ChatRooms = new List<ChatRoom>()
+                    };
+
+                    _context.ChatPanels.Add(chatPanel);
+
                     _context.UserProfiles.Add(userProfile);
                     await _context.SaveChangesAsync();
 

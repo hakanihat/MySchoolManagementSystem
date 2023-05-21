@@ -22,7 +22,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 builder.Services.Configure<SendGridEmailSenderOptions>(builder.Configuration.GetSection("SendGridEmailSenderOptions"));
 
-
+builder.Services.AddSignalR();
 
 builder.Services.AddControllersWithViews();
 
@@ -52,5 +52,10 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<ChatHub>(ChatHub.HubUrl); // Replace YourChatHub with your actual SignalR hub class
+});
 
 app.Run();

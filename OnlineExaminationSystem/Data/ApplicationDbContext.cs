@@ -35,12 +35,41 @@ namespace OnlineExaminationSystem.Data
         public DbSet<ExamQuestion> ExamQuestions { get; set; }
         public DbSet<TeacherCourse> TeacherCourses { get; set; }
         public DbSet<StudentAnswer> StudentAnswers { get; set; }
-
+        public DbSet<ChatPanel> ChatPanels { get; set; }
+        public DbSet<ChatPanelRoom> ChatPanelRooms { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<ApplicationUser>()
+                .HasMany(a => a.ChatRooms)
+                .WithMany(c => c.ApplicationUsers)
+                .UsingEntity<ChatRoomUser>(
+                cr => cr.HasOne(prop => prop.ChatRoom).WithMany().HasForeignKey(prop => prop.RoomId),
+                cr => cr.HasOne(prop => prop.User).WithMany().HasForeignKey(prop => prop.UserId),
+                cr =>
+                {
+                    cr.HasKey(prop => new { prop.RoomId, prop.UserId });
+                }
+                );
+
+            builder.Entity<ChatRoom>()
+                .HasMany(cp => cp.ChatPanels)
+                .WithMany(r => r.ChatRooms)
+                .UsingEntity<ChatPanelRoom>(
+
+                pr => pr.HasOne(prop => prop.ChatPanel).WithMany().HasForeignKey(prop => prop.ChatPanelId),
+                pr => pr.HasOne(prop => prop.ChatRoom).WithMany().HasForeignKey(prop => prop.ChatRoomId),
+                pr =>
+                {
+                    pr.HasKey(prop => new { prop.ChatPanelId, prop.ChatRoomId });
+                }
+
+
+
+                );
 
             builder.Entity<Course>()
         .HasMany(t => t.Teachers)

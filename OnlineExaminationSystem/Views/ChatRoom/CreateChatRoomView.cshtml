@@ -1,0 +1,117 @@
+﻿@using OnlineExaminationSystem.ViewModels
+@using Newtonsoft.Json
+@model CreateChatRoomViewModel
+
+<h1>Create Chat Room</h1>
+<form id="createChatRoomForm" asp-controller="ChatRoom" asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Select Participants:</label>
+        <input id="participantSearch" type="text" class="form-control" placeholder="Search for participants" />
+        <div id="selectedParticipantsContainer" class="selected-participants-container"></div>
+        <input type="hidden" id="selectedParticipants" name="SelectedParticipantIds" />
+        <span asp-validation-for="ParticipantOptions" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section Scripts {
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script>
+        $(function () {
+            var selectedParticipantIds = [];
+            var selectedParticipants = [];
+
+            var participantOptions = @Html.Raw(JsonConvert.SerializeObject(Model.ParticipantOptions));
+
+            $("#participantSearch").autocomplete({
+                source: participantOptions.map(function (option) {
+                    return { label: option.Text, value: option.Value };
+                }),
+                minLength: 1,
+                select: function (event, ui) {
+                    var selectedParticipant = { id: ui.item.value, name: ui.item.label };
+                    selectedParticipantIds.push(selectedParticipant.id);
+                    selectedParticipants.push(selectedParticipant);
+
+                    // Update the visible container
+                    var selectedParticipantsContainer = $("#selectedParticipantsContainer");
+                    var participantContainer = $('<div class="selected-participant">' + selectedParticipant.name + '<span class="delete-participant" data-id="' + selectedParticipant.id + '">X</span></div>');
+                    selectedParticipantsContainer.append(participantContainer);
+
+                    // Clear the search input
+                    $(this).val("");
+
+                    // Update the Name input with the full names of selected participants
+                    updateNameInput();
+
+                    return false;
+                }
+            });
+
+            $("#createChatRoomForm").on("click", ".delete-participant", function () {
+                var participantId = $(this).data("id");
+                var participantContainer = $(this).parent();
+                var participantName = participantContainer.text().trim();
+                participantContainer.remove();
+
+                // Remove the participant ID from selectedParticipantIds
+                var index = selectedParticipantIds.indexOf(participantId);
+                if (index !== -1) {
+                    selectedParticipantIds.splice(index, 1);
+                }
+
+                // Remove the participant from selectedParticipants
+                selectedParticipants = selectedParticipants.filter(function (participant) {
+                    return participant.id !== participantId;
+                });
+
+                // Update the Name input with the full names of selected participants
+                updateNameInput();
+            });
+
+            function updateNameInput() {
+                var nameInput = $("#Name");
+                var fullName = selectedParticipants.map(function (participant) {
+                    return participant.name;
+                }).join(", ");
+                nameInput.val(fullName);
+            }
+
+            $("#createChatRoomForm").submit(function () {
+                // Update the hidden input with selected participant IDs as JSON
+                $("#selectedParticipants").val(JSON.stringify(selectedParticipantIds));
+            });
+        });
+
+    </script>
+
+    <style>
+        .selected-participants-container {
+            margin-top: 10px;
+        }
+
+        .selected-participant {
+            display: inline-block;
+            padding: 5px;
+            background-color: lightblue;
+            margin-right: 5px;
+        }
+
+        .delete-participant {
+            cursor: pointer;
+            margin-left: 5px;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+}

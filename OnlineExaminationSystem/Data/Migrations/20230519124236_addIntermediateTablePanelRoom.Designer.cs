@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineExaminationSystem.Data;
 
@@ -11,9 +12,10 @@ using OnlineExaminationSystem.Data;
 namespace OnlineExaminationSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230519124236_addIntermediateTablePanelRoom")]
+    partial class addIntermediateTablePanelRoom
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,21 +54,21 @@ namespace OnlineExaminationSystem.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "1f2464c2-eb7b-43d6-b9ce-c3d960ed143f",
+                            ConcurrencyStamp = "44ed0136-0462-4d48-b25c-3134fa6aacb2",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "713079b8-70e8-4e8b-8dc8-613ed8e0c319",
+                            ConcurrencyStamp = "b8560391-4d05-4106-b3af-4d9381f1f950",
                             Name = "student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "1ac50c65-d81e-4abf-8982-aaad70494350",
+                            ConcurrencyStamp = "786e366a-bfd7-433d-8fb8-0ca727e606e1",
                             Name = "teacher",
                             NormalizedName = "TEACHER"
                         });
@@ -383,13 +385,22 @@ namespace OnlineExaminationSystem.Data.Migrations
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.ChatRoomUser", b =>
                 {
-                    b.Property<int>("RoomId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ChatRoomId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("RoomId", "UserId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatRoomId");
 
                     b.HasIndex("UserId");
 
@@ -891,13 +902,13 @@ namespace OnlineExaminationSystem.Data.Migrations
             modelBuilder.Entity("OnlineExaminationSystem.Models.ChatRoomUser", b =>
                 {
                     b.HasOne("OnlineExaminationSystem.Models.ChatRoom", "ChatRoom")
-                        .WithMany()
-                        .HasForeignKey("RoomId")
+                        .WithMany("ChatRoomUsers")
+                        .HasForeignKey("ChatRoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("OnlineExaminationSystem.Models.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("ChatRoomUsers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1108,6 +1119,8 @@ namespace OnlineExaminationSystem.Data.Migrations
                     b.Navigation("ChatPanel")
                         .IsRequired();
 
+                    b.Navigation("ChatRoomUsers");
+
                     b.Navigation("ExamResults");
 
                     b.Navigation("Exams");
@@ -1127,6 +1140,8 @@ namespace OnlineExaminationSystem.Data.Migrations
 
             modelBuilder.Entity("OnlineExaminationSystem.Models.ChatRoom", b =>
                 {
+                    b.Navigation("ChatRoomUsers");
+
                     b.Navigation("Messages");
                 });
 

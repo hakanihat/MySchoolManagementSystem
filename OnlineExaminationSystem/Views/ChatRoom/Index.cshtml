@@ -1,0 +1,206 @@
+﻿@{
+    ViewData["Title"] = "Chat Room";
+}
+
+@using OnlineExaminationSystem.ViewModels
+@model ChatRoomViewModel
+<head>
+    <style>
+        #chat-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 3.75vw;
+            border: 1.5px solid #ccc;
+            border-radius: 1.5vw;
+            background-color: #f9f9f9;
+        }
+
+        .chat-box {
+            max-height: 150vh;
+            min-height: 30vh;
+            overflow-y: scroll;
+            margin-bottom: 1.5vw;
+            padding: 1.5vw;
+            border: 1.5px solid #ccc;
+            border-radius: 1.5vw;
+            background-color: #fff;
+        }
+
+        .message-container {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1.5vw;
+        }
+
+        .message-sender {
+            font-weight: bold;
+            margin-bottom: 0.75vw;
+            font-size: 1.5vw;
+        }
+
+            .message-sender.me {
+                text-align: right;
+            }
+
+            .message-sender.other {
+                text-align: left;
+            }
+
+        .message-bubble {
+            padding: 1.5vw;
+            border-radius: 1.5vw;
+            color: #fff;
+            margin-bottom: 0.75vw;
+            max-width: 33.75%;
+            word-wrap: break-word;
+            font-size: 1.5vw;
+        }
+
+            .message-bubble.me {
+                background-color: #ccc;
+                color: #000;
+                text-align: right;
+                align-self: flex-end;
+                width: 33.75%;
+            }
+
+            .message-bubble.other {
+                background-color: #007bff;
+                text-align: left;
+                align-self: flex-start;
+                width: 33.75%;
+            }
+
+        #message-input {
+            width: 100%;
+            height: 6vw;
+            padding: 0.75vw;
+            border: 1.5px solid #ccc;
+            border-radius: 1.5vw;
+            font-size: 1.5vw;
+        }
+
+        #send-button {
+            display: block;
+            width: 100%;
+            margin-top: 1.5vw;
+            padding: 1.5vw;
+            border: none;
+            border-radius: 1.5vw;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.5vw;
+        }
+
+            #send-button:hover {
+                background-color: #0056b3;
+            }
+    </style>
+
+
+
+</head>
+
+
+<h1>Chat Room</h1>
+
+<div id="chat-container">
+    <div id="chat-box-@Model.ChatRoomId" class="chat-box"></div>
+    <textarea id="message-input" placeholder="Type your message..."></textarea>
+    <button id="send-button">Send</button>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Create a connection to the SignalR hub
+            var connection = new signalR.HubConnectionBuilder()
+                .withUrl("/chathub?chatRoomId=" + "@Model.ChatRoomId") // Replace with the actual URL of the ChatHub
+                .build();
+
+            function sendMessageToServer(message, chatRoomId, senderId, senderFullName) {
+                connection.invoke("SendMessage", message, parseInt(chatRoomId), senderId, senderFullName);
+            }
+            // Start the connection
+            connection.start()
+                .then(function () {
+                    console.log("Connected to the chat hub.");
+                })
+                .catch(function (error) {
+                    console.error("Error connecting to the chat hub: " + error);
+                });
+
+            // Event listener for sending a message
+            document.getElementById("send-button").addEventListener("click", function  () {
+                var message = document.getElementById("message-input").value;
+                if (message.trim() !== "") {
+                    // Send the message to the server through the hub
+                    sendMessageToServer(message, "@Model.ChatRoomId", "@Model.SenderId", "@Model.SenderFullName");
+                    document.getElementById("message-input").value = ""; // Clear the input field
+                }
+            });
+
+            // Event handler for receiving a message from the server
+            connection.on("ReceiveMessage", function (user, message, chatRoom, date) {
+                // Create a message container and append it to the chat box
+                var messageContainer = document.createElement("div");
+                messageContainer.className = "message-container";
+                var messageSender = document.createElement("div");
+                messageSender.className = "message-sender";
+
+                // Apply different class based on the sender
+                if (user === "@Model.SenderFullName") {
+                    messageSender.classList.add("me");
+                } else {
+                    messageSender.classList.add("other");
+                }
+
+                var formattedDate = new Date(date).toLocaleString('en-US', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true
+                });
+
+                messageSender.innerText = user + " - " + formattedDate;
+                var messageBubble = document.createElement("div");
+                messageBubble.className = "message-bubble";
+
+                // Apply different class based on the sender
+                if (user === "@Model.SenderFullName") {
+                    messageBubble.classList.add("me");
+                } else {
+                    messageBubble.classList.add("other");
+                }
+
+                messageBubble.innerText = message;
+
+                messageContainer.appendChild(messageSender);
+                messageContainer.appendChild(messageBubble);
+                document.getElementById("chat-box-@Model.ChatRoomId").appendChild(messageContainer);
+
+            });
+
+            document.getElementById("send-button").addEventListener("click", sendMessageToServer);
+
+            document.getElementById("message-input").addEventListener("keydown", function (event) {
+                if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault(); // Prevent the default Enter key behavior (e.g., new line)
+                    var message = document.getElementById("message-input").value;
+                    if (message.trim() !== "") {
+                        sendMessageToServer(message, "@Model.ChatRoomId", "@Model.SenderId", "@Model.SenderFullName");
+                        document.getElementById("message-input").value = ""; // Clear the input field
+                    }
+                }
+            });
+
+
+        });
+    </script>
+
+}
