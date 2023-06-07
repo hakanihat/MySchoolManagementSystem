@@ -1,30 +1,112 @@
-﻿<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="ChatPanel" asp-action="Index">Chat Panel</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Question" asp-action="CreateQuestion">Create Question</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Exam" asp-action="CreateExam">Create Exam</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Courses" asp-action="Create">Create Course</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Exam" asp-action="Detail">See Exams</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Groups" asp-action="Create">Create Group</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Assignment" asp-action="Create">Create Assignment</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Submission" asp-action="Index">See Submissions</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Assignment" asp-action="GroupedAssignments">See Created Assignments</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register"><i class="bi bi-person-add"></i> Register User</a>
-</li>
+﻿<style>
+    .custom-btn {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <li>
+                <a class="dropdown-item btn btn-sm custom-btn" asp-area="" asp-controller="ChatPanel" asp-action="Index">
+                   Chat Panel
+                </a>
+            </li>
+        </div>
+        <div class="col-md-3">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle btn-sm custom-btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Questions Management
+                </button>
+                <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton1">
+                    <li>
+                        <a class="dropdown-item" asp-area="" asp-controller="Question" asp-action="CreateQuestion">
+                            Create Question
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle btn-sm custom-btn" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                    Exam Management
+                </button>
+                <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton2">
+                    <li>
+                        <a class="dropdown-item" asp-area="" asp-controller="Exam" asp-action="CreateExam">
+                            Create Exam
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" asp-area="" asp-controller="Exam" asp-action="Detail">
+                            See Exams
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle btn-sm custom-btn" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+                    Groups and Courses
+                </button>
+                <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton3">
+                    <li>
+                        <a class="dropdown-item" asp-area="" asp-controller="Courses" asp-action="Create">
+                            Create Course
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" asp-area="" asp-controller="Groups" asp-action="Create">
+                            Create Group
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle btn-sm custom-btn" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-expanded="false">
+                    Assignment Management
+                </button>
+                <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton4">
+                    <li>
+                        <a class="dropdown-item" asp-area="" asp-controller="Assignment" asp-action="Create">
+                            Create Assignment
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" asp-area="" asp-controller="Assignment" asp-action="GroupedAssignments">
+                            See Created Assignments
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle btn-sm custom-btn" type="button" id="dropdownMenuButton5" data-bs-toggle="dropdown" aria-expanded="false">
+                    Submission Management
+                </button>
+                <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton5">
+                    <li>
+                        <a class="dropdown-item" asp-area="" asp-controller="Submission" asp-action="Index">
+                            See Submissions
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <!-- Empty column for spacing -->
+        </div>
+        <div class="col-md-3">
+            <!-- Empty column for spacing -->
+        </div>
+    </div>
+</div>

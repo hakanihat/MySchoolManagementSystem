@@ -23,6 +23,7 @@ public class SubmissionController : Controller
             .Include(s => s.ApplicationUser)
                 .ThenInclude(u => u.Group)
             .Include(s => s.ExamResult)
+            .OrderBy(s => s.SubmissionTime)
             .ToListAsync();
 
         var viewModel = new List<SubmissionViewModel>();

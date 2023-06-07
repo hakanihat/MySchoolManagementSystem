@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace OnlineExaminationSystem.Controllers
 {
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin,teacher")]
     public class QuestionController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,16 +24,16 @@ namespace OnlineExaminationSystem.Controllers
         {
             var viewModel = new QuestionViewModel();
             viewModel.Courses = await GetCoursesAsync();
-            return View("CreateQuestionViewModel",viewModel);
+            return View("CreateQuestionViewModel", viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-             public async Task<IActionResult> CreateQuestionAsync(QuestionViewModel viewModel, string AnswersJson)
+        public async Task<IActionResult> CreateQuestionAsync(QuestionViewModel viewModel, string AnswersJson)
         {
             // Deserialize the JSON string into a list of AnswerViewModel objects
             var answers = JsonConvert.DeserializeObject<List<AnswerViewModel>>(AnswersJson);
-            
+
             // Assign the answers to the view model's Answers property
             viewModel.Answers = answers;
 
@@ -51,16 +51,16 @@ namespace OnlineExaminationSystem.Controllers
                 Type = Enum.Parse<QuestionType>(viewModel.QuestionType),
                 ApplicationUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value,
                 CourseId = viewModel.CourseId
-        };
+            };
 
             _context.Questions.Add(question);
             _context.SaveChanges();
-            CreateQuestionAnswers(viewModel.Answers,question);
+            CreateQuestionAnswers(viewModel.Answers, question);
             viewModel.Courses = await GetCoursesAsync();
             return View("CreateQuestionViewModel", viewModel);
         }
 
-        private void CreateQuestionAnswers(List<AnswerViewModel> answers,Question question)
+        private void CreateQuestionAnswers(List<AnswerViewModel> answers, Question question)
         {
             var ans = new List<Answer>();
 
@@ -79,6 +79,7 @@ namespace OnlineExaminationSystem.Controllers
         }
 
         // GET: Questions/Details/5
+
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Questions == null)
@@ -102,14 +103,14 @@ namespace OnlineExaminationSystem.Controllers
                 QuestionType = question.Type.ToString(),
                 Points = question.Points,
                 CourseId = question.CourseId,
-                Courses =await GetCoursesAsync(),
+                Courses = await GetCoursesAsync(),
                 Answers = question.Answers.Select(c => new AnswerViewModel
                 {
                     AnswerText = c.Text,
                     IsCorrect = c.IsCorrect
                 }).ToList()
             };
-            return View("QuestionDetail",viewModel);
+            return View("QuestionDetail", viewModel);
 
         }
         public async Task<IActionResult> Edit(int? id)
