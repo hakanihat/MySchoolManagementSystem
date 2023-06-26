@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using OnlineExaminationSystem.Models;
 using System.Security.Claims;
 using OnlineExaminationSystem.ViewModels;
+using System.Data.Common;
 
 namespace OnlineExaminationSystem.Controllers
 {
@@ -12,37 +13,67 @@ namespace OnlineExaminationSystem.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<SendGridEmailSender> _logger;
 
-        public ChatPanelController(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
+        public ChatPanelController(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, ILogger<SendGridEmailSender> logger)
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _logger = logger;
         }
 
         public IActionResult Index()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var chatPanel = _dbContext.ChatPanels.Include(cp => cp.User)
-                                                 .Include(cp => cp.ChatRooms)
-                                                 .FirstOrDefault(cp => cp.ApplicationUserId == userId);
-
-            if (chatPanel == null)
+            try
             {
-                return NotFound();
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var chatPanel = _dbContext.ChatPanels.Include(cp => cp.User)
+                                                     .Include(cp => cp.ChatRooms)
+                                                     .FirstOrDefault(cp => cp.ApplicationUserId == userId);
+
+                if (chatPanel == null)
+                {
+                    return NotFound();
+                }
+
+                var chatRoomIds = chatPanel.ChatRooms.Select(cr => cr.Id).ToList();
+                var chatRoomNames = chatPanel.ChatRooms.Select(cr => cr.Name).ToList();
+
+                var chatPanelViewModel = new ChatPanelViewModel
+                {
+                    ChatRoomIds = chatRoomIds,
+                    ChatRoomNames = chatRoomNames
+                };
+
+                return View("ChatPanelView", chatPanelViewModel);
             }
-
-            var chatRoomIds = chatPanel.ChatRooms.Select(cr => cr.Id).ToList();
-            var chatRoomNames = chatPanel.ChatRooms.Select(cr => cr.Name).ToList();
-
-            var chatPanelViewModel = new ChatPanelViewModel
+            catch (InvalidOperationException ex)
             {
-                ChatRoomIds = chatRoomIds,
-                ChatRoomNames = chatRoomNames
-            };
+                // Handle specific InvalidOperationException
+                _logger.LogError(ex, "An InvalidOperationException occurred while retrieving the chat panel.");
 
-            return View("ChatPanelView",chatPanelViewModel);
+                // You can redirect the user to an error page here
+                return RedirectToAction("Index", "Error");
+            }
+            catch (DbException ex)
+            {
+                // Handle specific DbException
+                _logger.LogError(ex, "A DbException occurred while retrieving the chat panel.");
+
+                // You can redirect the user to an error page here
+                return RedirectToAction("Index", "Error");
+            }
+            catch (Exception ex)
+            {
+                // Handle other exceptions
+                _logger.LogError(ex, "An error occurred while retrieving the chat panel.");
+
+                // You can redirect the user to an error page here
+                return RedirectToAction("Index", "Error");
+            }
         }
+
 
 
     }

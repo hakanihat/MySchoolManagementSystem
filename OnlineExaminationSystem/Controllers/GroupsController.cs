@@ -16,6 +16,7 @@ namespace OnlineExaminationSystem.Controllers
     public class GroupsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<SendGridEmailSender> _logger;
 
         public GroupsController(ApplicationDbContext context)
         {
@@ -25,28 +26,46 @@ namespace OnlineExaminationSystem.Controllers
         // GET: Groups
         public async Task<IActionResult> Index()
         {
-              return _context.Groups != null ? 
-                          View(await _context.Groups.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Groups'  is null.");
+            if (_context.Groups != null)
+            {
+                return View(await _context.Groups.ToListAsync());
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
+
 
         // GET: Groups/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Groups == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null || _context.Groups == null)
+                {
+                    return NotFound();
+                }
 
-            var @group = await _context.Groups
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (@group == null)
+                var @group = await _context.Groups
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (@group == null)
+                {
+                    return NotFound();
+                }
+
+                return View(@group);
+            }
+            catch (Exception ex)
             {
-                return NotFound();
-            }
+                // Log the exception
+                _logger.LogError(ex, "An error occurred while retrieving group details.");
 
-            return View(@group);
+                // Redirect to the desired page
+                return RedirectToAction("Index", "Home");
+            }
         }
+
 
         // GET: Groups/Create
         public IActionResult Create()
@@ -54,113 +73,175 @@ namespace OnlineExaminationSystem.Controllers
             return View();
         }
 
-        // POST: Groups/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Group @group)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(@group);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(@group);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(@group);
             }
-            return View(@group);
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger.LogError(ex, "An error occurred while creating a group.");
+
+                // Redirect to an error page or display an error message
+                return RedirectToAction("Error", "Home");
+            }
         }
+
 
         // GET: Groups/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Groups == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null || _context.Groups == null)
+                {
+                    return NotFound();
+                }
 
-            var @group = await _context.Groups.FindAsync(id);
-            if (@group == null)
-            {
-                return NotFound();
+                var @group = await _context.Groups.FindAsync(id);
+                if (@group == null)
+                {
+                    return NotFound();
+                }
+
+                return View(@group);
             }
-            return View(@group);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving group for editing.");
+                return RedirectToAction("Error", "Home");
+            }
         }
 
-        // POST: Groups/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Group @group)
         {
-            if (id != @group.Id)
+            try
             {
-                return NotFound();
-            }
+                if (id != @group.Id)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(@group);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GroupExists(@group.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(@group);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!GroupExists(@group.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(@group);
             }
-            return View(@group);
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger.LogError(ex, "An error occurred while updating the group.");
+
+                // Redirect to an error page or display an error message
+                return RedirectToAction("Error", "Home");
+            }
         }
 
-        // GET: Groups/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Groups == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null || _context.Groups == null)
+                {
+                    return NotFound();
+                }
 
-            var @group = await _context.Groups
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (@group == null)
+                var @group = await _context.Groups
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (@group == null)
+                {
+                    return NotFound();
+                }
+
+                return View(@group);
+            }
+            catch (Exception ex)
             {
-                return NotFound();
-            }
+                // Log the exception
+                _logger.LogError(ex, "An error occurred while retrieving the group for deletion.");
 
-            return View(@group);
+                // Redirect to an error page or display an error message
+                return RedirectToAction("Error", "Home");
+            }
         }
 
-        // POST: Groups/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Groups == null)
+            try
             {
-                return Problem("Entity set 'ApplicationDbContext.Groups'  is null.");
+                if (_context.Groups == null)
+                {
+                    return Problem("Entity set 'ApplicationDbContext.Groups' is null.");
+                }
+
+                var @group = await _context.Groups.FindAsync(id);
+                if (@group != null)
+                {
+                    _context.Groups.Remove(@group);
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            var @group = await _context.Groups.FindAsync(id);
-            if (@group != null)
+            catch (Exception ex)
             {
-                _context.Groups.Remove(@group);
+                // Log the exception
+                _logger.LogError(ex, "An error occurred while deleting the group.");
+
+                // Redirect to an error page or display an error message
+                return RedirectToAction("Error", "Home");
             }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
+
 
         private bool GroupExists(int id)
         {
-          return (_context.Groups?.Any(e => e.Id == id)).GetValueOrDefault();
+            try
+            {
+                return (_context.Groups?.Any(e => e.Id == id)).GetValueOrDefault();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger.LogError(ex, "An error occurred while checking if the group exists.");
+
+                // Return an appropriate default value or handle the exception as needed
+                return false;
+            }
         }
+
     }
 }

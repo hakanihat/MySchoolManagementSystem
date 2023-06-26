@@ -9,45 +9,56 @@ using OnlineExaminationSystem.ViewModels;
 public class SubmissionController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly ILogger<SendGridEmailSender> _logger;
 
-    public SubmissionController(ApplicationDbContext context)
+    public SubmissionController(ApplicationDbContext context, ILogger<SendGridEmailSender> logger)
     {
         _context = context;
+        _logger = logger;
     }
     public async Task<IActionResult> Index()
     {
-        var submissions = await _context.Submissions
-            .Include(s => s.ApplicationUser)
-            .Include(s => s.Assignment)
-                .ThenInclude(a => a.Course)
-            .Include(s => s.ApplicationUser)
-                .ThenInclude(u => u.Group)
-            .Include(s => s.ExamResult)
-            .OrderBy(s => s.SubmissionTime)
-            .ToListAsync();
-
-        var viewModel = new List<SubmissionViewModel>();
-
-        foreach (var submission in submissions)
+        try
         {
-            var model = new SubmissionViewModel
+            var submissions = await _context.Submissions
+                .Include(s => s.ApplicationUser)
+                .Include(s => s.Assignment)
+                    .ThenInclude(a => a.Course)
+                .Include(s => s.ApplicationUser)
+                    .ThenInclude(u => u.Group)
+                .Include(s => s.ExamResult)
+                .OrderBy(s => s.SubmissionTime)
+                .ToListAsync();
+
+            var viewModel = new List<SubmissionViewModel>();
+
+            foreach (var submission in submissions)
             {
-                SubmissionId = submission.Id,
-                UserSchoolNumber = submission.ApplicationUser.SchoolNumber ?? 0,
-                IsResultChecked = submission.isResultChecked,
-                CourseName = submission.Assignment.Course.Name,
-                GroupName = submission.ApplicationUser.Group.Name,
-                AssignmentName = submission.Assignment.Title,
-                SubmissionDate = submission.SubmissionTime,
-                ExamResultId = submission.ExamResult?.Id ?? 0
-            };
+                var model = new SubmissionViewModel
+                {
+                    SubmissionId = submission.Id,
+                    UserSchoolNumber = submission.ApplicationUser.SchoolNumber ?? 0,
+                    IsResultChecked = submission.isResultChecked,
+                    CourseName = submission.Assignment.Course.Name,
+                    GroupName = submission.ApplicationUser.Group.Name,
+                    AssignmentName = submission.Assignment.Title,
+                    SubmissionDate = submission.SubmissionTime,
+                    ExamResultId = submission.ExamResult?.Id ?? 0
+                };
 
-            viewModel.Add(model);
+                viewModel.Add(model);
+            }
+
+            return View(viewModel);
         }
-
-
-        return View(viewModel);
+        catch (Exception ex)
+        {
+            // Log the exception and return an appropriate error response
+            _logger.LogError(ex, "An error occurred while retrieving submissions.");
+            return RedirectToAction("Index", "Error");
+        }
     }
+
 
 
 }
