@@ -87,6 +87,7 @@ namespace OnlineExaminationSystem.Controllers
                     {
                         // Log the exception and continue processing other student answers
                         _logger.LogError(ex, "An error occurred while processing a student answer.");
+                        return RedirectToAction("Index", "Error");
                     }
                 }
 
@@ -134,7 +135,7 @@ namespace OnlineExaminationSystem.Controllers
 
 
 
-
+        [Authorize(Roles = "admin,teacher")]
         public async Task<IActionResult> Edit(int submissionId)
         {
             try
@@ -195,6 +196,7 @@ namespace OnlineExaminationSystem.Controllers
                     {
                         // Log the exception and continue processing other student answers
                         _logger.LogError(ex, "An error occurred while processing a student answer.");
+                        return RedirectToAction("Index", "Error");
                     }
                 }
 
@@ -238,7 +240,7 @@ namespace OnlineExaminationSystem.Controllers
         }
 
 
-
+        [Authorize(Roles = "admin,teacher")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ExamResultViewModel viewModel)

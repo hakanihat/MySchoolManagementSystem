@@ -24,7 +24,7 @@ namespace OnlineExaminationSystem.Controllers
         public async Task<IActionResult> CreateQuestionAsync()
         {
             var viewModel = new QuestionViewModel();
-            viewModel.Courses = await GetCoursesAsync();
+            viewModel.Courses = await GetCoursesAsync(User);
             return View("CreateQuestionViewModel", viewModel);
         }
 
@@ -57,7 +57,7 @@ namespace OnlineExaminationSystem.Controllers
                 _context.Questions.Add(question);
                 _context.SaveChanges();
                 CreateQuestionAnswers(viewModel.Answers, question);
-                viewModel.Courses = await GetCoursesAsync();
+                viewModel.Courses = await GetCoursesAsync(User);
                 return View("CreateQuestionViewModel", viewModel);
             }
             catch (JsonException ex)
@@ -146,7 +146,7 @@ namespace OnlineExaminationSystem.Controllers
                     QuestionType = question.Type.ToString(),
                     Points = question.Points,
                     CourseId = question.CourseId,
-                    Courses = await GetCoursesAsync(),
+                    Courses = await GetCoursesAsync(User),
                     Answers = question.Answers.Select(c => new AnswerViewModel
                     {
                         AnswerText = c.Text,
@@ -157,12 +157,8 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Handle the exception
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while retrieving the question details.");
-
-                // Handle the exception or return an error view
-                throw; // Rethrow the exception to propagate it to the calling code
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -190,7 +186,7 @@ namespace OnlineExaminationSystem.Controllers
                     QuestionType = question.Type.ToString(),
                     Points = question.Points,
                     CourseId = question.CourseId,
-                    Courses = await GetCoursesAsync(),
+                    Courses = await GetCoursesAsync(User),
                     Answers = question.Answers.Select(c => new AnswerViewModel
                     {
                         AnswerText = c.Text,
@@ -202,21 +198,13 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                // Handle the InvalidOperationException
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while retrieving the question for editing.");
-
-                // Handle the exception or return an error view
-                throw; // Rethrow the exception to propagate it to the calling code
+                return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
-                // Handle other specific exception types if needed
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while retrieving the question for editing.");
-
-                // Handle the exception or return an error view
-                throw; // Rethrow the exception to propagate it to the calling code
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -240,7 +228,7 @@ namespace OnlineExaminationSystem.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    viewModel.Courses = await GetCoursesAsync();
+                    viewModel.Courses = await GetCoursesAsync(User);
                     return View("EditQuestionViewModel", viewModel);
                 }
 
@@ -268,7 +256,7 @@ namespace OnlineExaminationSystem.Controllers
                 _context.Update(question);
                 await _context.SaveChangesAsync();
 
-                viewModel.Courses = await GetCoursesAsync();
+                viewModel.Courses = await GetCoursesAsync(User);
                 return View("EditQuestionViewModel", viewModel);
             }
             catch (DbUpdateConcurrencyException ex)
@@ -276,18 +264,14 @@ namespace OnlineExaminationSystem.Controllers
                 // Handle the DbUpdateConcurrencyException
                 // Log the exception
                 _logger.LogError(ex, "An error occurred while updating the question.");
-
-                // Handle the exception or return an error view
-                throw; // Rethrow the exception to propagate it to the calling code
+                return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
                 // Handle other specific exception types if needed
                 // Log the exception
                 _logger.LogError(ex, "An error occurred while updating the question.");
-
-                // Handle the exception or return an error view
-                throw; // Rethrow the exception to propagate it to the calling code
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -318,19 +302,31 @@ namespace OnlineExaminationSystem.Controllers
             {
                 // Log the exception
                 _logger.LogError(ex, "An error occurred while deleting the question.");
-
-                // Handle the exception or return an error view
-                throw; // Rethrow the exception to propagate it to the calling code
+                return RedirectToAction("Index", "Error");
             }
         }
 
-        public async Task<List<SelectListItem>> GetCoursesAsync()
+        public async Task<List<SelectListItem>> GetCoursesAsync(ClaimsPrincipal user)
         {
             try
             {
-                var courses = await _context.Courses
-                    .Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })
-                    .ToListAsync();
+                List<SelectListItem> courses;
+
+                if (user.IsInRole("admin"))
+                {
+                    courses = await _context.Courses
+                        .Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })
+                        .ToListAsync();
+                }
+                else
+                {
+                    var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                    courses = await _context.TeacherCourses
+                        .Where(tc => tc.ApplicationUserId == userId)
+                        .Select(uc => new SelectListItem { Value = uc.Course.Id.ToString(), Text = uc.Course.Name })
+                        .ToListAsync();
+                }
 
                 return courses;
             }
@@ -343,6 +339,7 @@ namespace OnlineExaminationSystem.Controllers
                 return new List<SelectListItem>(); // Return an empty list or handle the exception based on your requirement
             }
         }
+
 
     }
 }

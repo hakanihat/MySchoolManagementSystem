@@ -2,10 +2,18 @@
 @model QuestionViewModel
 
 <h1>Create questions</h1>
-
+<style>
+    .container-3d {
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+    }
+</style>
 <form asp-action="CreateQuestion" asp-controller="Question" method="post" id="form-id">
     @Html.AntiForgeryToken()
-
+    <div class="container-3d">
     <div class="form-group">
         <label asp-for="CourseId"></label>
         <select asp-for="CourseId" asp-items="@Model.Courses" class="form-control"></select>
@@ -48,6 +56,7 @@
 
 
     <button type="submit" class="btn btn-success btn-lg" style="margin-top: 30px">Create</button>
+    </div>
 </form>
 
 

@@ -27,12 +27,12 @@ namespace OnlineExaminationSystem.Controllers
             _userManager = userManager;
             _logger = logger;
         }
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public IActionResult Index()
         {
             return View();
         }
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<IActionResult> CreateExam()
         {
         
@@ -43,7 +43,7 @@ namespace OnlineExaminationSystem.Controllers
             return View("CreateExamViewModel", viewModel);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateExam(ExamViewModel viewModel, string SelectedQuestionIdsJson)
@@ -198,18 +198,18 @@ namespace OnlineExaminationSystem.Controllers
             {
                 // Handle InvalidOperationException
                 _logger.LogError(ex, "An error occurred due to an invalid operation.");
-                throw;
+                return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
                 // Handle other specific exceptions or provide a generic fallback
                 _logger.LogError(ex, "An error occurred while retrieving the exams.");
-                throw;
+                return RedirectToAction("Index", "Error");
             }
         }
 
 
-
+        [Authorize(Roles = "admin,teacher")]
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -252,7 +252,7 @@ namespace OnlineExaminationSystem.Controllers
             }
         }
 
-
+        [Authorize(Roles = "admin,teacher")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ExamViewModel viewModel, string SelectedQuestionIdsJson)
@@ -312,7 +312,7 @@ namespace OnlineExaminationSystem.Controllers
                         }
                         else
                         {
-                            throw;
+                            return RedirectToAction("Index", "Error");
                         }
                     }
 
@@ -327,13 +327,13 @@ namespace OnlineExaminationSystem.Controllers
             {
                 // Handle DbUpdateException
                 _logger.LogError(ex, "An error occurred while updating the exam.");
-                throw;
+                return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
                 // Handle other specific exceptions or provide a generic fallback
                 _logger.LogError(ex, "An error occurred during the exam editing process.");
-                throw;
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -351,6 +351,7 @@ namespace OnlineExaminationSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "admin,teacher")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
@@ -377,13 +378,13 @@ namespace OnlineExaminationSystem.Controllers
             {
                 // Handle DbUpdateException
                 _logger.LogError(ex, "An error occurred while deleting the exam.");
-                throw;
+                return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
                 // Handle specific exceptions or provide a generic fallback
                 _logger.LogError(ex, "An error occurred while deleting the exam.");
-                throw;
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -432,13 +433,13 @@ namespace OnlineExaminationSystem.Controllers
             {
                 // Handle specific database-related exceptions
                 _logger.LogError(ex, "A database error occurred while retrieving the exam for taking.");
-                throw;
+                return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
                 // Handle other exceptions or provide a generic fallback
                 _logger.LogError(ex, "An error occurred while retrieving the exam for taking.");
-                throw;
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -521,14 +522,14 @@ namespace OnlineExaminationSystem.Controllers
             {
                 // Log the error or display it to the user
                 Console.WriteLine(ex.Message);
-                throw;
+                return RedirectToAction("Index", "Error");
             }
             var examResult = await CreateExamResultAsync(model.ExamId, userId, answers, textAnswers, submission);
             submission.ExamResult = examResult;
             return RedirectToAction("Detail", "ExamResult", new { id = examResult.Id });
         }
 
-        private async Task<ExamResult> CreateExamResultAsync(int examId, string userId, Dictionary<int, List<int>> answerIds, Dictionary<int, string> textAnswers, Submission sub)
+        public async Task<ExamResult> CreateExamResultAsync(int examId, string userId, Dictionary<int, List<int>> answerIds, Dictionary<int, string> textAnswers, Submission sub)
         {
             try
             {
@@ -636,7 +637,7 @@ namespace OnlineExaminationSystem.Controllers
             {
                 // Log the exception and return an appropriate error response
                 _logger.LogError(ex, "An error occurred while retrieving exams.");
-                return StatusCode(500, "An error occurred while retrieving exams. Please try again later.");
+                return RedirectToAction("Index", "Error");
             }
         }
 

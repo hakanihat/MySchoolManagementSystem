@@ -1,25 +1,69 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model ChatPanelViewModel
-<h1>Chat Panel</h1>
 
-@if (Model.ChatRoomIds.Count == 0)
-{
-    <p>No chat rooms available.</p>
-}
-else
-{
-    <ul>
-        @for (int i = 0; i < Model.ChatRoomIds.Count; i++)
-        {
-            <li>
-                <strong>Chat Room ID:</strong> @Model.ChatRoomIds[i]
-                <br />
-                <strong>Chat Room Name:</strong> @Model.ChatRoomNames[i]
-                <br />
-                <a href="@Url.Action("Index", "ChatRoom", new { id = Model.ChatRoomIds[i] })" class="btn btn-primary">View Chat Room</a>
-            </li>
-        }
-    </ul>
-}
+<style>
+    .list-group-item:hover {
+        background-color: #f5f5f5;
+        cursor: pointer;
+    }
 
-<a href="@Url.Action("Create", "ChatRoom")" class="btn btn-primary">Add Chat Room</a>
+    .list-group-item.active {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .participant-name {
+        font-weight: bold;
+        background-color: darkorange;
+        display: inline-block;
+        padding: 2px 4px;
+        border-radius: 4px;
+
+    }
+</style>
+
+<div class="container">
+    <h1>Chat Panel</h1>
+
+    @if (Model.ChatRoomIds.Count == 0)
+    {
+        <div class="card">
+            <div class="card-body">
+                <p>No chat rooms available.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-body">
+                <ul class="list-group">
+                    @for (int i = 0; i < Model.ChatRoomIds.Count; i++)
+                    {
+                        <li class="list-group-item" onclick="viewChatRoom('@Model.ChatRoomIds[i]')" onmousedown="event.preventDefault()" onmouseup="event.preventDefault(); this.classList.add('active'); setTimeout(() => this.classList.remove('active'), 150)">
+                            <div class="chat-room-info">
+                            
+                                <strong class="participant-name">Chat Room: @Model.ChatRoomNames[i]</strong>
+                            </div>
+
+                            <div class="chat-room-actions">
+                                <a href="@Url.Action("Index", "ChatRoom", new { id = Model.ChatRoomIds[i] })" class="btn btn-primary">Open chat</a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
+    <div class="add-chat-room-button">
+        <a href="@Url.Action("Create", "ChatRoom")" class="btn btn-primary">Add Chat Room</a>
+    </div>
+</div>
+
+<script>
+    function viewChatRoom(chatRoomId) {
+        var url = '@Url.Action("Index", "ChatRoom")' + '?id=' + chatRoomId;
+        window.location.href = url;
+    }
+</script>

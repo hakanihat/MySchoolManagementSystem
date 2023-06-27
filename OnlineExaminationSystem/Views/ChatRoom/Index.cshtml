@@ -16,26 +16,28 @@
         }
 
         .chat-box {
-            max-height: 150vh;
-            min-height: 30vh;
-            overflow-y: scroll;
-            margin-bottom: 1.5vw;
-            padding: 1.5vw;
+            max-height: 45vh; /* Adjust the value as needed */
+            min-height: 15vh;
+            overflow-y: auto; /* Changed to 'auto' to activate the scroll after three messages */
+            margin-bottom: 0.75vw;
+            padding: 0.75vw;
             border: 1.5px solid #ccc;
             border-radius: 1.5vw;
             background-color: #fff;
         }
 
+
+
         .message-container {
             display: flex;
             flex-direction: column;
-            margin-bottom: 1.5vw;
+            margin-bottom: 1vw;
         }
 
         .message-sender {
             font-weight: bold;
-            margin-bottom: 0.75vw;
-            font-size: 1.5vw;
+            margin-bottom: 0.5vw;
+            font-size: 1vw;
         }
 
             .message-sender.me {
@@ -47,13 +49,13 @@
             }
 
         .message-bubble {
-            padding: 1.5vw;
-            border-radius: 1.5vw;
+            padding: 1vw;
+            border-radius: 1vw;
             color: #fff;
-            margin-bottom: 0.75vw;
+            margin-bottom: 0.5vw;
             max-width: 33.75%;
             word-wrap: break-word;
-            font-size: 1.5vw;
+            font-size: 1vw;
         }
 
             .message-bubble.me {
@@ -73,24 +75,24 @@
 
         #message-input {
             width: 100%;
-            height: 6vw;
-            padding: 0.75vw;
+            height: 4vw;
+            padding: 0.5vw;
             border: 1.5px solid #ccc;
-            border-radius: 1.5vw;
-            font-size: 1.5vw;
+            border-radius: 1vw;
+            font-size: 1vw;
         }
 
         #send-button {
             display: block;
             width: 100%;
-            margin-top: 1.5vw;
-            padding: 1.5vw;
+            margin-top: 1vw;
+            padding: 1vw;
             border: none;
-            border-radius: 1.5vw;
+            border-radius: 1vw;
             background-color: #007bff;
             color: #fff;
             cursor: pointer;
-            font-size: 1.5vw;
+            font-size: 1vw;
         }
 
             #send-button:hover {
@@ -113,7 +115,7 @@
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Create a connection to the SignalR hub
@@ -122,8 +124,12 @@
                 .build();
 
             function sendMessageToServer(message, chatRoomId, senderId, senderFullName) {
-                connection.invoke("SendMessage", message, parseInt(chatRoomId), senderId, senderFullName);
+                connection.invoke("SendMessage", message, parseInt(chatRoomId), senderId, senderFullName)
+                    .catch(function (error) {
+                        console.error("Error sending message: " + error);
+                    });
             }
+
             // Start the connection
             connection.start()
                 .then(function () {
@@ -134,7 +140,8 @@
                 });
 
             // Event listener for sending a message
-            document.getElementById("send-button").addEventListener("click", function  () {
+            document.getElementById("send-button").addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent form submission
                 var message = document.getElementById("message-input").value;
                 if (message.trim() !== "") {
                     // Send the message to the server through the hub
@@ -183,10 +190,9 @@
                 messageContainer.appendChild(messageSender);
                 messageContainer.appendChild(messageBubble);
                 document.getElementById("chat-box-@Model.ChatRoomId").appendChild(messageContainer);
-
+                var chatBox = document.getElementById("chat-box-@Model.ChatRoomId");
+                chatBox.scrollTop = chatBox.scrollHeight;
             });
-
-            document.getElementById("send-button").addEventListener("click", sendMessageToServer);
 
             document.getElementById("message-input").addEventListener("keydown", function (event) {
                 if (event.key === "Enter" && !event.shiftKey) {
@@ -198,9 +204,8 @@
                     }
                 }
             });
-
-
         });
+
     </script>
 
 }

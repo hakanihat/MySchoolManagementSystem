@@ -81,11 +81,20 @@
 
             function updateNameInput() {
                 var nameInput = $("#Name");
-                var fullName = selectedParticipants.map(function (participant) {
-                    return participant.name;
-                }).join(", ");
+                var currentUserFullName = $(".navbar .align-middle").text().trim();
+
+                var fullName = currentUserFullName;
+                if (selectedParticipants.length > 0) {
+                    fullName += " - " + selectedParticipants.map(function (participant) {
+                        return participant.name;
+                    }).join(" - ");
+                }
                 nameInput.val(fullName);
             }
+
+
+
+
 
             $("#createChatRoomForm").submit(function () {
                 // Update the hidden input with selected participant IDs as JSON

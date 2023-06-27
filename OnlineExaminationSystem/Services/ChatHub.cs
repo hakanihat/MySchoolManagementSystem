@@ -23,45 +23,18 @@ namespace OnlineExaminationSystem.Services
 
         public async Task SendMessage(string message, int crId, string sId, string sName)
         {
-            try
+            var chatRoomId = crId;
+            var senderId = sId;
+            var newMessage = new Message
             {
-                var chatRoomId = crId;
-                var senderId = sId;
-
-                // Save the message to the database
-                var newMessage = new Message
-                {
-                    Text = message,
-                    Timestamp = DateTime.UtcNow,
-                    ChatRoomId = chatRoomId,
-                    SenderId = senderId
-                };
-
-                _dbContext.Messages.Add(newMessage);
-                await _dbContext.SaveChangesAsync();
-
-                // Broadcast the message to all clients in the chat room
-                await Clients.All.SendAsync("ReceiveMessage", sName, message, chatRoomId, DateTime.Now);
-            }
-            catch (DbUpdateException ex)
-            {
-                // Log the database update error using your preferred logging mechanism
-                // Replace 'logger' with your actual logger instance
-                _logger.LogError(ex, "An error occurred while updating the database.");
-
-                // Optionally, handle the specific exception or throw a custom exception
-                // For example:
-                throw;
-            }
-            catch (Exception ex)
-            {
-                // Log other exceptions using your preferred logging mechanism
-                // Replace 'logger' with your actual logger instance
-                _logger.LogError(ex, "An error occurred while sending the message.");
-
-                // Optionally, throw or return a specific result for the error
-                throw;
-            }
+                Text = message,
+                Timestamp = DateTime.UtcNow,
+                ChatRoomId = chatRoomId,
+                SenderId = senderId
+            };
+            _dbContext.Messages.Add(newMessage);
+            await _dbContext.SaveChangesAsync();
+            await Clients.All.SendAsync("ReceiveMessage", sName, message, chatRoomId, DateTime.Now);
         }
 
 

@@ -25,56 +25,27 @@ namespace OnlineExaminationSystem.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int id)
         {
-            try
+            var chatRoom = _dbContext.ChatRooms.Include(a => a.ApplicationUsers).FirstOrDefault(cr => cr.Id == id);
+
+            if (chatRoom == null)
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var chatPanel = _dbContext.ChatPanels.Include(cp => cp.User)
-                                                     .Include(cp => cp.ChatRooms)
-                                                     .FirstOrDefault(cp => cp.ApplicationUserId == userId);
-
-                if (chatPanel == null)
-                {
-                    return NotFound();
-                }
-
-                var chatRoomIds = chatPanel.ChatRooms.Select(cr => cr.Id).ToList();
-                var chatRoomNames = chatPanel.ChatRooms.Select(cr => cr.Name).ToList();
-
-                var chatPanelViewModel = new ChatPanelViewModel
-                {
-                    ChatRoomIds = chatRoomIds,
-                    ChatRoomNames = chatRoomNames
-                };
-
-                return View("ChatPanelView", chatPanelViewModel);
+                return NotFound(); // Return a 404 Not Found response if the chat room is not found
             }
-            catch (InvalidOperationException ex)
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            var userWithProfile = _dbContext.Users.Include(u => u.UserProfile).FirstOrDefault(u => u.Id == currentUser.Id);
+            Dictionary<string, string> keyValuePairs = new Dictionary<string, string> { { GetRecipientId(chatRoom.ApplicationUsers.ToList(), currentUser).Keys.FirstOrDefault(), GetRecipientId(chatRoom.ApplicationUsers.ToList(), currentUser).Values.First() } };
+            var viewModel = new ChatRoomViewModel
             {
-                // Handle specific InvalidOperationException
-                _logger.LogError(ex, "An InvalidOperationException occurred while retrieving the chat panel.");
-
-                // You can redirect the user to an error page here
-                return RedirectToAction("Index", "Error");
-            }
-            catch (DbException ex)
-            {
-                // Handle specific DbException
-                _logger.LogError(ex, "A DbException occurred while retrieving the chat panel.");
-
-                // You can redirect the user to an error page here
-                return RedirectToAction("Index", "Error");
-            }
-            catch (Exception ex)
-            {
-                // Handle other exceptions
-                _logger.LogError(ex, "An error occurred while retrieving the chat panel.");
-
-                // You can redirect the user to an error page here
-                return RedirectToAction("Index", "Error");
-            }
+                ChatRoomId = chatRoom.Id,
+                SenderId = userWithProfile.Id,
+                SenderFullName = userWithProfile.UserProfile.FullName,
+                RecipientId = keyValuePairs.Keys.First(),
+                RecipientFullName = keyValuePairs.Values.First()// Get the recipient ID based on the chat room's users
+            };
+            return View(viewModel);
         }
 
         public IActionResult Create()
@@ -206,6 +177,18 @@ namespace OnlineExaminationSystem.Controllers
             }
         }
 
+        private Dictionary<string, string> GetRecipientId(List<ApplicationUser> users, ApplicationUser cu)
+        {
+            foreach (var user in users)
+            {
+                if (user.Id != cu.Id)
+                {
+                    var userWithProfile = _dbContext.Users.Include(u => u.UserProfile).FirstOrDefault(u => u.Id == user.Id);
+                    var dictionary = new Dictionary<string, string>();
+                    return new Dictionary<string, string> { { userWithProfile.Id, userWithProfile.UserProfile.FullName } };
+                }
+            }
+            return null;
+        }
     }
-
 }
