@@ -1,9 +1,29 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model ExamViewModel
 
-<h2>Edit Exam</h2>
+<style>
+    .container-3d {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
+    .bold-label {
+        font-weight: bold;
+    }
+
+    .heading {
+        text-align: center;
+    }
+
+</style>
+
+<div class="container-3d">
 <form asp-action="Edit" method="post">
+
+        <h2 class="heading">Edit Exam</h2>
     <div class="form-group">
         <label asp-for="CourseId" class="control-label"></label>
         <select asp-for="CourseId" class="form-control" asp-items="@Model.Courses"></select>
@@ -27,14 +47,10 @@
     <div class="form-group">
         <div class="form-check">
             <input asp-for="IsCheatSecured" class="form-check-input" />
-            <label class="form-check-label" asp-for="IsCheatSecured"></label>
+            <label class="form-check-label bold-label" asp-for="IsCheatSecured"></label>
         </div>
         <span asp-validation-for="IsCheatSecured" class="text-danger"></span>
     </div>
-
-
-
-
 
     <div id="selectedQuestionsContainer">
         @foreach (var question in Model.Questions)
@@ -45,15 +61,17 @@
                     <label for="Question@(question.Value)">@question.Text</label>
                     <input id="Question@(question.Value)" name="Question@(question.Value)" type="text" class="form-control" value="@question.Text" />
                     <button type="button" class="btn btn-danger btn-sm delete-question">Delete</button>
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="col-md-1">
+                                <a asp-controller="Question" asp-action="Edit" asp-route-id="@question.Value" class="btn btn-primary">Edit</a>
+                            </div>
+                            <div class="col-md-1">
+                                <a asp-controller="Question" asp-action="Details" asp-route-id="@question.Value" class="btn btn-primary" style="margin-left: 15px;">Details</a>
+                            </div>
+                        </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <a asp-controller="Question" asp-action="Details" asp-route-id="@question.Value" class="btn btn-primary">Details</a>
-                    </div>
-                    <div class="col-md-6">
-                        <a asp-controller="Question" asp-action="Edit" asp-route-id="@question.Value" class="btn btn-primary">Edit</a>
-                    </div>
-                </div>
+          
+
             }
         }
         <input type="hidden" name="SelectedQuestionIdsJson" id="SelectedQuestionIdsJson" />
@@ -69,15 +87,10 @@
             }
         </select>
     </div>
-
-
-
-
-
-
-
-    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="submit" class="btn btn-primary" style="margin-top: 5px;">Save</button>
 </form>
+</div>
+
 
 
         @section Scripts {

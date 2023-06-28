@@ -4,12 +4,55 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<style>
+    .container-3d {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 80%; /* Adjust the percentage value as needed */
+        margin: auto; /* Center the container horizontally */
+    }
 
-<h4>Group</h4>
+    .heading {
+        text-align: center;
+    }
+
+    .separator {
+        margin: 20px 0;
+        border: none;
+        border-top: 1px solid #000;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .centered {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+</style>
+
+<div class="container-3d">
+
+    <div class="text-center">
+        <div class="d-flex align-items-center mb-3">
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h1 class="mx-auto">Edit Group</h1>
+        </div>
+    </div>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="centered">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -19,16 +62,17 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary" style="margin-top:5px"/>
+                    <div >
+                        <a asp-action="Index">Back to List</a>
+                    </div>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
+</div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

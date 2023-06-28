@@ -22,6 +22,7 @@ namespace OnlineExaminationSystem.ViewModels
         public double Points { get; set; }
 
         [Required]
+        [Display(Name = "Course")]
         public int CourseId { get; set; }
         public List<SelectListItem> Courses { get; set; } = new List<SelectListItem>();
         public List<AnswerViewModel> Answers { get; set; } = new List<AnswerViewModel>();

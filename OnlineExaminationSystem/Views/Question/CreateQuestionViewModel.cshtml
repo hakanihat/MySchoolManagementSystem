@@ -1,7 +1,7 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model QuestionViewModel
 
-<h1>Create questions</h1>
+
 <style>
     .container-3d {
         background-color: #ffffff;
@@ -10,10 +10,29 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         padding: 20px;
     }
+
+    .separator {
+        margin: 20px 0;
+        border: none;
+        border-top: 1px solid #000;
+    }
 </style>
+
+
 <form asp-action="CreateQuestion" asp-controller="Question" method="post" id="form-id">
     @Html.AntiForgeryToken()
     <div class="container-3d">
+        <div class="container-chat">
+            <div class="text-center">
+                <div class="d-flex align-items-center mb-3">
+                    <a href="javascript:history.back()" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                    <h1 class="mx-auto">Create questions</h1>
+                </div>
+            </div>
+        </div>
+        <hr class="separator">
     <div class="form-group">
         <label asp-for="CourseId"></label>
         <select asp-for="CourseId" asp-items="@Model.Courses" class="form-control"></select>
@@ -54,8 +73,8 @@
             <input type="hidden" name="AnswersJson" id="AnswersJson" />
         </div>
 
-
-    <button type="submit" class="btn btn-success btn-lg" style="margin-top: 30px">Create</button>
+        <hr class="separator">
+    <button type="submit" class="btn btn-success btn-lg" style="margin-top: 5px;margin-left: 4px;">Create</button>
     </div>
 </form>
 

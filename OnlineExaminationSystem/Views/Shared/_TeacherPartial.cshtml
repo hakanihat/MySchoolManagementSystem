@@ -1,21 +1,49 @@
-﻿<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="ChatPanel" asp-action="Index">Chat Panel</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Question" asp-action="CreateQuestion">Create Question</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Exam" asp-action="CreateExam">Create Exam</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Exam" asp-action="Detail">See Exams</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Assignment" asp-action="Create">Create Assignment</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Submission" asp-action="Index">See Submissions</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Assignment" asp-action="GroupedAssignments">See Created Assignments</a>
-</li>
+﻿<div class="container">
+    <div class="row">
+        <div class="col">
+            <ul class="nav justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link btn btn-secondary btn-sm custom-btn text-white mx-2" asp-area="" asp-controller="ChatPanel" asp-action="Index">
+                        Chat Panel
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link btn btn-secondary btn-sm custom-btn text-white mx-2" asp-area="" asp-controller="Question" asp-action="CreateQuestion">
+                        Create Question
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link btn btn-secondary btn-sm custom-btn text-white mx-2" asp-area="" asp-controller="Exam" asp-action="CreateExam">
+                        Create Exam
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link btn btn-secondary btn-sm custom-btn text-white mx-2" asp-area="" asp-controller="Exam" asp-action="Detail">
+                        See Exams
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link btn btn-secondary btn-sm custom-btn text-white mx-2" asp-area="" asp-controller="Assignment" asp-action="Create">
+                        Create Assignment
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link btn btn-secondary btn-sm custom-btn text-white mx-2" asp-area="" asp-controller="Assignment" asp-action="GroupedAssignments">
+                        See Created Assignments
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link btn btn-secondary btn-sm custom-btn text-white mx-2" asp-area="" asp-controller="Submission" asp-action="Index">
+                        See Submissions
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

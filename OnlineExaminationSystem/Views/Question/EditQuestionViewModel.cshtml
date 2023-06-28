@@ -2,59 +2,93 @@
 @using OnlineExaminationSystem.ViewModels
 @model QuestionViewModel
 
-<h1>Edit Question</h1>
+<style>
+    .container-3d {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 80%; /* Adjust the percentage value as needed */
+        margin:  auto; /* Center the container horizontally */
+ 
 
-<form asp-action="Edit" method="post">
 
-    <div class="form-group">
-        <label asp-for="QuestionText"></label>
-        <input asp-for="QuestionText" class="form-control" />
-        <span asp-validation-for="QuestionText" class="text-danger"></span>
-    </div>
+    }
 
-    <div class="form-group">
-        <label asp-for="QuestionType"></label>
-        <select asp-for="QuestionType" asp-items="Model.QuestionTypes" class="form-control"></select>
-        <span asp-validation-for="QuestionType" class="text-danger"></span>
-    </div>
+    .heading {
+        text-align: center;
+    }
 
-    <div class="form-group">
-        <label asp-for="Points"></label>
-        <input asp-for="Points" class="form-control" />
-        <span asp-validation-for="Points" class="text-danger"></span>
-    </div>
+    .container-3d .form-group {
+        margin-bottom: 10px; /* Add margin between form groups */
+    }
 
-    <div class="form-group">
-        <label asp-for="CourseId"></label>
-        <select asp-for="CourseId" asp-items="Model.Courses" class="form-control"></select>
-        <span asp-validation-for="CourseId" class="text-danger"></span>
-    </div>
+    .container-3d .button-separator {
+        height: 2px;
+        background-color: black;
+        margin: 20px 0; /* Add margin above and below the line */
+    }
 
-    <h4>Answers:</h4>
+</style>
 
-    <div id="answers">
-        @foreach (var answer in Model.Answers)
-        {
-            <div class="form-group">
-                <label>Answer</label>
-                <input type="text" name="answer.AnswerText" value="@answer.AnswerText" class="form-control" />
-                <span asp-validation-for="@answer.AnswerText" class="text-danger"></span>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="answer.IsCorrect" value="true" @(answer.IsCorrect ? "checked" : "")>
-                    <label class="form-check-label">Is Correct</label>
+<div class="container-3d">
+    <form asp-action="Edit" method="post">
+        <h2 class="heading">Edit Question</h2>
+        <div class="form-group">
+            <label asp-for="QuestionText">Question</label>
+            <input asp-for="QuestionText" class="form-control form-control-sm" />
+            <span asp-validation-for="QuestionText" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="QuestionType">Question Type</label>
+            <select asp-for="QuestionType" asp-items="Model.QuestionTypes" class="form-control form-control-sm"></select>
+            <span asp-validation-for="QuestionType" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Points">Points</label>
+            <input asp-for="Points" class="form-control form-control-sm" />
+            <span asp-validation-for="Points" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="CourseId">Course</label>
+            <select asp-for="CourseId" asp-items="Model.Courses" class="form-control form-control-sm"></select>
+            <span asp-validation-for="CourseId" class="text-danger"></span>
+        </div>
+
+        <h4>Answers:</h4>
+
+        <div id="answers">
+            @foreach (var answer in Model.Answers)
+            {
+                <div class="form-group">
+                    <label>Answer</label>
+                    <input type="text" name="answer.AnswerText" value="@answer.AnswerText" class="form-control form-control-sm" />
+                    <span asp-validation-for="@answer.AnswerText" class="text-danger"></span>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="answer.IsCorrect" value="true" @(answer.IsCorrect ? "checked" : "")>
+                        <label class="form-check-label">Is Correct</label>
+                    </div>
+                    <button type="button" class="btn btn-danger btn-sm delete-answer">Delete</button>
                 </div>
-                <button type="button" class="btn btn-danger delete-answer">Delete</button>
-            </div>
-        }
-    </div>
+            }
+        </div>
 
-    <button type="button" id="add-answer" class="btn btn-primary">Add Answer</button>
+        <div class="button-separator"></div>
 
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Save Changes</button>
-    </div>
-    <input type="hidden" name="AnswersJson" id="AnswersJson" />
-</form>
+        <div class="form-group">
+            <button type="button" id="add-answer" class="btn btn-primary btn-sm">Add Answer</button>
+        </div>
+
+        <div class="form-group" style="margin-top: 10px;">
+            <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+        </div>
+        <input type="hidden" name="AnswersJson" id="AnswersJson" />
+    </form>
+</div>
 
 
 

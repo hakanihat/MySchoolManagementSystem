@@ -1,11 +1,52 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model AssignmentViewModel
 
-<h1>Create Assignment</h1>
+<style>
+    .container-3d {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 80%; /* Adjust the percentage value as needed */
+        margin: auto; /* Center the container horizontally */
+    }
 
-<hr />
+    .heading {
+        text-align: center;
+    }
+
+    .separator {
+        margin: 20px 0;
+        border: none;
+        border-top: 1px solid #000;
+    }
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .centered {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+</style>
+
+<div class="container-3d">
 
 <form asp-action="Create">
+
+        <div class="d-flex align-items-center mb-3">
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h2 class="mx-auto">Create Assignment</h2>
+        </div>
+        <hr class="separator">
     <div class="form-group">
         <label for="courseSelect">Select Course:</label>
         <select id="courseSelect" class="form-control" asp-for="CourseId" asp-items="Model.Courses.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })">
@@ -84,14 +125,14 @@
         </div>
 
     </div>
-
+        <hr class="separator">
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Create</button>
         <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </div>
 </form>
 
-
+</div>
 
 @section Scripts {
     <script>

@@ -1,0 +1,25 @@
+﻿.welcome-text {
+    font-size: 10em;
+    font-weight: bold;
+    color: darkorange;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    transform: translateX(-50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0% {
+        transform: translateX(-50%) translateY(-50%);
+    }
+
+    50% {
+        transform: translateX(-50%) translateY(-55%);
+    }
+
+    100% {
+        transform: translateX(-50%) translateY(-50%);
+    }
+}

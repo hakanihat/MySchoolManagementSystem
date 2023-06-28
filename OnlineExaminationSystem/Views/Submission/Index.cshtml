@@ -1,8 +1,51 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model List<SubmissionViewModel>
 
-<h1>Submissions</h1>
+<style>
+    .container-3d {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 80%; /* Adjust the percentage value as needed */
+        margin: auto; /* Center the container horizontally */
+    }
 
+    .heading {
+        text-align: center;
+    }
+
+    .separator {
+        margin: 20px 0;
+        border: none;
+        border-top: 1px solid #000;
+    }
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .centered {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+</style>
+<div class="container-3d">
+    <div class="text-center">
+        <div class="d-flex align-items-center mb-3">
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h1 class="mx-auto">Submissions</h1>
+        </div>
+    </div>
+
+    <hr class="separator">
 <div class="form-group">
     <label for="searchInput">Search:</label>
     <input type="text" class="form-control" id="searchInput" placeholder="Enter search term">
@@ -10,6 +53,7 @@
 
 
 <h2>Unchecked Submissions</h2>
+    <hr class="separator">
 <table class="table">
     <thead>
         <tr>
@@ -38,6 +82,7 @@
 </table>
 
 <h2>Checked Submissions</h2>
+    <hr class="separator">
 <table class="table">
     <thead>
         <tr>
@@ -65,7 +110,7 @@
     </tbody>
 </table>
 
-
+</div>
 
 
 @section scripts {

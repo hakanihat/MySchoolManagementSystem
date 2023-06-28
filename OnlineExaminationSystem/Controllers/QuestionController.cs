@@ -341,5 +341,18 @@ namespace OnlineExaminationSystem.Controllers
         }
 
 
+
+        public async Task<IActionResult> Index()
+        {
+            if (_context.Questions != null)
+            {
+                return View(await _context.Questions.ToListAsync());
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
     }
 }

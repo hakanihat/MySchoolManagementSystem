@@ -2,7 +2,52 @@
 @using Newtonsoft.Json
 @model CreateChatRoomViewModel
 
-<h1>Create Chat Room</h1>
+
+<style>
+    .container-3d {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 80%; /* Adjust the percentage value as needed */
+        margin: auto; /* Center the container horizontally */
+    }
+
+    .heading {
+        text-align: center;
+    }
+
+    .separator {
+        margin: 20px 0;
+        border: none;
+        border-top: 1px solid #000;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .centered {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+</style>
+<div class="container-3d">
+    <div class="text-center">
+        <div class="d-flex align-items-center mb-3">
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h1 class="mx-auto">Create Chat Room</h1>
+        </div>
+    </div>
+
 <form id="createChatRoomForm" asp-controller="ChatRoom" asp-action="Create" method="post">
     <div class="form-group">
         <label asp-for="Name"></label>
@@ -20,7 +65,7 @@
 
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
-
+</div>
 @section Scripts {
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="//code.jquery.com/jquery-3.6.0.min.js"></script>

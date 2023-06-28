@@ -2,74 +2,132 @@
 @using OnlineExaminationSystem.Common
 @model ExamViewModel
 
-<h2>Create Exam</h2>
+<style>
+    .container-3d {
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+    }
 
-<form asp-action="CreateExam" id="create-exam-form">
+    .bottom-container {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+    }
 
-    <div id="message-container"></div>
+    .separator {
+        margin: 20px 0;
+        border: none;
+        border-top: 1px solid #000;
+    }
 
-    <div class="form-group">
-        <label for="CourseId">Select a course</label>
-        <select name="CourseId" id="course-dropdown" class="form-control">
-            <option value="">-- Select a course --</option>
-            @foreach (var course in Model.Courses)
-            {
-                <option value="@course.Value">@course.Text</option>
-            }
-        </select>
-    </div>
+    .centered {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+    }
 
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name"></span>
-    </div>
+    .bottom-content {
+        border: 1px solid #ccc;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-    <div class="form-group">
-        <label asp-for="Description" class="control-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
+        .bottom-content .form-group {
+            margin-right: 10px;
+        }
 
-    <div class="form-group">
-        <label asp-for="ExamDuration"></label>
-        <input asp-for="ExamDuration" id="exam-time-input" class="form-control " />
-        <span asp-validation-for="ExamDuration"></span>
-    </div>
-    <div class="form-group">
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="isCheatSecured" name="IsCheatSecured" value="true">
-            <label class="form-check-label" for="isCheatSecured" data-toggle="tooltip" data-placement="top" title="@ConstantStrings.CheatSecurityExplanation">
-                Cheat Security
-            </label>
+
+</style>
+
+<div class="container-3d">
+    <form asp-action="CreateExam" id="create-exam-form">
+  
+        <div id="message-container"></div>
+        <div class="text-center">
+            <div class="d-flex align-items-center mb-3">
+                <a href="javascript:history.back()" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h2 class="mx-auto">Create Exam</h2>
+            </div>
+     
+            <hr class="separator">
         </div>
-    </div>
+        <div class="form-group">
+            <label for="CourseId">Select a course</label>
+            <select name="CourseId" id="course-dropdown" class="form-control">
+                <option value="">-- Select a course --</option>
+                @foreach (var course in Model.Courses)
+                {
+                    <option value="@course.Value">@course.Text</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Description" class="control-label"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ExamDuration"></label>
+            <input asp-for="ExamDuration" id="exam-time-input" class="form-control" />
+            <span asp-validation-for="ExamDuration"></span>
+        </div>
+
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="isCheatSecured" name="IsCheatSecured" value="true">
+                <label class="form-check-label" for="isCheatSecured" data-toggle="tooltip" data-placement="top" title="@ConstantStrings.CheatSecurityExplanation">
+                    Cheat Security
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div id="create-exam-inputs"></div>
+            <input type="hidden" name="SelectedQuestionIdsJson" id="SelectedQuestionIdsJson" />
+        </div>
+
+        <div class="form-group">
+            <label for="SelectedQuestionIds">Select a question</label>
+            <select id="SelectedQuestionIds" name="SelectedQuestionIds" class="form-control">
+                <option value="">-- Select a question --</option>
+            </select>
+        </div>
+
+        <div class="bottom-container">
+            <div class="bottom-content">
+                <div class="form-group">
+                    <label for="NumberOfQuestions">Number of questions:</label>
+                    <input type="number" id="num-questions-input" name="NumberOfQuestions" min="1" value="1">
+                </div>
+                <div>
+                    <button id="generate-questions-button" class="btn btn-primary">Generate Questions</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="generatedQuestions"></div>
+        <hr class="separator">
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+</div>
 
 
-    <div class="form-group">
-        <div id="create-exam-inputs"></div>
-        <input type="hidden" name="SelectedQuestionIdsJson" id="SelectedQuestionIdsJson" />
-    </div>
-
-    <div class="form-group">
-        <label for="SelectedQuestionIds">Select a question</label>
-        <select id="SelectedQuestionIds" name="SelectedQuestionIds" class="form-control">
-            <option value="">-- Select a question --</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="NumberOfQuestions">Number of questions:</label>
-        <input type="number" id="num-questions-input" name="NumberOfQuestions" min="1" value="1">
-    </div>
-
-    <button id="generate-questions-button" class="btn btn-primary">Generate Questions</button>
-
-    <div id="generatedQuestions"></div>
-
-    <button type="submit" class="btn btn-primary">Create</button>
-
-</form>
 
 
 
@@ -86,4 +144,44 @@
     <script src="~/js/generateQuestionFromDropdown.js"></script>
     <script src="~/js/checkDates.js"></script>
     <script src="~/js/filterQuestionsByCourse.js"></script>
+    <script>
+        // Handle the form submission
+        document.getElementById('create-exam-form').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+
+            // Perform any necessary form validation here
+
+            // If the form is valid, submit it via AJAX
+            var form = document.getElementById('create-exam-form');
+            var formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Check the response for success or error
+                    if (data.success) {
+                        // Exam created successfully, show the success notification
+                        toastr.success('Exam created successfully', 'Exam Created', {
+                            positionClass: 'toast-top-right',
+                            progressBar: true,
+                            timeOut: 3000
+                        });
+
+                        // Optionally, reset the form fields or redirect to a different page
+                    } else {
+                        // Handle the error case, if needed
+                    }
+                })
+                .catch(error => {
+                    // Handle any network or server errors, if needed
+                });
+        });
+    </script>
+
+
+
+
     }
