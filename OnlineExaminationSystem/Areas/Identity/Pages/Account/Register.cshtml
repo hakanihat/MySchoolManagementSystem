@@ -4,12 +4,43 @@
     ViewData["Title"] = "Register";
 }
 
+<style>
+    .custom-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+    }
 
+        .custom-alert .alert-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .custom-alert .alert-message {
+            font-size: 16px;
+        }
+</style>
 <div class="container-fluid">
     <div class="row justify-content-center align-items-start" style="height: 100vh;">
         <div class="col-md-4">
             <div class="card shadow p-3">
-            <h1 class="text-center">@ViewData["Title"]</h1>
+                <div class="container-chat">
+                    <div class="text-center">
+                        <div class="d-flex align-items-center mb-3">
+                            <a href="javascript:history.back()" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i>
+                            </a>
+                            <h1 class="mx-auto">@ViewData["Title"]</h1>
+                        </div>
+                    </div>
+                </div>
                 <h2 class="text-center">Create a new account</h2>
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
             <hr />
@@ -110,5 +141,6 @@
     <script src="~/js/uploadPicture.js"></script>
     <script src="~/js/hideDripdownsInRegistration.js"></script>
     <script src="~/js/groupCheckValues.js"></script>
+    <script src="~/js/examNotificationToastr.js"></script>
 
 }

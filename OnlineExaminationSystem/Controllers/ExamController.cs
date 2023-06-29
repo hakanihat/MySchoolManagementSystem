@@ -79,8 +79,10 @@ namespace OnlineExaminationSystem.Controllers
 
                 _context.Exams.Add(exam);
                 _context.SaveChanges();
+                // After successfully creating the exam
+                TempData["SuccessMessage"] = "Exam created successfully!";
+                return RedirectToAction("Detail", "Exam", new { successMessage = TempData["SuccessMessage"] });
 
-                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
@@ -316,7 +318,8 @@ namespace OnlineExaminationSystem.Controllers
                         }
                     }
 
-                    return View("EditExam", viewModel);
+                    TempData["SuccessMessage"] = "Exam edited successfully!";
+                    return RedirectToAction("Detail", "Exam", new { successMessage = TempData["SuccessMessage"] });
                 }
 
                 viewModel.Courses = await GetCoursesAsync();
@@ -372,7 +375,8 @@ namespace OnlineExaminationSystem.Controllers
                 _context.Exams.Remove(exam);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Index", "Home");
+                TempData["SuccessMessage"] = "Exam deleted successfully!";
+                return RedirectToAction("Detail", "Exam", new { successMessage = TempData["SuccessMessage"] });
             }
             catch (DbUpdateException ex)
             {
@@ -394,6 +398,21 @@ namespace OnlineExaminationSystem.Controllers
         {
             try
             {
+                var assignment = await _context.Assignments.FindAsync(assignmentId);
+
+                if (assignment == null)
+                {
+                    return NotFound();
+                }
+
+                // Check if the assignment has already been submitted
+                if (assignment.IsSubmitted)
+                {   
+                    return RedirectToAction("StudentHomePage","Home");
+                }
+                assignment.IsSubmitted = true;
+
+                await _context.SaveChangesAsync();
                 var exam = await _context.Exams
                     .Include(e => e.Questions)
                     .ThenInclude(q => q.Answers)
@@ -452,6 +471,19 @@ namespace OnlineExaminationSystem.Controllers
             // Retrieve the current user's ID
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            var assignment = await _context.Assignments.FindAsync(model.AssignmentId);
+
+            if (assignment == null)
+            {
+                return NotFound();
+            }
+
+            // Check if the assignment has already been submitted
+            if (assignment.IsSubmitted)
+            {
+                return RedirectToAction("StudentHomePage", "Home");
+            }
+            assignment.IsSubmitted = true;
             // Create a new Submission object
             var submission = new Submission
             {
@@ -459,6 +491,7 @@ namespace OnlineExaminationSystem.Controllers
                 AssignmentId = model.AssignmentId,
                 SubmissionTime = DateTime.Now
             };
+
 
             // Loop through the selected answers and add them to the Submission object
            
@@ -512,7 +545,8 @@ namespace OnlineExaminationSystem.Controllers
                 };
                 submission.StudentAnswers.Add(studentAnswer);
             }
-         
+          
+
             try
             {
                 _context.Submissions.Add(submission);

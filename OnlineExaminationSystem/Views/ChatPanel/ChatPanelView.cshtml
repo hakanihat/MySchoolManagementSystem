@@ -35,7 +35,7 @@
     <div class="text-center">
         <div class="d-flex align-items-center mb-3">
             <a href="javascript:history.back()" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> 
+                <i class="bi bi-arrow-left"></i>
             </a>
             <h1 class="mx-auto">Chat Panel</h1>
         </div>
@@ -53,15 +53,17 @@
     {
         <div class="card">
             <div class="card-body">
+                <div class="search-bar">
+                    <input type="text" id="search-input" class="form-control" placeholder="Search by chat room name" />
+                </div>
+
                 <ul class="list-group">
                     @for (int i = 0; i < Model.ChatRoomIds.Count; i++)
                     {
                         <li class="list-group-item" onclick="viewChatRoom('@Model.ChatRoomIds[i]')" onmousedown="event.preventDefault()" onmouseup="event.preventDefault(); this.classList.add('active'); setTimeout(() => this.classList.remove('active'), 150)">
                             <div class="chat-room-info">
-                            
                                 <strong class="participant-name">Chat Room: @Model.ChatRoomNames[i]</strong>
                             </div>
-
                             <div class="chat-room-actions">
                                 <a href="@Url.Action("Index", "ChatRoom", new { id = Model.ChatRoomIds[i] })" class="btn btn-primary">Open chat</a>
                             </div>
@@ -77,8 +79,6 @@
             <i class="bi bi-plus-circle" style="font-size: 2rem;"></i>
         </a>
     </div>
-
-
 </div>
 
 <script>
@@ -86,4 +86,26 @@
         var url = '@Url.Action("Index", "ChatRoom")' + '?id=' + chatRoomId;
         window.location.href = url;
     }
+</script>
+<script>
+    // Function to filter and sort the chat rooms based on the search input
+    function filterChatRooms() {
+        var searchInput = document.getElementById('search-input').value.toLowerCase();
+        var chatRooms = document.querySelectorAll('.list-group-item');
+
+        chatRooms.forEach(function (chatRoom) {
+            var chatRoomName = chatRoom.querySelector('.participant-name').textContent.toLowerCase();
+
+            if (chatRoomName.indexOf(searchInput) > -1) {
+                chatRoom.style.display = '';
+            } else {
+                chatRoom.style.display = 'none';
+            }
+        });
+    }
+
+    // Event listener for the search input
+    document.getElementById('search-input').addEventListener('input', function () {
+        filterChatRooms();
+    });
 </script>

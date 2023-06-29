@@ -1,6 +1,5 @@
 ﻿@model List<Question>
 
-
 <style>
     .container-3d {
         max-width: 800px;
@@ -8,8 +7,8 @@
         padding: 20px;
         background-color: #fff;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        width: 80%; /* Adjust the percentage value as needed */
-        margin: auto; /* Center the container horizontally */
+        width: 80%;
+        margin: auto;
     }
 
     .heading {
@@ -35,6 +34,32 @@
         justify-content: center;
     }
 
+    .search-bar {
+        margin-bottom: 20px;
+    }
+
+    .custom-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+    }
+
+        .custom-alert .alert-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .custom-alert .alert-message {
+            font-size: 16px;
+        }
+
 </style>
 
 <div class="container-3d">
@@ -47,28 +72,57 @@
         </div>
     </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Question Text</th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var question in Model)
-        {
+    <div class="search-bar">
+        <input type="text" id="search-input" class="form-control" placeholder="Search by question text" />
+    </div>
+
+    <table class="table">
+        <thead>
             <tr>
-                <td>@question.Text</td>
-                <td>
-                    @Html.ActionLink("Details", "Details", new { id = question.Id }, new { @class = "btn btn-info" })
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = question.Id }, new { @class = "btn btn-primary" })
-                </td>
-       
+                <th>Question Text</th>
+                <th></th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var question in Model)
+            {
+                <tr>
+                    <td>@question.Text</td>
+                    <td>
+                        @Html.ActionLink("Details", "Details", new { id = question.Id }, new { @class = "btn btn-info" })
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = question.Id }, new { @class = "btn btn-primary" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
+
+<script>
+    // Function to filter and sort the questions based on the search input
+    function filterQuestions() {
+        var searchInput = document.getElementById('search-input').value.toLowerCase();
+        var questions = document.querySelectorAll('.table tbody tr');
+
+        questions.forEach(function (question) {
+            var questionText = question.querySelector('td:first-child').textContent.toLowerCase();
+
+            if (questionText.indexOf(searchInput) > -1) {
+                question.style.display = '';
+            } else {
+                question.style.display = 'none';
+            }
+        });
+    }
+
+    // Event listener for the search input
+    document.getElementById('search-input').addEventListener('input', function () {
+        filterQuestions();
+    });
+
+
+</script>
+<script src="~/js/examNotificationToastr.js"></script>

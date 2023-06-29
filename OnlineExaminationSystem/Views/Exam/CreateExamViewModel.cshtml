@@ -144,42 +144,7 @@
     <script src="~/js/generateQuestionFromDropdown.js"></script>
     <script src="~/js/checkDates.js"></script>
     <script src="~/js/filterQuestionsByCourse.js"></script>
-    <script>
-        // Handle the form submission
-        document.getElementById('create-exam-form').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission behavior
 
-            // Perform any necessary form validation here
-
-            // If the form is valid, submit it via AJAX
-            var form = document.getElementById('create-exam-form');
-            var formData = new FormData(form);
-
-            fetch(form.action, {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Check the response for success or error
-                    if (data.success) {
-                        // Exam created successfully, show the success notification
-                        toastr.success('Exam created successfully', 'Exam Created', {
-                            positionClass: 'toast-top-right',
-                            progressBar: true,
-                            timeOut: 3000
-                        });
-
-                        // Optionally, reset the form fields or redirect to a different page
-                    } else {
-                        // Handle the error case, if needed
-                    }
-                })
-                .catch(error => {
-                    // Handle any network or server errors, if needed
-                });
-        });
-    </script>
 
 
 

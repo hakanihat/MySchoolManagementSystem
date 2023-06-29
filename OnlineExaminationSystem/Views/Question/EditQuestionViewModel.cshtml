@@ -34,7 +34,16 @@
 
 <div class="container-3d">
     <form asp-action="Edit" method="post">
-        <h2 class="heading">Edit Question</h2>
+        <div class="container-chat">
+            <div class="text-center">
+                <div class="d-flex align-items-center mb-3">
+                    <a href="javascript:history.back()" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                    <h1 class="mx-auto">Edit Question</h1>
+                </div>
+            </div>
+        </div>
         <div class="form-group">
             <label asp-for="QuestionText">Question</label>
             <input asp-for="QuestionText" class="form-control form-control-sm" />

@@ -189,8 +189,9 @@ namespace OnlineExaminationSystem.Controllers
                 }
                 await _context.SaveChangesAsync();
 
-                return View("AssignmentViewModel", viewModel);
-            }
+                    TempData["SuccessMessage"] = "Assignment created successfully!";
+                    return RedirectToAction("GroupedAssignments", "Assignment", new { successMessage = TempData["SuccessMessage"] });
+                }
 
             return View("AssignmentViewModel", viewModel);
             }
@@ -294,7 +295,8 @@ namespace OnlineExaminationSystem.Controllers
                 await _context.SaveChangesAsync();
 
                 // Redirect to the appropriate page
-                return RedirectToAction("Index", "Home");
+                TempData["SuccessMessage"] = "Assignment deleted successfully!";
+                return RedirectToAction("GroupedAssignments", "Assignment", new { successMessage = TempData["SuccessMessage"] });
             }
             catch (DbUpdateException ex)
             {

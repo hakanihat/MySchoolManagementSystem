@@ -6,77 +6,143 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Exam Result</title>
     <link rel="stylesheet" href="~/css/examResults.css" />
-</head>
-<h1>Exam Result: @Model.ExamName</h1>
+    <style>
+        .container-3d {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            margin: auto;
+        }
 
+        .heading {
+            text-align: center;
+        }
+
+        .separator {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #000;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .centered {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .custom-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+        }
+
+            .custom-alert .alert-title {
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            .custom-alert .alert-message {
+                font-size: 16px;
+            }
+
+    </style>
+</head>
+
+<div class="container-3d">
+<h1>Exam Result: @Model.ExamName</h1>
+<hr class="separator" />
 <p><strong>Score:</strong> @Model.Score / @Model.TotalPoints</p>
 <p><strong>Comment:</strong> @Model.Comment</p>
-
+    <hr class="separator" />
 <h2>Your Answers</h2>
 
 
+    @if (Model.SMTFAnswers.Count > 0)
+    {
+        <table >
 
-<table >
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Your Answer</th>
+                    <th>Correct Answer</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var answer in Model.SMTFAnswers)
+                {
+                    <tr>
+                        <td>@answer.QuestionText</td>
+                        <td>
+                            @if (answer.AnswerId.HasValue)
+                            {
+                                @foreach (var choice in answer.AnswerText)
+                                {
+                                    <div>@choice</div>
+                                }
+                            }
+                            else
+                            {
+                                <em>No answer provided</em>
+                            }
+                        </td>
+                        <td>
+                            @if (answer.CorrectAnswerText != null && answer.CorrectAnswerText.Any())
+                            {
+                                foreach (var correctAnswer in answer.CorrectAnswerText)
+                                {
+                                    <div>@correctAnswer</div>
+                                }
+                            }
+                            else
+                            {
+                                <em>No correct answer</em>
+                            }
+                        </td>
 
-    <thead>
-        <tr>
-            <th>Question</th>
-            <th>Your Answer</th>
-            <th>Correct Answer</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var answer in Model.SMTFAnswers)
-        {
-            <tr>
-                <td>@answer.QuestionText</td>
-                <td>
-                    @if (answer.AnswerId.HasValue)
-                    {
-                        @foreach (var choice in answer.AnswerText)
-                        {
-                            <div>@choice</div>
-                        }
-                    }
-                    else
-                    {
-                        <em>No answer provided</em>
-                    }
-                </td>
-                <td>
-                    @if (answer.CorrectAnswerText!=null && answer.CorrectAnswerText.Any())
-                    {
-                        foreach (var correctAnswer in answer.CorrectAnswerText)
-                        {
-                            <div>@correctAnswer</div>
-                        }
-                    }
-                    else
-                    {
-                        <em>No correct answer</em>
-                    }
-                </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 
-            </tr>
-        }
-    </tbody>
-</table>
-<table>
-    <thead>
-        <tr>
-            <th>Question</th>
-            <th>Your Answer</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var answer in Model.ShortAnsEssayAnswers)
-        {
-            <tr>
-                <td>@answer.QuestionText</td>
-                <td>@answer.AnswerText</td>
-                <td>@answer.AnswerText</td>
-            </tr>
-        }
-    </tbody>
-</table>
-<a asp-action="StudentHomePage" asp-controller="Home">Back to Home page</a>
+    @if (Model.ShortAnsEssayAnswers.Count > 0)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Your Answer</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var answer in Model.ShortAnsEssayAnswers)
+                {
+                    <tr>
+                        <td>@answer.QuestionText</td>
+                        <td>@answer.AnswerText</td>
+                        <td>@answer.AnswerText</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    <a asp-action="StudentHomePage" asp-controller="Home" >Back to Home page</a>
+</div>

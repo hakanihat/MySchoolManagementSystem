@@ -229,7 +229,8 @@ namespace OnlineExaminationSystem.Controllers
                             }).ToList()
                 };
 
-                return View(viewModel);
+                TempData["SuccessMessage"] = "Result sended successfully!";
+                return RedirectToAction("Index", "Submission", new { successMessage = TempData["SuccessMessage"] });
             }
             catch (Exception ex)
             {

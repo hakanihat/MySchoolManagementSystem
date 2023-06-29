@@ -169,23 +169,25 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
                     user.SchoolNumber = Input.SchoolNumber;
                 }
 
-                if (Input.Courses!= null) {
-                var courseIds = Input.Courses;
-                var courses = await _context.Courses
-                    .Where(c => courseIds.Contains(c.Id))
-                    .ToListAsync();
-            
-                foreach (var course in courses)
+                if (Input.Courses != null)
                 {
-                    var teacherCourse = new TeacherCourse
-                    {
-                        ApplicationUserId = user.Id,
-                        CourseId = course.Id
-                    };
+                    var courseIds = Input.Courses;
+                    var courses = await _context.Courses
+                        .Where(c => courseIds.Contains(c.Id))
+                        .ToListAsync();
 
-                    _context.TeacherCourses.Add(teacherCourse);
+                    foreach (var course in courses)
+                    {
+                        var teacherCourse = new TeacherCourse
+                        {
+                            ApplicationUserId = user.Id,
+                            CourseId = course.Id
+                        };
+
+                        _context.TeacherCourses.Add(teacherCourse);
+                    }
                 }
-                }
+
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
@@ -216,26 +218,8 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
                     await _userManager.AddToRoleAsync(user, Input.Role);
                     _logger.LogInformation("User created a new account with password.");
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code },
-                        protocol: Request.Scheme);
-
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
-                    }
-                    else
-                    {
-                        return RedirectToPage("/Index");
-                    }
+                    TempData["SuccessMessage"] = "Registration successful! Please check your email to confirm your account.";
+                    return RedirectToPage("/Account/Register", new { area = "Identity", successMessage = TempData["SuccessMessage"] });
                 }
 
                 foreach (var error in result.Errors)
@@ -247,6 +231,8 @@ namespace OnlineExaminationSystem.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
+
 
         private ApplicationUser CreateUser()
         {

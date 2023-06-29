@@ -1,21 +1,114 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model StudentAssignmentViewModel
+<style>
+    .container-3d {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        margin: auto;
+    }
 
-<h1>@Model.Title</h1>
+    .heading {
+        text-align: center;
+    }
 
-<div>
-    <p>@Model.Description</p>
-    <p>Due date: @Model.DueDate.ToString("F")</p>
-    <p>Max points: @Model.MaxPoints</p>
-    <p>Course: @Model.CourseName</p>
-    <p>Exam: @Model.ExamName</p>
-    <div>
-        <!-- Other details of the assignment -->
-        <a class="btn btn-primary btn-sm" href="@Url.Action("TakeExam", "Exam")?examId=@Model.ExamId&assignmentId=@Model.Id">Start Exam</a>
+    .separator {
+        margin: 20px 0;
+        border: none;
+        border-top: 1px solid #000;
+    }
 
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .centered {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .custom-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+    }
+
+        .custom-alert .alert-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .custom-alert .alert-message {
+            font-size: 16px;
+        }
+
+</style>
+<div class="container-3d">
+    <div class="text-center">
+        <div class="d-flex align-items-center mb-3">
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h1 class="mx-auto ml-4" style="margin-left: -10px;">@Model.Title&nbsp&nbsp&nbsp&nbsp&nbsp</h1>
+        </div>
     </div>
+    <hr class="my-4">
+    <div class="text-center">
+        <div>
+            <p><strong>Description:</strong></p>
+            <p>@Model.Description</p>
+        </div>
 
+        <hr class="my-4">
+
+        <div>
+            <p><strong>Due Date:</strong></p>
+            <p>@Model.DueDate.ToString("F")</p>
+        </div>
+
+        <hr class="my-4">
+
+        <div>
+            <p><strong>Max Points:</strong></p>
+            <p>@Model.MaxPoints</p>
+        </div>
+
+        <hr class="my-4">
+
+        <div>
+            <p><strong>Course:</strong></p>
+            <p>@Model.CourseName</p>
+        </div>
+
+        <hr class="my-4">
+
+        <div>
+            <p><strong>Exam:</strong></p>
+            <p>@Model.ExamName</p>
+        </div>
+
+        <hr class="my-4">
+
+        <div>
+            <a class="btn btn-primary btn-sm" href="@Url.Action("TakeExam", "Exam")?examId=@Model.ExamId&assignmentId=@Model.Id">Start Exam</a>
+        </div>
+    </div>
 </div>
+
 
 @section scripts{
 

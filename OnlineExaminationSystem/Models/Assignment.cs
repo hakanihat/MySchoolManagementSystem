@@ -10,6 +10,7 @@ namespace OnlineExaminationSystem.Models
         public DateTime DueDate { get; set; }
         public double MaxPoints { get; set; }
         [DefaultValue(false)]
+        public bool IsSubmitted { get; set; }
         public string AssignedByUserId { get; set; }
         public virtual ApplicationUser AssignedBy { get; set; }
 

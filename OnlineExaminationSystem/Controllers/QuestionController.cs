@@ -58,7 +58,8 @@ namespace OnlineExaminationSystem.Controllers
                 _context.SaveChanges();
                 CreateQuestionAnswers(viewModel.Answers, question);
                 viewModel.Courses = await GetCoursesAsync(User);
-                return View("CreateQuestionViewModel", viewModel);
+                TempData["SuccessMessage"] = "Question created successfully!";
+                return RedirectToAction("CreateQuestion", "Question", new { successMessage = TempData["SuccessMessage"] });
             }
             catch (JsonException ex)
             {
@@ -257,7 +258,8 @@ namespace OnlineExaminationSystem.Controllers
                 await _context.SaveChangesAsync();
 
                 viewModel.Courses = await GetCoursesAsync(User);
-                return View("EditQuestionViewModel", viewModel);
+                TempData["SuccessMessage"] = "Question edited successfully!";
+                return RedirectToAction("Index", "Question", new { successMessage = TempData["SuccessMessage"] });
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -296,7 +298,8 @@ namespace OnlineExaminationSystem.Controllers
                 _context.Questions.Remove(question);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Index", "Home"); // Redirect to the desired page after deletion
+                TempData["SuccessMessage"] = "Question deleted successfully!";
+                return RedirectToAction("Index", "Question", new { successMessage = TempData["SuccessMessage"] });
             }
             catch (Exception ex)
             {

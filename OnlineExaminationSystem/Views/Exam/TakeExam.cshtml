@@ -1,13 +1,76 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model TakeExamViewModel
 
+<style>
+    .container-3d {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        margin: auto;
+    }
+
+    .heading {
+        text-align: center;
+    }
+
+    .separator {
+        margin: 20px 0;
+        border: none;
+        border-top: 1px solid #000;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .centered {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .custom-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+    }
+
+        .custom-alert .alert-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .custom-alert .alert-message {
+            font-size: 16px;
+        }
+
+</style>
+
+<div class="container-3d">
+
+
 <div class="text-center">
     <h1>@Model.ExamName</h1>
-
+    <hr class="separator">
     <form method="post" id="examForm" asp-route-answersJson="answersJson">
-        <div class="timer">
-            <span id="hours">0@((int)Math.Floor((double)Model.ExamDuration / 60))</span>:<span id="minutes">0@((int)Math.Floor((double)Model.ExamDuration % 60))</span>:<span id="seconds">00</span>
-        </div>
+            <div style="display: inline-block; border: 2px solid gray; padding: 10px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin-bottom:10px">
+                <div class="timer">
+                    <span id="hours">0@((int)Math.Floor((double)Model.ExamDuration / 60))</span>:<span id="minutes">0@((int)Math.Floor((double)Model.ExamDuration % 60))</span>:<span id="seconds">00</span>
+                </div>
+            </div>
         <input type="hidden" name="examId" value="@Model.ExamId" />
         <input type="hidden" name="assignmentId" value="@Model.AssignmentId" />
 
@@ -64,7 +127,7 @@
         </div>
     </form>
 </div>
-
+</div>
 
 
 @section Scripts {
@@ -79,6 +142,12 @@
     <script>
         var examDuration = @Model.ExamDuration * 60; // Convert to seconds
 
+        // Retrieve the remaining time from localStorage, if available
+        var storedRemainingTime = localStorage.getItem("remainingTime");
+        if (storedRemainingTime !== null) {
+            examDuration = parseInt(storedRemainingTime);
+        }
+
         var x = setInterval(function () {
             var hours = Math.floor(examDuration / 3600);
             var minutes = Math.floor((examDuration % 3600) / 60);
@@ -91,6 +160,9 @@
 
             examDuration--;
 
+            // Save the remaining time to localStorage
+            localStorage.setItem("remainingTime", examDuration.toString());
+
             // If the countdown is finished, display "Time's Up" and submit the exam
             if (examDuration < 0) {
                 clearInterval(x);
@@ -102,6 +174,9 @@
         }, 1000);
 
         function submitExam() {
+            // Clear the remaining time from localStorage
+            localStorage.removeItem("remainingTime");
+
             var formData = $("#examForm").serializeArray();
             var selectedAnswers = {};
             var textAnswers = {};
@@ -147,6 +222,7 @@
             });
         });
     </script>
+
 
 
 }

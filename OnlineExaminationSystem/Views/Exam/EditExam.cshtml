@@ -10,6 +10,12 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
+    .separator {
+        margin: 20px 0;
+        border: none;
+        border-top: 1px solid #000;
+    }
+
     .bold-label {
         font-weight: bold;
     }
@@ -21,46 +27,53 @@
 </style>
 
 <div class="container-3d">
-<form asp-action="Edit" method="post">
-
-        <h2 class="heading">Edit Exam</h2>
-    <div class="form-group">
-        <label asp-for="CourseId" class="control-label"></label>
-        <select asp-for="CourseId" class="form-control" asp-items="@Model.Courses"></select>
-        <span asp-validation-for="CourseId" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Description" class="control-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="ExamDuration" class="control-label"></label>
-        <input asp-for="ExamDuration" class="form-control" type="number" min="1" />
-        <span asp-validation-for="ExamDuration" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <div class="form-check">
-            <input asp-for="IsCheatSecured" class="form-check-input" />
-            <label class="form-check-label bold-label" asp-for="IsCheatSecured"></label>
+    <form asp-action="Edit" method="post">
+        <div class="text-center">
+            <div class="d-flex align-items-center mb-3">
+                <a href="javascript:history.back()" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h1 class="mx-auto">Edit Exam</h1>
+            </div>
         </div>
-        <span asp-validation-for="IsCheatSecured" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label asp-for="CourseId" class="control-label"></label>
+            <select asp-for="CourseId" class="form-control" asp-items="@Model.Courses"></select>
+            <span asp-validation-for="CourseId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description" class="control-label"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="ExamDuration" class="control-label"></label>
+            <input asp-for="ExamDuration" class="form-control" type="number" min="1" />
+            <span asp-validation-for="ExamDuration" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <div class="form-check">
+                <input asp-for="IsCheatSecured" class="form-check-input" />
+                <label class="form-check-label bold-label" asp-for="IsCheatSecured"></label>
+            </div>
+            <span asp-validation-for="IsCheatSecured" class="text-danger"></span>
+        </div>
 
-    <div id="selectedQuestionsContainer">
-        @foreach (var question in Model.Questions)
-        {
-            if (Model.SelectedQuestionIds?.Contains(Int32.Parse(question.Value)) ?? false)
+        <div id="selectedQuestionsContainer">
+            @foreach (var question in Model.Questions)
             {
-                <div id="question@(question.Value)" class="form-group">
-                    <label for="Question@(question.Value)">@question.Text</label>
-                    <input id="Question@(question.Value)" name="Question@(question.Value)" type="text" class="form-control" value="@question.Text" />
-                    <button type="button" class="btn btn-danger btn-sm delete-question">Delete</button>
+                <hr class="separator">
+                if (Model.SelectedQuestionIds?.Contains(Int32.Parse(question.Value)) ?? false)
+                {
+                    <div id="question@(question.Value)" class="form-group">
+                        <label for="Question@(question.Value)">@question.Text</label>
+                        <input id="Question@(question.Value)" name="Question@(question.Value)" type="text" class="form-control" value="@question.Text" />
+                        <button type="button" class="btn btn-danger btn-sm delete-question">Delete</button>
                         <div class="row" style="margin-top: 5px;">
                             <div class="col-md-1">
                                 <a asp-controller="Question" asp-action="Edit" asp-route-id="@question.Value" class="btn btn-primary">Edit</a>
@@ -69,31 +82,32 @@
                                 <a asp-controller="Question" asp-action="Details" asp-route-id="@question.Value" class="btn btn-primary" style="margin-left: 15px;">Details</a>
                             </div>
                         </div>
-                </div>
-          
+                    </div>
 
-            }
-        }
-        <input type="hidden" name="SelectedQuestionIdsJson" id="SelectedQuestionIdsJson" />
-    </div>
 
-    <div class="form-group">
-        <label for="SelectedQuestionIds">Select a question</label>
-        <select id="SelectedQuestionIds" name="SelectedQuestionIds" class="form-control" data-val="false" data-val-required="">
-            <option value="" selected>-- Select a question --</option>
-            @foreach (var question in Model.Questions)
-            {
-                <option value="@question.Value">@question.Text</option>
+                }
             }
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary" style="margin-top: 5px;">Save</button>
-</form>
+       
+            <input type="hidden" name="SelectedQuestionIdsJson" id="SelectedQuestionIdsJson" />
+        </div>
+
+        <div class="form-group">
+            <label for="SelectedQuestionIds">Select a question</label>
+            <select id="SelectedQuestionIds" name="SelectedQuestionIds" class="form-control" data-val="false" data-val-required="">
+                <option value="" selected>-- Select a question --</option>
+                @foreach (var question in Model.Questions)
+                {
+                    <option value="@question.Value">@question.Text</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top: 5px;">Save</button>
+    </form>
 </div>
 
 
 
-        @section Scripts {
+@section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/examQuestions.css" asp-append-version="true" />
@@ -104,5 +118,5 @@
     <script src="~/js/deleteInputInDelete.js"></script>
     <script src="~/js/saveEditedExam.js"></script>
 
-       
+
     }
