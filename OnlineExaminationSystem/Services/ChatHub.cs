@@ -19,7 +19,7 @@ namespace OnlineExaminationSystem.Services
             _logger = logger;
         }
 
-        public const string HubUrl = "/chathub"; // Define the URL for the hub
+        public const string HubUrl = "/chathub"; 
 
         public async Task SendMessage(string message, int crId, string sId, string sName)
         {

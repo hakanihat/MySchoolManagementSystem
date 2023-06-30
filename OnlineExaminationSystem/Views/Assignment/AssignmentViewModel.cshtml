@@ -1,40 +1,12 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model AssignmentViewModel
 
-<style>
-    .container-3d {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        width: 80%; /* Adjust the percentage value as needed */
-        margin: auto; /* Center the container horizontally */
-    }
+<head>
+    <link rel="stylesheet" href="~/css/container_alert.css" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+</head>
 
-    .heading {
-        text-align: center;
-    }
 
-    .separator {
-        margin: 20px 0;
-        border: none;
-        border-top: 1px solid #000;
-    }
-    .header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-
-    .centered {
-        flex-grow: 1;
-        display: flex;
-        justify-content: center;
-    }
-
-</style>
 
 <div class="container-3d">
 
@@ -135,34 +107,15 @@
 </div>
 
 @section Scripts {
-    <script>
-        document.getElementById("selectAllCheckbox").addEventListener("click", function () {
-            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            for (var i = 0; i < checkboxes.length; i++) {
-                var row = checkboxes[i].parentNode.parentNode;
-                if (checkboxes[i].id !== "selectAllCheckbox" && row.style.display !== "none") {
-                    checkboxes[i].checked = this.checked;
-                }
-            }
-        });
-
-        document.getElementById("searchBar").addEventListener("input", function () {
-            var input = this.value.toLowerCase();
-            var rows = document.querySelectorAll("tbody tr");
-            for (var i = 0; i < rows.length; i++) {
-                var schoolNumber = rows[i].querySelectorAll("td")[0].textContent.toLowerCase();
-                var fullName = rows[i].querySelectorAll("td")[1].textContent.toLowerCase();
-                var group = rows[i].querySelectorAll("td")[2].textContent.toLowerCase();
-                if (schoolNumber.indexOf(input) > -1 || fullName.indexOf(input) > -1 || group.indexOf(input) > -1) {
-                    rows[i].style.display = "";
-                } else {
-                    rows[i].style.display = "none";
-                }
-            }
-        });
-    </script>
-
-    <script>
+   
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="~/js/filterExamsByCourse.js"></script>
+    <script src="~/js/getExamTotalPointsInAssignment.js"></script>
+    <script src="~/js/selectAllCheckboxes.js"></script>
+    <script src="~/js/assignmentSearchBar.js"></script>
+    <script src="~/js/assignmentFlatPickr.js"></script>
+    <script >
         window.addEventListener("DOMContentLoaded", function () {
             var examId = @Html.Raw(Json.Serialize(Model.ExamId)); // get examId from the model
 
@@ -176,19 +129,7 @@
                     }
                 }
             }
-        });
-    </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script >
-        flatpickr("#due-date-input", {
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-            defaultDate: new Date()
         });</script>
-    <script src="~/js/filterExamsByCourse.js"></script>
-    <script src="~/js/getExamTotalPointsInAssignment.js"></script>
-
+  
 
 }

@@ -1,11 +1,10 @@
-﻿using EllipticCurve;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
+using OnlineExaminationSystem.Common;
 using OnlineExaminationSystem.Data;
 using OnlineExaminationSystem.Models;
 using OnlineExaminationSystem.ViewModels;
@@ -27,16 +26,16 @@ namespace OnlineExaminationSystem.Controllers
             _userManager = userManager;
             _logger = logger;
         }
+
         [Authorize(Roles = "admin,teacher")]
         public IActionResult Index()
         {
             return View();
         }
+
         [Authorize(Roles = "admin,teacher")]
         public async Task<IActionResult> CreateExam()
         {
-        
-
             var viewModel = new ExamViewModel();
             viewModel.Questions = await GetQuestionsAsync();
             viewModel.Courses = await GetCoursesAsync();
@@ -79,17 +78,14 @@ namespace OnlineExaminationSystem.Controllers
 
                 _context.Exams.Add(exam);
                 _context.SaveChanges();
-                // After successfully creating the exam
-                TempData["SuccessMessage"] = "Exam created successfully!";
+
+                TempData["SuccessMessage"] = ConstantStrings.ExamCreationSuccess;
                 return RedirectToAction("Detail", "Exam", new { successMessage = TempData["SuccessMessage"] });
 
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while creating the exam.");
-
-                // Handle the exception or return an error view
                 return RedirectToAction("Index", "Error");
             }
         }
@@ -132,12 +128,9 @@ namespace OnlineExaminationSystem.Controllers
             try
             {
                 var currentUser = await _userManager.GetUserAsync(User);
-
-                // Check if the user is an admin
                 var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
-
-                // Retrieve the courses based on the user's role
                 List<Course> courses;
+
                 if (isAdmin)
                 {
                     courses = await _context.Courses.ToListAsync();
@@ -160,19 +153,15 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                // Handle InvalidOperationException
                 _logger.LogError(ex, "An error occurred due to an invalid operation.");
                 throw;
             }
             catch (Exception ex)
             {
-                // Handle other specific exceptions or provide a generic fallback
                 _logger.LogError(ex, "An error occurred while retrieving the courses.");
                 throw;
             }
         }
-
-
 
 
         [Authorize(Roles = "admin, teacher")]
@@ -318,7 +307,7 @@ namespace OnlineExaminationSystem.Controllers
                         }
                     }
 
-                    TempData["SuccessMessage"] = "Exam edited successfully!";
+                    TempData["SuccessMessage"] = ConstantStrings.ExamEditSuccess;
                     return RedirectToAction("Detail", "Exam", new { successMessage = TempData["SuccessMessage"] });
                 }
 
@@ -328,13 +317,11 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (DbUpdateException ex)
             {
-                // Handle DbUpdateException
                 _logger.LogError(ex, "An error occurred while updating the exam.");
                 return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
-                // Handle other specific exceptions or provide a generic fallback
                 _logger.LogError(ex, "An error occurred during the exam editing process.");
                 return RedirectToAction("Index", "Error");
             }
@@ -348,7 +335,6 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Handle specific exceptions or provide a generic fallback
                 _logger.LogError(ex, "An error occurred while checking if the exam exists.");
                 throw;
             }
@@ -367,26 +353,21 @@ namespace OnlineExaminationSystem.Controllers
                     return NotFound();
                 }
 
-                // Delete related records in ExamQuestion table
                 var relatedExamQuestions = await _context.ExamQuestions.Where(eq => eq.ExamId == id).ToListAsync();
                 _context.ExamQuestions.RemoveRange(relatedExamQuestions);
-
-                // Remove exam and save changes
                 _context.Exams.Remove(exam);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Exam deleted successfully!";
+                TempData["SuccessMessage"] = ConstantStrings.ExamDeleteSuccess;
                 return RedirectToAction("Detail", "Exam", new { successMessage = TempData["SuccessMessage"] });
             }
             catch (DbUpdateException ex)
             {
-                // Handle DbUpdateException
                 _logger.LogError(ex, "An error occurred while deleting the exam.");
                 return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
-                // Handle specific exceptions or provide a generic fallback
                 _logger.LogError(ex, "An error occurred while deleting the exam.");
                 return RedirectToAction("Index", "Error");
             }
@@ -405,11 +386,13 @@ namespace OnlineExaminationSystem.Controllers
                     return NotFound();
                 }
 
-                // Check if the assignment has already been submitted
                 if (assignment.IsSubmitted)
-                {   
-                    return RedirectToAction("StudentHomePage","Home");
+                {
+                    TempData["SuccessMessage"] = ConstantStrings.ExamRepeatError;
+                    return RedirectToAction("StudentHomePage", "Home", new { successMessage = TempData["SuccessMessage"] });
+                
                 }
+
                 assignment.IsSubmitted = true;
 
                 await _context.SaveChangesAsync();
@@ -434,7 +417,7 @@ namespace OnlineExaminationSystem.Controllers
                     {
                         Id = q.Id,
                         Text = q.Text,
-                        QuestionType = q.Type, // set the QuestionType property
+                        QuestionType = q.Type, 
                         Points = q.Points,
                         Answers = q.Answers.Select(o => new TakeExamAnswerViewModel
                         {
@@ -450,13 +433,11 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (DbUpdateException ex)
             {
-                // Handle specific database-related exceptions
                 _logger.LogError(ex, "A database error occurred while retrieving the exam for taking.");
                 return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
-                // Handle other exceptions or provide a generic fallback
                 _logger.LogError(ex, "An error occurred while retrieving the exam for taking.");
                 return RedirectToAction("Index", "Error");
             }
@@ -468,9 +449,7 @@ namespace OnlineExaminationSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> TakeExam(TakeExamViewModel model, string answersJson, string textAnswersJson)
         {
-            // Retrieve the current user's ID
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             var assignment = await _context.Assignments.FindAsync(model.AssignmentId);
 
             if (assignment == null)
@@ -478,22 +457,14 @@ namespace OnlineExaminationSystem.Controllers
                 return NotFound();
             }
 
-            // Check if the assignment has already been submitted
-            if (assignment.IsSubmitted)
-            {
-                return RedirectToAction("StudentHomePage", "Home");
-            }
             assignment.IsSubmitted = true;
-            // Create a new Submission object
+
             var submission = new Submission
             {
                 ApplicationUserId = userId,
                 AssignmentId = model.AssignmentId,
                 SubmissionTime = DateTime.Now
             };
-
-
-            // Loop through the selected answers and add them to the Submission object
            
             Dictionary<int,List<int>> answers = new Dictionary<int, List<int>>();
             Dictionary<int, string> textAnswers =  new Dictionary<int, string>();
@@ -554,7 +525,6 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the error or display it to the user
                 Console.WriteLine(ex.Message);
                 return RedirectToAction("Index", "Error");
             }
@@ -567,7 +537,6 @@ namespace OnlineExaminationSystem.Controllers
         {
             try
             {
-                // Retrieve the Exam object
                 var exam = await _context.Exams
                     .Include(e => e.Questions)
                     .ThenInclude(q => q.Answers)
@@ -577,14 +546,41 @@ namespace OnlineExaminationSystem.Controllers
                 {
                     throw new ArgumentException($"No exam found with ID {examId}");
                 }
-
-                // Calculate the score
                 var score = 0.0;
                 foreach (var question in exam.Questions)
                 {
-                    // ...
-                    // Score calculation logic
+                    if (question.Type == QuestionType.ShortAnswer || question.Type == QuestionType.Essay)
+                    {
+                        continue;
+                    }
 
+                    var questionId = question.Id;
+                    var questionAnswerIds = answerIds.ContainsKey(questionId) ? answerIds[questionId] : new List<int>();
+
+                    var correctAnswerIds = question.Answers.Where(a => a.IsCorrect).Select(a => a.Id).ToList();
+                    var selectedCorrectAnswers = questionAnswerIds.Intersect(correctAnswerIds).ToList();
+
+                    var incorrectAnswerIds = question.Answers.Where(a => !a.IsCorrect).Select(a => a.Id).ToList();
+                    var selectedIncorrectAnswers = questionAnswerIds.Intersect(incorrectAnswerIds).ToList();
+
+                    if (question.Type == QuestionType.MultipleChoice)
+                    {
+                        if (selectedIncorrectAnswers.Any() || !selectedCorrectAnswers.Any())
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            score += question.Points;
+                        }
+                    }
+                    else if (question.Type == QuestionType.TrueFalse || question.Type == QuestionType.SingleChoice)
+                    {
+                        if (selectedCorrectAnswers.Any())
+                        {
+                            score += question.Points;
+                        }
+                    }
                 }
 
                 string comment = "Final result";
@@ -593,7 +589,6 @@ namespace OnlineExaminationSystem.Controllers
                     comment = "Wait for teacher's points!";
                 }
 
-                // Create a new ExamResult object
                 var result = new ExamResult
                 {
                     ExamId = examId,
@@ -604,7 +599,6 @@ namespace OnlineExaminationSystem.Controllers
                     SubmissionId = sub.Id
                 };
 
-                // Save the ExamResult object to the database
                 _context.ExamResults.Add(result);
                 await _context.SaveChangesAsync();
 
@@ -612,19 +606,16 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (ArgumentException ex)
             {
-                // Handle specific ArgumentException
                 _logger.LogError(ex, "Argument exception occurred while creating an exam result.");
                 throw;
             }
             catch (DbUpdateException ex)
             {
-                // Handle specific DbUpdateException
                 _logger.LogError(ex, "A database error occurred while creating an exam result.");
                 throw;
             }
             catch (Exception ex)
             {
-                // Handle other exceptions or provide a generic fallback
                 _logger.LogError(ex, "An error occurred while creating an exam result.");
                 throw;
             }
@@ -651,7 +642,6 @@ namespace OnlineExaminationSystem.Controllers
             {
                 if (courseId.HasValue)
                 {
-                    // Filter exams based on the selected course ID
                     var filteredExams = _context.Exams
                         .Where(e => e.CourseId == courseId)
                         .Select(e => new { value = e.Id, text = $"{e.Name} - {e.Description}" })
@@ -660,7 +650,6 @@ namespace OnlineExaminationSystem.Controllers
                     return Json(filteredExams);
                 }
 
-                // If no course ID is provided, return all exams
                 var exams = _context.Exams
                     .Select(e => new { value = e.Id, text = $"{e.Name} - {e.Description}" })
                     .ToList();
@@ -669,7 +658,6 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception and return an appropriate error response
                 _logger.LogError(ex, "An error occurred while retrieving exams.");
                 return RedirectToAction("Index", "Error");
             }

@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OnlineExaminationSystem.Common;
 using OnlineExaminationSystem.Data;
 using OnlineExaminationSystem.Models;
 using OnlineExaminationSystem.ViewModels;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace OnlineExaminationSystem.Controllers
 {
@@ -28,10 +28,8 @@ namespace OnlineExaminationSystem.Controllers
         {
             try
             {
-                // Get the current user's ID
                 var userId = _userManager.GetUserId(User);
 
-                // Find the exam result with the specified ID that belongs to the current user
                 var examResult = await _context.ExamResults
                     .Include(er => er.Exam)
                         .ThenInclude(e => e.Questions)
@@ -46,13 +44,10 @@ namespace OnlineExaminationSystem.Controllers
                     return NotFound();
                 }
 
-                // Create a dictionary to hold the student's answers
                 var studentAnswers = new Dictionary<int, List<string>>();
 
-                // Loop through the student's answers and add them to the dictionary
                 foreach (var studentAnswer in examResult.StudentAnswers)
                 {
-                    // Handle answer-related exceptions
                     try
                     {
                         if (studentAnswer.AnswerId.HasValue)
@@ -85,16 +80,13 @@ namespace OnlineExaminationSystem.Controllers
                     }
                     catch (Exception ex)
                     {
-                        // Log the exception and continue processing other student answers
                         _logger.LogError(ex, "An error occurred while processing a student answer.");
                         return RedirectToAction("Index", "Error");
                     }
                 }
 
-                // Calculate the total points and number of correct answers
                 double totalPoints = examResult.Exam.Questions.Sum(q => q.Points);
 
-                // Create the view model
                 var viewModel = new ExamResultViewModel
                 {
                     Id = examResult.Id,
@@ -109,6 +101,7 @@ namespace OnlineExaminationSystem.Controllers
                             QuestionId = q.Id,
                             QuestionText = q.Text,
                             AnswerText = studentAnswers.ContainsKey(q.Id) ? studentAnswers[q.Id]?.FirstOrDefault() ?? "" : ""
+
                         }).ToList(),
                     SMTFAnswers = (examResult.Exam.Questions ?? Enumerable.Empty<Question>())
                         .Where(q => q.Type != QuestionType.ShortAnswer && q.Type != QuestionType.Essay)
@@ -127,7 +120,6 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception and return an appropriate error response
                 _logger.LogError(ex, "An error occurred while retrieving the exam result details.");
                 return RedirectToAction("Index", "Error");
             }
@@ -156,10 +148,8 @@ namespace OnlineExaminationSystem.Controllers
                     return NotFound();
                 }
 
-                // Create a dictionary to hold the student's answers
                 var studentAnswers = new Dictionary<int, List<string>>();
 
-                // Loop through the student's answers and add them to the dictionary
                 foreach (var studentAnswer in submission.ExamResult.StudentAnswers)
                 {
                     try
@@ -194,7 +184,6 @@ namespace OnlineExaminationSystem.Controllers
                     }
                     catch (Exception ex)
                     {
-                        // Log the exception and continue processing other student answers
                         _logger.LogError(ex, "An error occurred while processing a student answer.");
                         return RedirectToAction("Index", "Error");
                     }
@@ -229,12 +218,11 @@ namespace OnlineExaminationSystem.Controllers
                             }).ToList()
                 };
 
-                TempData["SuccessMessage"] = "Result sended successfully!";
+                TempData["SuccessMessage"] = ConstantStrings.ExamResultSent;
                 return RedirectToAction("Index", "Submission", new { successMessage = TempData["SuccessMessage"] });
             }
             catch (Exception ex)
             {
-                // Log the exception and return an appropriate error response
                 _logger.LogError(ex, "An error occurred while retrieving the submission details.");
                 return RedirectToAction("Index", "Error");
             }
@@ -278,15 +266,10 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception and return an appropriate error response
                 _logger.LogError(ex, "An error occurred while editing the exam result.");
                 return RedirectToAction("Index", "Error");
             }
         }
-
-
-
-
 
     }
 }

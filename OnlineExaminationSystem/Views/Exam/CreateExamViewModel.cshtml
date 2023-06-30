@@ -2,48 +2,13 @@
 @using OnlineExaminationSystem.Common
 @model ExamViewModel
 
-<style>
-    .container-3d {
-        background-color: #ffffff;
-        border: 1px solid #dddddd;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        padding: 20px;
-    }
 
-    .bottom-container {
-        display: flex;
-        justify-content: flex-end;
-        align-items: flex-end;
-    }
-
-    .separator {
-        margin: 20px 0;
-        border: none;
-        border-top: 1px solid #000;
-    }
-
-    .centered {
-        flex-grow: 1;
-        display: flex;
-        justify-content: center;
-    }
-
-    .bottom-content {
-        border: 1px solid #ccc;
-        padding: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-        .bottom-content .form-group {
-            margin-right: 10px;
-        }
-
-
-</style>
+<head>
+    <link rel="stylesheet" href="~/css/container_alert.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/examCreate.css" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/examQuestions.css" asp-append-version="true" />
+</head>
 
 <div class="container-3d">
     <form asp-action="CreateExam" id="create-exam-form">
@@ -135,18 +100,11 @@
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <link rel="stylesheet" href="~/css/examQuestions.css" asp-append-version="true" />
-   
     <script src="~/js/flatpickr.js"></script>
     <script src="~/js/enableTooltip.js"></script>
     <script src="~/js/generateQuestionFromDropdown.js"></script>
     <script src="~/js/checkDates.js"></script>
     <script src="~/js/filterQuestionsByCourse.js"></script>
-
-
-
-
 
     }

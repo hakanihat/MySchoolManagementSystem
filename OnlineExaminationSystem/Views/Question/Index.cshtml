@@ -1,66 +1,8 @@
 ﻿@model List<Question>
 
-<style>
-    .container-3d {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        width: 80%;
-        margin: auto;
-    }
-
-    .heading {
-        text-align: center;
-    }
-
-    .separator {
-        margin: 20px 0;
-        border: none;
-        border-top: 1px solid #000;
-    }
-
-    .header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-
-    .centered {
-        flex-grow: 1;
-        display: flex;
-        justify-content: center;
-    }
-
-    .search-bar {
-        margin-bottom: 20px;
-    }
-
-    .custom-alert {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        z-index: 9999;
-    }
-
-        .custom-alert .alert-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .custom-alert .alert-message {
-            font-size: 16px;
-        }
-
-</style>
+<head>
+    <link rel="stylesheet" href="~/css/container_alert.css" asp-append-version="true" />
+</head>
 
 <div class="container-3d">
     <div class="text-center">
@@ -101,28 +43,8 @@
     </table>
 </div>
 
-<script>
-    // Function to filter and sort the questions based on the search input
-    function filterQuestions() {
-        var searchInput = document.getElementById('search-input').value.toLowerCase();
-        var questions = document.querySelectorAll('.table tbody tr');
+@section scripts {
+    <script src="~/js/examNotificationToastr.js"></script>
+    <script src="~/js/questionFilter.js"></script>
+}
 
-        questions.forEach(function (question) {
-            var questionText = question.querySelector('td:first-child').textContent.toLowerCase();
-
-            if (questionText.indexOf(searchInput) > -1) {
-                question.style.display = '';
-            } else {
-                question.style.display = 'none';
-            }
-        });
-    }
-
-    // Event listener for the search input
-    document.getElementById('search-input').addEventListener('input', function () {
-        filterQuestions();
-    });
-
-
-</script>
-<script src="~/js/examNotificationToastr.js"></script>

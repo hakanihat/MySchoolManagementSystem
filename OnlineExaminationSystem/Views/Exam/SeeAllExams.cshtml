@@ -1,62 +1,9 @@
 ﻿@model List<OnlineExaminationSystem.Models.Exam>
-<style>
-    .container-3d {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
 
-    .heading {
-        text-align: center;
-    }
+<head>
+    <link rel="stylesheet" href="~/css/examList.css" asp-append-version="true" />
+</head>
 
-    .separator {
-        margin: 20px 0;
-        border: none;
-        border-top: 1px solid #000;
-    }
-
-    .filter-container {
-        margin-bottom: 20px;
-    }
-
-    .table {
-        width: 100%;
-    }
-
-    .exam-row {
-        background-color: #f9f9f9;
-    }
-
-        .exam-row:hover {
-            background-color: #f5f5f5;
-        }
-
-
-    .custom-alert {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        z-index: 9999;
-    }
-
-        .custom-alert .alert-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .custom-alert .alert-message {
-            font-size: 16px;
-        }
-</style>
 <div class="container-3d">
 
     <div class="text-center">
@@ -107,30 +54,7 @@
 
 @section scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            // Function to filter exams based on the provided filter
-            function filterExams() {
-                var filterValue = $('#filterInput').val().trim().toLowerCase();
-
-                $('.exam-row').each(function () {
-                    var examName = $(this).data('exam-name').toLowerCase();
-                    var course = $(this).data('course').toLowerCase();
-
-                    if (examName.includes(filterValue) || course.includes(filterValue)) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            }
-
-            // Event handler for the filter input
-            $('#filterInput').on('input', function () {
-                filterExams();
-            });
-        });
-    </script>
     <script src="~/js/examNotificationToastr.js"></script>
+    <script src="~/js/examFilter.js"></script>
 
 }

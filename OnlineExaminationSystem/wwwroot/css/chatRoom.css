@@ -1,0 +1,92 @@
+﻿#chat-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 3.75vw;
+    border: 1.5px solid #ccc;
+    border-radius: 1.5vw;
+    background-color: #f9f9f9;
+}
+
+.chat-box {
+    max-height: 45vh; /* Adjust the value as needed */
+    min-height: 15vh;
+    overflow-y: auto; /* Changed to 'auto' to activate the scroll after three messages */
+    margin-bottom: 0.75vw;
+    padding: 0.75vw;
+    border: 1.5px solid #ccc;
+    border-radius: 1.5vw;
+    background-color: #fff;
+}
+
+
+
+.message-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1vw;
+}
+
+.message-sender {
+    font-weight: bold;
+    margin-bottom: 0.5vw;
+    font-size: 1vw;
+}
+
+    .message-sender.me {
+        text-align: right;
+    }
+
+    .message-sender.other {
+        text-align: left;
+    }
+
+.message-bubble {
+    padding: 1vw;
+    border-radius: 1vw;
+    color: #fff;
+    margin-bottom: 0.5vw;
+    max-width: 33.75%;
+    word-wrap: break-word;
+    font-size: 1vw;
+}
+
+    .message-bubble.me {
+        background-color: #ccc;
+        color: #000;
+        text-align: right;
+        align-self: flex-end;
+        width: 33.75%;
+    }
+
+    .message-bubble.other {
+        background-color: #007bff;
+        text-align: left;
+        align-self: flex-start;
+        width: 33.75%;
+    }
+
+#message-input {
+    width: 100%;
+    height: 4vw;
+    padding: 0.5vw;
+    border: 1.5px solid #ccc;
+    border-radius: 1vw;
+    font-size: 1vw;
+}
+
+#send-button {
+    display: block;
+    width: 100%;
+    margin-top: 1vw;
+    padding: 1vw;
+    border: none;
+    border-radius: 1vw;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1vw;
+}
+
+    #send-button:hover {
+        background-color: #0056b3;
+    }

@@ -1,36 +1,9 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model QuestionViewModel
 
-<style>
-    .container-3d {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        width: 80%; /* Adjust the percentage value as needed */
-        margin: auto; /* Center the container horizontally */
-    }
-
-    .heading {
-        text-align: center;
-    }
-
-    .header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-
-    .centered {
-        flex-grow: 1;
-        display: flex;
-        justify-content: center;
-    }
-
-
-</style>
+<head>
+    <link rel="stylesheet" href="~/css/container_alert.css" asp-append-version="true" />
+</head>
 <div class="container-3d">
     <div class="header">
         <a href="javascript:history.back()" class="btn btn-secondary">

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OnlineExaminationSystem.Data;
 using OnlineExaminationSystem.Models;
@@ -27,7 +21,6 @@ namespace OnlineExaminationSystem.Controllers
             _logger = logger;
         }
 
-        // GET: Courses
         public async Task<IActionResult> Index()
         {
             if (_context.Courses != null)
@@ -40,8 +33,6 @@ namespace OnlineExaminationSystem.Controllers
             }
         }
 
-
-        // GET: Courses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             try
@@ -66,14 +57,11 @@ namespace OnlineExaminationSystem.Controllers
             }
         }
 
-
-        // GET: Courses/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Courses/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateCourseViewModel viewModel)
@@ -108,8 +96,6 @@ namespace OnlineExaminationSystem.Controllers
             }
         }
 
-
-        // GET: Courses/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             try
@@ -172,7 +158,6 @@ namespace OnlineExaminationSystem.Controllers
             return View(course);
         }
 
-        // GET: Courses/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             try
@@ -236,9 +221,6 @@ namespace OnlineExaminationSystem.Controllers
             }
         }
 
-
-
-
         private bool CourseExists(int id)
         {
             try
@@ -247,10 +229,7 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while checking if the course exists.");
-
-                // Handle the exception or perform any other necessary handling
                 return false;
             }
         }

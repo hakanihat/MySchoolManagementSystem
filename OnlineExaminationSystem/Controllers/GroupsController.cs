@@ -23,7 +23,6 @@ namespace OnlineExaminationSystem.Controllers
             _context = context;
         }
 
-        // GET: Groups
         public async Task<IActionResult> Index()
         {
             if (_context.Groups != null)
@@ -36,8 +35,6 @@ namespace OnlineExaminationSystem.Controllers
             }
         }
 
-
-        // GET: Groups/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             try
@@ -58,16 +55,10 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while retrieving group details.");
-
-                // Redirect to the desired page
                 return RedirectToAction("Index", "Home");
             }
         }
-
-
-        // GET: Groups/Create
         public IActionResult Create()
         {
             return View();
@@ -90,16 +81,11 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while creating a group.");
-
-                // Redirect to an error page or display an error message
                 return RedirectToAction("Error", "Home");
             }
         }
 
-
-        // GET: Groups/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             try
@@ -160,10 +146,7 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while updating the group.");
-
-                // Redirect to an error page or display an error message
                 return RedirectToAction("Error", "Home");
             }
         }
@@ -188,10 +171,7 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while retrieving the group for deletion.");
-
-                // Redirect to an error page or display an error message
                 return RedirectToAction("Error", "Home");
             }
         }
@@ -218,10 +198,7 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while deleting the group.");
-
-                // Redirect to an error page or display an error message
                 return RedirectToAction("Error", "Home");
             }
         }
@@ -235,10 +212,7 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while checking if the group exists.");
-
-                // Return an appropriate default value or handle the exception as needed
                 return false;
             }
         }

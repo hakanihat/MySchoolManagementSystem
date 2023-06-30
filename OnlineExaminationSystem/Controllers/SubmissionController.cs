@@ -53,7 +53,6 @@ public class SubmissionController : Controller
         }
         catch (Exception ex)
         {
-            // Log the exception and return an appropriate error response
             _logger.LogError(ex, "An error occurred while retrieving submissions.");
             return RedirectToAction("Index", "Error");
         }

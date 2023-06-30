@@ -1,0 +1,12 @@
+﻿.bottom-content {
+    border: 1px solid #ccc;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+    .bottom-content .form-group {
+        margin-right: 10px;
+    }

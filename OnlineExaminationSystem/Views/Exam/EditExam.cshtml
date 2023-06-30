@@ -1,30 +1,9 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model ExamViewModel
 
-<style>
-    .container-3d {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .separator {
-        margin: 20px 0;
-        border: none;
-        border-top: 1px solid #000;
-    }
-
-    .bold-label {
-        font-weight: bold;
-    }
-
-    .heading {
-        text-align: center;
-    }
-
-</style>
+<head>
+    <link rel="stylesheet" href="~/css/container_alert.css" asp-append-version="true" />
+</head>
 
 <div class="container-3d">
     <form asp-action="Edit" method="post">

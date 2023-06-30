@@ -1,33 +1,9 @@
 ﻿@using OnlineExaminationSystem.ViewModels
 @model ChatPanelViewModel
 
-<style>
-    .container-chat {
-        background-color: #ffffff;
-        border: 1px solid #dddddd;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        padding: 20px;
-    }
-
-    .list-group-item:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
-
-    .list-group-item.active {
-        transform: translateY(-2px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .participant-name {
-        font-weight: bold;
-        background-color: darkorange;
-        display: inline-block;
-        padding: 2px 4px;
-        border-radius: 4px;
-    }
-</style>
+<head>
+    <link rel="stylesheet" href="~/css/chatPanel.css" asp-append-version="true" />
+</head>
 
 
 
@@ -37,7 +13,7 @@
             <a href="javascript:history.back()" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i>
             </a>
-            <h1 class="mx-auto">Chat Panel</h1>
+            <h1 class="mx-auto">Chat Panel&nbsp&nbsp&nbsp&nbsp</h1>
         </div>
     </div>
 
@@ -81,31 +57,13 @@
     </div>
 </div>
 
-<script>
-    function viewChatRoom(chatRoomId) {
-        var url = '@Url.Action("Index", "ChatRoom")' + '?id=' + chatRoomId;
-        window.location.href = url;
-    }
-</script>
-<script>
-    // Function to filter and sort the chat rooms based on the search input
-    function filterChatRooms() {
-        var searchInput = document.getElementById('search-input').value.toLowerCase();
-        var chatRooms = document.querySelectorAll('.list-group-item');
 
-        chatRooms.forEach(function (chatRoom) {
-            var chatRoomName = chatRoom.querySelector('.participant-name').textContent.toLowerCase();
 
-            if (chatRoomName.indexOf(searchInput) > -1) {
-                chatRoom.style.display = '';
-            } else {
-                chatRoom.style.display = 'none';
-            }
-        });
-    }
-
-    // Event listener for the search input
-    document.getElementById('search-input').addEventListener('input', function () {
-        filterChatRooms();
-    });
-</script>
+@section Scripts {
+    <script >
+        function viewChatRoom(chatRoomId) {
+            var url = '@Url.Action("Index", "ChatRoom")' + '?id=' + chatRoomId;
+            window.location.href = url;
+        }</script>
+    <script src="~/js/filterChatRooms.js"></script>
+}

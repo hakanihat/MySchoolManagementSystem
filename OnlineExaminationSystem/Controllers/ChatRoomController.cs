@@ -6,9 +6,6 @@ using OnlineExaminationSystem.Data;
 using OnlineExaminationSystem.Models;
 using OnlineExaminationSystem.ViewModels;
 using Newtonsoft.Json;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Data.Common;
-using System.Security.Claims;
 
 namespace OnlineExaminationSystem.Controllers
 {
@@ -31,20 +28,28 @@ namespace OnlineExaminationSystem.Controllers
 
             if (chatRoom == null)
             {
-                return NotFound(); // Return a 404 Not Found response if the chat room is not found
+                return NotFound();
             }
 
             var currentUser = await _userManager.GetUserAsync(User);
             var userWithProfile = _dbContext.Users.Include(u => u.UserProfile).FirstOrDefault(u => u.Id == currentUser.Id);
-            Dictionary<string, string> keyValuePairs = new Dictionary<string, string> { { GetRecipientId(chatRoom.ApplicationUsers.ToList(), currentUser).Keys.FirstOrDefault(), GetRecipientId(chatRoom.ApplicationUsers.ToList(), currentUser).Values.First() } };
+
+            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>
+            {
+                { GetRecipientId(chatRoom.ApplicationUsers.ToList(), currentUser).Keys.FirstOrDefault(),
+                    GetRecipientId(chatRoom.ApplicationUsers.ToList(), currentUser).Values.First()
+                }
+            };
+
             var viewModel = new ChatRoomViewModel
             {
                 ChatRoomId = chatRoom.Id,
                 SenderId = userWithProfile.Id,
                 SenderFullName = userWithProfile.UserProfile.FullName,
                 RecipientId = keyValuePairs.Keys.First(),
-                RecipientFullName = keyValuePairs.Values.First()// Get the recipient ID based on the chat room's users
+                RecipientFullName = keyValuePairs.Values.First()
             };
+
             return View(viewModel);
         }
 
@@ -62,10 +67,8 @@ namespace OnlineExaminationSystem.Controllers
         {
             try
             {
-                // Retrieve the list of users/students from the database
                 var users = _dbContext.Users.Include(u => u.UserProfile).ToList();
 
-                // Create a list of SelectListItem objects for the dropdown
                 var options = users.Select(user => new SelectListItem
                 {
                     Value = user.Id,
@@ -76,10 +79,7 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Handle the exception (e.g., log the error, redirect to an error page)
                 _logger.LogError(ex, "An error occurred while retrieving the participant options.");
-
-                // Return an empty list or handle the error as needed
                 return new List<SelectListItem>();
             }
         }
@@ -100,17 +100,11 @@ namespace OnlineExaminationSystem.Controllers
                         ChatPanels = new List<ChatPanel>()
                     };
 
-                    // Add the current user's ID to the selected participant IDs if not already included
                     var currentUser = await _userManager.GetUserAsync(User);
                     var currentUserId = currentUser.Id;
-
                     var selectedParticipantIdsJson = JsonConvert.DeserializeObject<HashSet<string>>(selectedParticipantIds);
-                    var participantIdSet = new HashSet<string>(selectedParticipantIdsJson)
-            {
-                currentUserId
-            };
+                    var participantIdSet = new HashSet<string>(selectedParticipantIdsJson) { currentUserId };
 
-                    // Process the selected participant IDs and save them in the database
                     foreach (var participantId in participantIdSet)
                     {
                         var chatRoomUser = new ChatRoomUser
@@ -121,14 +115,12 @@ namespace OnlineExaminationSystem.Controllers
 
                         _dbContext.ChatRoomUsers.Add(chatRoomUser);
 
-                        // Retrieve the participant's chat panel
                         var participantChatPanel = _dbContext.ChatPanels
                             .Include(cp => cp.ChatRooms)
                             .FirstOrDefault(cp => cp.ApplicationUserId == participantId);
 
                         if (participantChatPanel == null)
                         {
-                            // Create a new chat panel for the participant if it doesn't exist
                             participantChatPanel = new ChatPanel
                             {
                                 ApplicationUserId = participantId,
@@ -139,7 +131,6 @@ namespace OnlineExaminationSystem.Controllers
                             _dbContext.ChatPanels.Add(participantChatPanel);
                         }
 
-                        // Add the chat room to the participant's chat panel
                         participantChatPanel.ChatRooms.Add(chatRoom);
                     }
 
@@ -153,26 +144,17 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (DbUpdateException ex)
             {
-                // Handle database-related exceptions
                 _logger.LogError(ex, "An error occurred while saving data to the database.");
-
-                // Redirect to an error page or handle the error as needed
                 return RedirectToAction("Index", "Error");
             }
             catch (JsonException ex)
             {
-                // Handle JSON serialization/deserialization exceptions
                 _logger.LogError(ex, "An error occurred while processing JSON data.");
-
-                // Redirect to an error page or handle the error as needed
                 return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
-                // Handle other exceptions
                 _logger.LogError(ex, "An unexpected error occurred.");
-
-                // Redirect to an error page or handle the error as needed
                 return RedirectToAction("Index", "Error");
             }
         }

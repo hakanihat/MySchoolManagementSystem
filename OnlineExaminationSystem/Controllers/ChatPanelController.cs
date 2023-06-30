@@ -50,26 +50,17 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                // Handle specific InvalidOperationException
                 _logger.LogError(ex, "An InvalidOperationException occurred while retrieving the chat panel.");
-
-                // You can redirect the user to an error page here
                 return RedirectToAction("Index", "Error");
             }
             catch (DbException ex)
             {
-                // Handle specific DbException
                 _logger.LogError(ex, "A DbException occurred while retrieving the chat panel.");
-
-                // You can redirect the user to an error page here
                 return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
-                // Handle other exceptions
                 _logger.LogError(ex, "An error occurred while retrieving the chat panel.");
-
-                // You can redirect the user to an error page here
                 return RedirectToAction("Index", "Error");
             }
         }

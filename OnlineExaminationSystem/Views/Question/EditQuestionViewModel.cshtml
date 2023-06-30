@@ -2,35 +2,9 @@
 @using OnlineExaminationSystem.ViewModels
 @model QuestionViewModel
 
-<style>
-    .container-3d {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        width: 80%; /* Adjust the percentage value as needed */
-        margin:  auto; /* Center the container horizontally */
- 
-
-
-    }
-
-    .heading {
-        text-align: center;
-    }
-
-    .container-3d .form-group {
-        margin-bottom: 10px; /* Add margin between form groups */
-    }
-
-    .container-3d .button-separator {
-        height: 2px;
-        background-color: black;
-        margin: 20px 0; /* Add margin above and below the line */
-    }
-
-</style>
+<head>
+    <link rel="stylesheet" href="~/css/editQuestion.css" asp-append-version="true" />
+</head>
 
 <div class="container-3d">
     <form asp-action="Edit" method="post">
@@ -102,17 +76,7 @@
 
 
 @section Scripts {
-    <script>
-        $(function () {
-         
-
-            $(document).on('click', '.delete-answer', function () {
-                $(this).closest('.form-group').remove();
-            });
-
-
-        });
-    </script>
     <script src="~/js/editQuestionAns.js" asp-append-version="true"></script>
     <script src="~/js/addAnswerInEditQuestion.js" asp-append-version="true"></script>
+    <script src="~/js/deleteQuestionAnswerLogic.js" asp-append-version="true"></script>
 }

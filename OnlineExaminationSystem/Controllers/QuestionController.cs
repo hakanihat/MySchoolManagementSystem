@@ -34,10 +34,7 @@ namespace OnlineExaminationSystem.Controllers
         {
             try
             {
-                // Deserialize the JSON string into a list of AnswerViewModel objects
                 var answers = JsonConvert.DeserializeObject<List<AnswerViewModel>>(AnswersJson);
-
-                // Assign the answers to the view model's Answers property
                 viewModel.Answers = answers;
 
                 if (!ModelState.IsValid)
@@ -63,29 +60,17 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (JsonException ex)
             {
-                // Handle JSON deserialization exception
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while deserializing JSON.");
-
-                // Handle the exception or return an error view
                 return RedirectToAction("Error", "Home");
             }
             catch (DbUpdateException ex)
             {
-                // Handle database update exception
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while updating the database.");
-
-                // Handle the exception or return an error view
                 return RedirectToAction("Error", "Home");
             }
             catch (Exception ex)
             {
-                // Handle other exceptions
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while creating the question.");
-
-                // Handle the exception or return an error view
                 return RedirectToAction("Error", "Home");
             }
         }
@@ -132,7 +117,7 @@ namespace OnlineExaminationSystem.Controllers
                 }
 
                 var question = await _context.Questions
-                    .Include(q => q.Answers) // eagerly load choices
+                    .Include(q => q.Answers) 
                     .FirstOrDefaultAsync(q => q.Id == id);
 
                 if (question == null)
@@ -221,10 +206,7 @@ namespace OnlineExaminationSystem.Controllers
                     return NotFound();
                 }
 
-                // Deserialize the JSON string into a list of AnswerViewModel objects
                 var answers = JsonConvert.DeserializeObject<List<AnswerViewModel>>(AnswersJson);
-
-                // Assign the answers to the view model's Answers property
                 viewModel.Answers = answers;
 
                 if (!ModelState.IsValid)
@@ -248,10 +230,8 @@ namespace OnlineExaminationSystem.Controllers
                 question.ApplicationUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 question.CourseId = viewModel.CourseId;
 
-                // Delete existing choices
                 _context.Answers.RemoveRange(question.Answers);
 
-                // Create new choices
                 CreateQuestionAnswers(viewModel.Answers, question);
 
                 _context.Update(question);
@@ -263,15 +243,11 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                // Handle the DbUpdateConcurrencyException
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while updating the question.");
                 return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
-                // Handle other specific exception types if needed
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while updating the question.");
                 return RedirectToAction("Index", "Error");
             }
@@ -290,11 +266,8 @@ namespace OnlineExaminationSystem.Controllers
                     return NotFound();
                 }
 
-                // Delete associated records in ExamQuestions table
                 var examQuestions = await _context.ExamQuestions.Where(eq => eq.QuestionId == id).ToListAsync();
                 _context.ExamQuestions.RemoveRange(examQuestions);
-
-                // Remove the question
                 _context.Questions.Remove(question);
                 await _context.SaveChangesAsync();
 
@@ -303,7 +276,6 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while deleting the question.");
                 return RedirectToAction("Index", "Error");
             }
@@ -335,14 +307,10 @@ namespace OnlineExaminationSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while retrieving the courses.");
-
-                // Handle the exception or return an empty list
-                return new List<SelectListItem>(); // Return an empty list or handle the exception based on your requirement
+                return new List<SelectListItem>(); 
             }
         }
-
 
 
         public async Task<IActionResult> Index()
